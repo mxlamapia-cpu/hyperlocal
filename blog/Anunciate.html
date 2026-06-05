@@ -1,0 +1,243 @@
+<style>
+    /* Estructura Base */
+    .contenedor-pilares { padding-top: 90px; background-color: #f8fafc; min-height: 90vh; padding-bottom: 60px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .container-anunciate { max-width: 1100px; margin: 0 auto; padding: 0 20px; text-align: center; }
+    .titulo-principal { color: #0a2540; font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; text-transform: lowercase; }
+    .subtitulo { color: #64748b; font-size: 1.1rem; max-width: 700px; margin: 0 auto 50px; line-height: 1.6; }
+    
+    /* Grid de Tarjetas */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 20px; }
+    .feature-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(10,37,64,0.08); transition: all 0.3s ease; border: 1px solid #e2e8f0; display: flex; flex-direction: column; height: 100%; }
+    .feature-card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(10,37,64,0.15); border-color: #60a5fa; }
+        /* Contenedor de Imagen ajustado */
+    .card-image { 
+        width: 100%; 
+        height: 180px; 
+        background: #f0f7ff; 
+        overflow: hidden; 
+        position: relative;
+        display: flex;         /* Centra la imagen si es más pequeña */
+        align-items: center; 
+        justify-content: center; 
+    }
+
+    .card-image img { 
+        width: 90%;            /* Evita que toque los bordes laterales */
+        height: 90%;           /* Evita que toque los bordes superior/inferior */
+        object-fit: contain;   /* Muestra la imagen completa sin recortar */
+        transition: opacity 0.3s ease; 
+    }
+
+  /* Estilos para Tarjetas de Video */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* Relación 16:9 */
+    height: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+    /* Contenido */
+    .card-content { padding: 25px; text-align: left; flex-grow: 1; }
+    .card-content h3 { color: #0a2540; font-size: 1.25rem; margin: 0 0 12px 0; font-weight: 700; text-transform: capitalize; }
+    .card-content p { color: #64748b; font-size: 0.95rem; line-height: 1.6; margin: 0; }
+    position: relative; /* <--- AÑADE ESTO */
+    padding-bottom: 60px; /* <--- AÑADE ESTO para dejar espacio al botón abajo */
+}
+    /* Footer */
+    footer { background: #0a2540; color: white; padding: 40px 20px; text-align: center; margin-top: 50px; }
+    footer p { margin: 5px 0; font-size: 0.9rem; opacity: 0.8; }
+    footer strong { color: #60a5fa; }
+
+    @media screen and (max-width: 768px) {
+        .contenedor-pilares { padding-top: 75px; }
+        .titulo-principal { font-size: 1.8rem; }
+        .subtitulo { font-size: 1rem; margin-bottom: 30px; }
+    }
+  
+   .map-wrapper-xalpa {
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    position: relative;
+    padding-bottom: 75%; /* Proporción 4:3 para móvil */
+    height: 0;
+  }
+
+  .map-wrapper-xalpa iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  
+  .btn-wa-float {
+    position: absolute; /* Se mantiene absolute pero ahora respecto a .card-content */
+    bottom: 15px;
+    right: 15px;
+    background-color: #25D366;
+    color: white !important;
+    padding: 8px 15px; /* Un poco más de relleno para que se vea mejor */
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none !important;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
+    z-index: 5;
+    transition: all 0.3s ease;
+}
+
+  
+</style>
+
+<div class="contenedor-pilares">
+    <main>
+        <section class="container-anunciate">
+            <h1 class="titulo-principal">negosistema</h1>
+            <p class="subtitulo">Potenciamos la visibilidad de su negocio con una estrategia enfocada en que su establecimiento sea ubicable y mantenga siempre información actualizada.</p>
+            
+            <h2 style="color: #0a2540; font-size: 1.4rem; font-weight: 400; letter-spacing: 2px; margin-bottom: 40px; text-transform: uppercase;">Nuestros Pilares</h2>
+            
+            <div class="card-grid">
+                <!--Tarjeta 1-->
+                <div class="feature-card">
+                    <div class="card-image">
+                        <img alt="Ubicación" class="img-dinamica" data-hover="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigeEsGMJd4xJj47UEtlSkJxvzvoYcv_jLnoA-EgcviqmJvXyoLVpshGaYEMAPyTv62PnMchYtwyt0s9jtsd0TUVZT_ceTPXn5-LOwNP3xW86y9GIEZ7zdlXzbyO1BP72UYnGVCHT8RYP-0M5m0cRsng-uXTY0Qas14iKOG41zllaf0ZOVBUaAhGLawMLdR/s320/gm.gif" src="https://blogger.googleusercontent.com/img/a/AVvXsEjhYZ2ac8hgfwklj1QE5xORstuIuBYZ4aVdipXmJkfG-0hnuV-X8xn8GxMRrRv7PDbgKHY3az0RWqGWffYJMEOtvPd22nfvB3JPvugOou_wuXBXa0ZvCpGeHVNjxM6PBu9cjHlqxhSAKNtH6A-l5Sbz1ioYtQGNL_aLq-qixXvJxXaOrvbYggqhspqrEBX1" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Visibilizar Negocios</h3>
+                        <p>Ubicación Exacta, Posicionamos su negocio en el mapa digital para garantizar que sus clientes lo localicen con precisión milimétrica. trayendolos de "la manita" hasta las puertas de tu negocio.</p>
+                    </div>
+                </div>
+
+                <!--Tarjeta 2-->
+                <div class="feature-card">
+                    <div class="card-image">
+                        <img alt="Accesibilidad" class="img-dinamica" data-hover="https://blogger.googleusercontent.com/img/a/AVvXsEhGz_hBcLdKoXFk6Ilha-vn3qnc8566_ooNXPMr2u2DkS8XNS3_1ZoYvNKYSwieQzOp3RoNr9K36407su7fRHDDjJwY9emwiyawl4CNYf_lPbG8L2ixFztgrufuK8nWnnE-B0xav7ogWPaTH6cTX2fRqeb9U3NbT-RXn1GVUraMCsBzkUmw-kI4NfDS9n3S" src="https://blogger.googleusercontent.com/img/a/AVvXsEioRpgRtoPBVFbche3T89p_EAA8zwSL33WYNiFvqZimSbGtk5d7xK1cncw9UYOg6ImeeEHNw0RLWyeD9TvAzROkCHvCRed-iAUNXPgl4Q_OG8w3DeNFeReg69WEBUXiGlz-92QCTOB4IPAvyNhtbXxebNLuI2FzNDdGxoNAbUBuRwj_E5GjWxzzEsEmD0wg" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Accesibilidad</h3>
+                        <p>Nos ajustamos a distintos niveles de negocio, permitiéndote decidir qué volumen de información deseas entregar a tus usuarios, Como quieres que te contacten.</p>
+                    </div>
+                </div>
+
+                <!--Tarjeta 3-->
+                <div class="feature-card">
+                    <div class="card-image">
+                        <img alt="Actualidad" class="img-dinamica" data-hover="https://blogger.googleusercontent.com/img/a/AVvXsEgCSbEWHN_iXzdqG4Ye8-Rb5u6YCtRJwi8gPFS3_4QYKSsXrb4TfisIxijMef9BjZC6P1VrQG9hmYV13oOz0ZAArSE8v-NuCFoPeV1RXTGvn98LJ0YD0j1DZLslOaxjp35ED1808JmMYMx0GNJCQuYi0Bu0JI_f8VtjWU71qKX_ikMNZ8UEpKCNAcywkcXB" src="https://blogger.googleusercontent.com/img/a/AVvXsEg7irX76qrTDm0f9YW76D2uDBvAGyg_qnDu98BBZzeDofbufPc7ZQlfyDttehP70ekugnV8C17k4xL3sI2pjudT7hVP-rIgpJM7HnKs6G6wc44B9oCtjbWCRXmd5w_hqniH6MhPkiO1teGr_9iTUsWddOYCzoyrf5lycNimLYrcbF44lJC9bwmf1Cy6cqva" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Actualidad</h3>
+                        <p>Reflejamos el estado real de tu localidad: si tu negocio abre, cambia de horario o cierra, la gente lo sabra los mas pronto posible.</p>
+                    </div>
+                </div>
+              
+
+                <!--Tarjeta 4-->
+                <div class="feature-card">
+                    <div class="card-image">
+                        <img alt="Presencia" class="img-dinamica" data-hover="https://blogger.googleusercontent.com/img/a/AVvXsEgyLW2UK2tRoabXfuiRyVlRpXHoU7N1qijRSTIp6J2XYhJ3UG8QFhyZ7dz-7M5x799ac9fDEWWbCPM-bHD2FTaCgABp2ddFxQTTBSlhvGkeqwbp9gc4x4TLtdH8VXeQ-MuGpW1Xx9V_bH7lMTPfcFdoRn9MwNAOfImdjdqg9lsA8LdK0cj3Be2jpU1dtlAt" src="https://blogger.googleusercontent.com/img/a/AVvXsEis7oeRflWSQlq9cj2uzk3O8o8N2G1ZUjSRW7_5VwKZiXVW-Q8KSxk0oKV3Fd_2H28Kuz7LXRMARUClWuUuIPsFmb4iNucNo87nyXVW7dxKR1059N1CpVL8qBYyCltqEzI68hRzFZ5R3sGUXl2gp8xeGQ4DLFItjyCm-ZJyQufSSQAwoClvyWUoJkwYfqts" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Presencia</h3>
+                        <p>Garantiza que tu esfuerzo trascienda tu zona inmediata y alcance el máximo potencial en toda tu área de influencia, Grita al mundo que existes en lugar de esperar a que te encuentren.</p>
+                    </div>
+                </div>
+              
+      
+              <!--Tarjeta 6: Video 1-->
+<div class="feature-card">
+    <div class="video-container">
+        <!--Reemplaza el ID de YouTube (Ej: VIDEO_ID_1) por el tuyo-->
+        <iframe allowfullscreen="" src="https://youtube.com/embed/XAGVDMJ4Bys" title="Problemáticas de Negocio"></iframe>
+    </div>
+    <div class="card-content">
+        <h3>Problemáticas Reales</h3>
+        <p>Análisis detallado sobre los desafíos que enfrentan los dueños de negocios en el entorno digital actual.</p>
+    </div>
+</div>
+
+            </div>
+        </section>
+  <section class="container-mapa">
+            <h2 class="section-title" style="font-size: 2em; margin-bottom: 10px;">Muestra de los Niveles de servicio</h2>
+            <p class="intro-text" style="color: #555555; margin-bottom: 10px;">
+                Presentación de lo que incluye  la<strong>Publicidad</strong> en el mapa de la zona. 
+                
+
+
+        <!--CONTENEDOR DE LA PRESENTACIÓN-->
+<div class="map-wrapper-xalpa">
+    <iframe 
+        src="https://docs.google.com/presentation/d/e/2PACX-1vS1XYD8wCJuNISm28NHWaxlL9LkVE1XBN_m87XeYC0pXSeiaCPxNeLJjfQcI3oX9A/pubembed?start=false&loop=false&delayms=3000" 
+        frameborder="0" 
+        width="100%" 
+        height="500" 
+        allowfullscreen="true">
+    </iframe>
+</div>
+
+
+<p style="color: #888888; font-size: 0.85em; margin-top: 15px;">
+     <strong></strong>
+</p>
+
+    
+    <div class="map-wrapper-xalpa">
+    <iframe height="480" loading="lazy" src="https://www.google.com/maps/d/embed?mid=1YL91wR7f8lc5dnHnv56pr1deOOTTuPo&amp;ehbc=2E312F" style="border: none;" width="100%"></iframe>
+</div>  
+    
+    
+         <!--Tarjeta 5-->
+<div class="feature-card">
+    <div class="card-image">
+        <img alt="Contacto" class="img-dinamica" 
+             data-hover="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhbF8Se1lhW9wtMszT1jYY5stwgdOe6qGdmnvzfo-4Kxafej-QAkBcFibJnpFCYYv7-gQSfvxAW8Kra3Jn4_AYkMhuA4IIyCkO3VMuGs4MR4rFKLUfo2gYFnmCCYL4XgJGDyWxnHPCO430cCNWaynOP4W8-Q_AdaUBtWjfOhwqNnqlytEtx7KqyEzdzqfYR/s320/contacto.gif" 
+             src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSNJwAVbQNkLBmwnPXJR5FAg0RCOkSn4qu7atOnNuyDuTt7s8J5KGU_VqMG2wuakTFv_FP0lFhy24MU1MyUTY9xQuu1-hHjPkD3Lka-skqk0HV1MmIZaOqwrpgdYwFiHBPywPRpD90onEOLNuSOIq7S8UqLnj4IWt9JgHMeVxCv12Oa3mL3PJOdYyngYls/s1600/contacto.png" />
+    </div>
+  
+  
+    <div class="card-content">
+        <h3>Contáctanos</h3>
+        <p>Ya tienes los pilares, ya viste los videos de las problemáticas de los dueños de negocios y los distintos niveles de publicidad, es hora de decidir, ¿quién quieres ser en el mapa?</p>
+        
+        <!-- Cambié la clase a btn-card-contact para que no "flote" fuera de la tarjeta -->
+        <a href="https://wa.me/525522989345?text=Quiero%20anunciarme%20en%20el%20mapa" class="btn-card-contact" target="_blank">
+            <i class="fab fa-whatsapp"></i> ¡Contactar!
+        </a>
+    </div>
+</div>
+
+  
+<script>
+    document.querySelectorAll('.img-dinamica').forEach(img => {
+        const staticSrc = img.src;
+        const hoverSrc = img.getAttribute('data-hover');
+
+        if (hoverSrc) {
+            const card = img.closest('.feature-card');
+            
+            // Precarga del GIF para evitar saltos en blanco
+            const tempImg = new Image();
+            tempImg.src = hoverSrc;
+
+            card.addEventListener('mouseenter', () => { img.src = hoverSrc; });
+            card.addEventListener('mouseleave', () => { img.src = staticSrc; });
+        }
+    });
+</script>
