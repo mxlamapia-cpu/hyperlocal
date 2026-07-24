@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Negosistema - Mapa Geográfico</title>
+    <!-- Estilos de Leaflet -->
+    <link rel="stylesheet" href="css/leaflet.css">
+    <!-- Estilos personalizados de la plataforma -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+        <!-- Menú de navegación del sistema -->
+    <nav class="menu-navegacion-sistema">
+        <div class="menu-enlaces">
+            <a href="index.html" class="enlace-nav activo">
+                <span class="icono-nav">🗺️</span> Mapa CDMX
+            </a>
+            <a href="comercial.html" class="enlace-nav">
+                <span class="icono-nav">🏪</span> Directorio Comercial
+            </a>
+            <a href="anunciate.html" class="enlace-nav">
+                <span class="icono-nav">📢</span> Anúnciate
+            </a>
+        </div>
+    </nav>
+    <!-- Barra superior para inyección dinámica de botones -->
+    <div id="barra-accesibilidad" class="accesibilidad-contenedor">
+        <div class="instruccion-navegacion">
+            <span id="texto-guia">Selecciona una Alcaldía o Colonia</span>
+        </div>
+        <!-- El script auto-construirá los botones aquí desde Sheets -->
+        <div id="contenedor-botones-dinamicos" class="botones-grid"></div>
+    </div>
+    <!-- Contenedor principal donde Leaflet renderizará los polígonos -->
+    <div id="mapa-macro-contenedor"></div>
+
+    <!-- Librerías de soporte externas -->
+    <script src="js/leaflet.js"></script>
+    <script src="js/papaparse.min.js"></script>
+
+    <!-- Motor unificado de la plataforma -->
+    <script src="js/motor-mapas.js"></script>
+        <!-- Footer con enlace legal único -->
+    <footer class="footer-sistema">
+        <a href="terminos.html" class="enlace-legal">Términos y condiciones</a>
+    </footer>
+</body>
+</html>

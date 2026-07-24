@@ -1,0 +1,41 @@
+name: Actualizar Sitemap SEO desde Google Sheets
+on:
+ schedule:
+  - cron: '0 0 * * *' # Se ejecuta automáticamente todos los días a la medianoche
+ workflow_dispatch: # Te permite ejecutarlo de forma manual desde el panel de GitHub
+
+jobs:
+ build:
+  runs-on: ubuntu-latest
+  steps:
+   - name: Clonar repositorio
+     uses: actions/checkout@v4
+
+   - name: Configurar Node.js
+     uses: actions/setup-node@v4
+     with:
+      node-state: '20'
+
+   - name: Ejecutar generador dinámico
+     run: |
+      # Un comando rápido en Bash que descarga tus colonias operativas y crea el Sitemap XML directamente
+      curl -s "https://google.com" > colonias.csv
+      echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://sitemaps.org">' > sitemap.xml
+      echo '<url><loc>https://TU_USUARIO.github.io/TU_REPOSITORIO/index.html</loc><priority>1.0</priority></url>' >> sitemap.xml
+      
+      # Filtra y limpia los nombres del CSV para estructurar los enlaces que rastreará Google
+      tail -n +2 colonias.csv | while IFS=, read -r wkt nombre estatus rest; do
+       estatus_limpio=$(echo "$estatus" | tr -d '"' | xargs | tr '[:upper:]' '[:lower:]')
+       if [ "$estatus_limpio" = "activo" ] || [ "$estatus_limpio" = "explorando" ]; then
+       nombre_url=$(echo "$nombre" | tr -d '"' | tr '[:upper:]' '[:lower:]' | iconv -f UTF-8 -t ASCII//TRANSLIT | tr -d '^`~"' | tr ' ' '-')
+       echo "<url><loc>https://TU_USUARIO.github.io/TU_REPOSITORIO/comercial.html?colonia=$nombre_url&amp;entorno=productos</loc><priority>0.8</priority></url>" >> sitemap.xml
+       fi
+      done
+      echo '</urlset>' >> sitemap.xml
+
+   - name: Guardar cambios en el repositorio
+     run: |
+      git config --global user.name "GitHub Actions Bot"
+      git config --global user.email "actions@github.com"
+      git add sitemap.xml
+      git diff --quiet && git diff --staged --quiet || (git commit -m "Automatización: Sitemap generado desde Google Sheets" && git push)

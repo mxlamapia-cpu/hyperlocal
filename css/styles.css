@@ -1,0 +1,350 @@
+
+
+/* Variables de dimensionamiento base */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+     display: flex;
+    flex-direction: column;
+}
+
+/* Menú de navegación global fijo */
+.menu-navegacion-sistema {
+    width: 100%;
+    background-color: #2c3e50;
+    padding: 10px 0;
+}
+.menu-enlaces {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.enlace-nav {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.enlace-nav.activo {
+    color: #3498db;
+}
+
+/* Lienzo de mapas con flujo flexible */
+#mapa-macro-contenedor, 
+#mapa-comercial-contenedor {
+  width: 100%;
+  flex-grow: 1;
+  min-height: 400px;
+  background: #e0e0e0;
+}
+
+
+/* Footer legal */
+.footer-sistema {
+    width: 100%;
+    text-align: center;
+    padding: 8px 0;
+    background: #2c3e50;
+}
+.enlace-legal {
+    color: #bdc3c7;
+    font-size: 12px;
+    text-decoration: none;
+}
+/* Slider superior de ofertas */
+.carrusel-ofertas {
+    width: 100%;
+    height: 60px;
+    background: #fff;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 2px solid #e74c3c;
+}
+.riel-dinamico {
+    display: inline-flex;
+    padding: 5px;
+    gap: 10px;
+}
+
+/* Buscador y switch */
+.panel-control-hiperlocal {
+    padding: 10px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.buscador-caja input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.btn-switch {
+    width: 100%;
+    padding: 10px;
+    background: #34495e;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+/* Grid inferior de switches táctiles */
+.grid-capas-switches {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    padding: 10px;
+    background: #fff;
+}
+.switch-capa-btn {
+    padding: 8px 2px;
+    border-radius: 20px;
+    border: 2px solid #ccc;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    background: #fff;
+}
+
+/* Clases de colores activos (Mapa A - Productos) */
+.btn-p-verde { background: #2ecc71; color: #fff; }
+.btn-p-naranja { background: #e67e22; color: #fff; }
+.btn-p-amarillo { background: #f1c40f; color: #000; }
+.btn-p-rojo { background: #e74c3c; color: #fff; }
+.btn-p-rosa { background: #e91e63; color: #fff; }
+.btn-p-cafe { background: #8b5a2b; color: #fff; }
+.btn-p-azul { background: #0000ff; color: #fff; }
+.btn-p-gris { background: #95a5a6; color: #fff; }
+
+/* Clases de colores activos (Mapa B - Servicios) */
+.btn-s-azulclaro { background: #ecf0f1; color: #000; }
+.btn-s-azulmedio { background: #3498db; color: #fff; }
+.btn-s-morado { background: #9b59b6; color: #fff; }
+.btn-s-grisoscuro { background: #34495e; color: #fff; }
+.btn-s-vino { background: #800020; color: #fff; }
+.btn-s-blanco { background: #ffffff; color: #000; border: 2px solid #000; }
+.btn-s-negro { background: #000000; color: #fff; }
+/* Contenedor base de los marcadores personalizados */
+.pin-personalizado {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Pines Plata (Nivel Medio) */
+.pin-plata {
+    border: 3px solid #b4b4b4;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease-in-out;
+}
+.pin-plata:hover {
+    transform: scale(1.25);
+}
+
+/* Pines Oro Premium (Efecto de hardware: pulso expansivo) */
+.pin-oro {
+    border: 3px solid #f1c40f;
+    box-shadow: 0 0 10px #f1c40f;
+    animation: pulso-oro-hardware 1.8s infinite ease-in-out;
+}
+@keyframes pulso-oro-hardware {
+    0% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.7); }
+    70% { box-shadow: 0 0 0 12px rgba(241, 196, 15, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0); }
+}
+
+/* Corona de Flamas (Urgencia) - Efecto Fuego superpuesto */
+.pin-con-flama::after {
+    content: '';
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    background: radial-gradient(circle at bottom, #ffdd00 20%, #ff5500 60%, transparent 90%);
+    border-radius: 50% 50% 20% 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: efecto-fuego-css 0.5s infinite alternate ease-in-out;
+    filter: drop-shadow(0 -2px 4px #ff5500);
+}
+@keyframes efecto-fuego-css {
+    0% { transform: translateX(-50%) rotate(-43deg) scale(0.9); opacity: 0.8; }
+    100% { transform: translateX(-50%) rotate(-47deg) scale(1.1); opacity: 1; }
+}
+/* Estructura para las barras de accesibilidad superiores */
+.accesibilidad-contenedor {
+  background: #ffffff;
+  padding: 10px;
+  border-bottom: 1px solid #cccccc;
+}
+
+/* Rejilla adaptativa para botones dinámicos */
+.botones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  margin-top: 5px;
+}
+
+/* Botones físicos de accesibilidad */
+.btn-accesibilidad-dinamico {
+  padding: 8px;
+  background: #34495e;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+}
+/* 1. RESTAURACIÓN DEL MAPA: Protege las cuadrículas de Leaflet para que vuelvan a verse */
+.leaflet-container img {
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  display: inline !important;
+}
+
+/* 2. AISLAMIENTO EXCLUSIVO: El tamaño fijo solo se aplicará a las fotos del carrusel */
+.foto-popup-item {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* Contenedores de la interfaz */
+.guia-colores-contenedor {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.guia-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+.guia-item-filtro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+/* El interruptor (Toggle Switch) */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider-palanca {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #b0bec5; /* Color apagado que no interfiere con las capas */
+  transition: .3s;
+  border-radius: 24px;
+  border: 1px solid #90a4ae;
+}
+.slider-palanca:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Estado encendido dinámico según la capa */
+.toggle-switch input:checked + .slider-palanca {
+  background-color: var(--color-capa);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+.toggle-switch input:checked + .slider-palanca:before {
+  transform: translateX(20px);
+}
+
+/* Ajuste específico para visibilidad del switch blanco */
+.toggle-switch input[style*="#ffffff"]:checked + .slider-palanca {
+  border-color: #ccc;
+}
+.toggle-switch input[style*="#ffffff"]:checked + .slider-palanca:before {
+  background-color: #f5f5f5;
+}
+/* Por defecto ocultamos ambas secciones para evitar parpadeos */
+#contenedor-filtros-global .seccion-productos,
+#contenedor-filtros-global .seccion-servicios {
+  display: none;
+}
+
+/* Si el contenedor padre tiene la clase de productos, muestra solo productos */
+#contenedor-filtros-global.modo-productos .seccion-productos {
+  display: block;
+}
+
+/* Si el contenedor padre tiene la clase de servicios, muestra solo servicios */
+#contenedor-filtros-global.modo-servicios .seccion-servicios {
+  display: block;
+}
+.guia-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    padding: 15px;
+}
+.guia-item-filtro {
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 8px;
+}
+/* Color para los selectores activos de los Checkboxes */
+.filtro-capa-chk[data-capa="verde"]:checked + .slider-palanca { background-color: #2ecc71; }
+.filtro-capa-chk[data-capa="naranja"]:checked + .slider-palanca { background-color: #e67e22; }
+.filtro-capa-chk[data-capa="amarillo"]:checked + .slider-palanca { background-color: #f1c40f; }
+.filtro-capa-chk[data-capa="rojo"]:checked + .slider-palanca { background-color: #e74c3c; }
+.filtro-capa-chk[data-capa="rosa"]:checked + .slider-palanca { background-color: #e91e63; }
+.filtro-capa-chk[data-capa="cafe"]:checked + .slider-palanca { background-color: #8b5a2b; }
+.filtro-capa-chk[data-capa="azul"]:checked + .slider-palanca { background-color: #0000ff; }
+
+/* Servicios */
+.filtro-capa-chk[data-capa="azulclaro"]:checked + .slider-palanca { background-color: #1565c0; }
+.filtro-capa-chk[data-capa="azulmedio"]:checked + .slider-palanca { background-color: #3498db; }
+.filtro-capa-chk[data-capa="morado"]:checked + .slider-palanca { background-color: #7b1fa2; }
+.filtro-capa-chk[data-capa="grisoscuro"]:checked + .slider-palanca { background-color: #34495e; }
+.filtro-capa-chk[data-capa="vino"]:checked + .slider-palanca { background-color: #5d001e; }
+.filtro-capa-chk[data-capa="blanco"]:checked + .slider-palanca { background-color: #ffffff; border: 1px solid #cbd5e1; }
+.filtro-capa-chk[data-capa="negro"]:checked + .slider-palanca { background-color: #000000; }
+.filtro-capa-chk[data-capa="gris"]:checked + .slider-palanca { background-color: #95a5a6; }

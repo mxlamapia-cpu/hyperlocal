@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Negosistema - Directorio Activo</title>
+    
+    <!-- CARGA LOCAL: Iconos y fuentes nativas sin depender de CDNs externos -->
+    <link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- ANCLA SEO: Espacio reservado para la inyección del árbol JSON-LD -->
+    <script type="application/ld+json" id="seo-local-jsonld">{}</script>
+</head>
+<body>
+    <!-- Menú de navegación integrado -->
+    <nav class="menu-navegacion-sistema">
+        <div class="menu-enlaces">
+            <a href="index.html" class="enlace-nav">
+                <span class="icono-nav">🗺️</span> Mapa CDMX
+            </a>
+            <a href="comercial.html" class="enlace-nav activo">
+                <span class="icono-nav">🏪</span> Directorio Comercial
+            </a>
+            <a href="anunciate.html" class="enlace-nav">
+                <span class="icono-nav">📢</span> Anúnciate
+            </a>
+        </div>
+    </nav>
+
+    <!-- Slider Superior Independiente alimentado por CSV -->
+    <div id="slider-ofertas-contenedor" class="carrusel-ofertas">
+        <div id="carrusel-riel" class="riel-dinamico"></div>
+    </div>
+
+    <!-- Cabecera dinámica para nombre de colonia y botones aledaños -->
+    <div class="encabezado-hiperlocal" style="padding: 15px; background: #ffffff; text-align: center; border-bottom: 1px solid #e2e8f0;">
+        <h2 id="titulo-colonia-actual" style="color: #2c3e50; margin: 5px 0; font-size: 1.8rem;">Cargando zona...</h2>
+        <p style="font-size: 13px; color: #7f8c8d; margin: 8px 0 5px 0; font-weight: bold;">Otras colonias disponibles:</p>
+        <div id="contenedor-colonias-aledanas" class="botones-grid" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- Panel de control interactivo sobre el mapa -->
+    <div class="panel-control-hiperlocal">
+        <div class="buscador-caja">
+            <input type="text" id="input-buscador-comercial" placeholder="Escribe comercio, ramo o producto (ej: tacos)...">
+        </div>
+
+        <div class="switch-entorno-contenedor">
+            <button id="btn-switch-entorno" class="btn-switch" data-entorno="productos">
+                Ver Servicios <span id="emoji-switch">🛠</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Lienzo del mapa hiperlocal -->
+    <div id="mapa-comercial-contenedor"></div>
+
+    <!-- Contenedor donde JS dibujará automáticamente los Checkboxes -->
+    <div id="capas-inferiores-contenedor" class="guia-grid" style="padding: 15px;"></div>
+
+    <!-- Footer con enlace legal -->
+    <footer class="footer-sistema">
+        <a href="terminos.html" class="enlace-legal">Términos y condiciones</a>
+    </footer>
+
+    <!-- Scripts de inicialización y control -->
+    <script src="js/leaflet.js"></script>
+    <script src="js/papaparse.min.js"></script>
+    <script src="js/motor-mapas.js"></script>
+</body>
+</html>
