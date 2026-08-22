@@ -652,3 +652,328 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
     border: 1px solid #e2e8f0 !important;
     border-radius: 8px !important;
 }
+/* ========================================================
+   SECCIÓN: OPTIMIZACIÓN VISUAL DEL BUSCADOR REGIONAL
+   ======================================================== */
+
+/* Alineación de dos extremos en la barra superior */
+.header-buscador-regional {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important; /* Logotipo a la izquierda, botón a la derecha */
+    background: #ffffff !important;
+    padding: 14px 24px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+.brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+}
+
+/* Botón Premium "Anúnciate" estilo Call to Action */
+.btn-anunciate-header {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    padding: 10px 18px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-anunciate-header:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35) !important;
+    filter: brightness(1.1) !important;
+}
+
+/* Pie de Página Estilizado */
+.footer-regional {
+    background: #0f172a !important; /* Gris oscuro profundo corporativo */
+    color: #94a3b8 !important;
+    padding: 14px 24px !important;
+    border-top: 1px solid #1e293b !important;
+    z-index: 10 !important;
+}
+
+.footer-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    font-size: 12px !important;
+}
+
+.footer-regional .copyright strong {
+    color: #ffffff !important;
+}
+
+/* Enlace legal interactivo */
+.enlace-legal-footer {
+    color: #38bdf8 !important; /* Azul cielo brillante para alto contraste */
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: color 0.2s ease !important;
+}
+
+.enlace-legal-footer:hover {
+    color: #7dd3fc !important;
+    text-decoration: underline !important;
+}
+
+/* Ajuste de diseño adaptativo para celulares */
+@media (max-width: 480px) {
+    .header-buscador-regional {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+    .btn-anunciate-header {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    .footer-content {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+}
+/* ========================================================
+   SECCIÓN: POPUPS PREMIUM EXPANDIDOS Y MULTIMEDIA HD
+   ======================================================== */
+
+/* 1. Expande el ancho máximo que Leaflet le permite al globo del popup */
+.leaflet-popup-content-wrapper {
+    width: 360px !important;
+    max-width: 360px !important;
+    border-radius: 12px !important;
+    padding: 6px !important;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.15) !important;
+}
+
+/* 2. Ajusta el contenedor interno del texto y quita márgenes excesivos */
+.leaflet-popup-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 8px !important;
+    font-family: inherit !important;
+}
+
+/* 3. Redimensiona la caja del negocio para el nuevo ancho de 344px reales */
+.popup-nego-contenedor {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.popup-nego-titulo {
+    font-size: 18px !important; /* Más grande y legible */
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.025em !important;
+}
+
+.popup-nego-slogan {
+    font-size: 13px !important;
+    color: #64748b !important;
+}
+
+/* 4. Optimiza el Carrusel para que las fotos NO se corten */
+.popup-multimedia-carrusel {
+    position: relative !important;
+    width: 100% !important;
+    height: 190px !important; /* Elevado de 150px a 190px para un aspecto 16:9 profesional */
+    background: #000000 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    margin: 12px 0 !important;
+}
+
+/* Fuerza a las imágenes a cubrir el espacio sin deformarse ni recortarse bruscamente */
+.carrusel-media-elemento {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important; /* Muestra la foto COMPLETA. Si prefieres que llene la caja usa 'cover' */
+    background-color: #0f172a !important; /* Fondo elegante para fotos verticales o de proporciones distintas */
+}
+
+/* 5. Estiliza las secciones de texto internas (Horarios, Productos, Enlaces) */
+.popup-nego-seccion {
+    margin-bottom: 12px !important;
+    font-size: 13px !important; /* Incrementado para facilitar la lectura rápida */
+    line-height: 1.5 !important;
+    border-bottom: 1px dashed #f1f5f9;
+    padding-bottom: 8px;
+}
+
+.popup-nego-label {
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 2px !important;
+}
+
+.popup-nego-contenido {
+    color: #334155 !important;
+}
+
+/* 6. Botones Premium de Acción más Grandes e Interactivos */
+.popup-nego-botones {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin-top: 14px !important;
+}
+
+.popup-btn {
+    padding: 10px !important; /* Más cómodos para el dedo en pantallas táctiles */
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+    transition: transform 0.2s ease, filter 0.2s ease !important;
+}
+
+.popup-btn:hover {
+    transform: translateY(-1px) !important;
+    filter: brightness(1.08) !important;
+}
+
+/* ========================================================
+   ARQUITECTURA CORE: FLUJO VERTICAL EN PARRILLA CONTINUA
+   ======================================================== */
+.nucleo-interactivo-vertical {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tarjetas contenedoras de controles GIS debajo del mapa */
+.panel-card-gis-vertical {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 15px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+    text-align: left;
+}
+
+.titulo-seccion-gis {
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Parrilla auto-adaptable para las Capas Comerciales */
+.capas-lista-parrilla-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+/* Parrilla auto-adaptable para Colonias Aledañas */
+.aledanas-grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+
+/* ========================================================
+   PARCHE GIS: MICRO-CLUSTERING (DONAS SVG)
+   ======================================================== */
+/* Evita que los clusters SVG nativos de Leaflet hereden fondos raros */
+.cluster-dona-svg-personalizado {
+    background: transparent !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Animación sutil de entrada para cuando aparecen las donas en el mapa */
+.cluster-dona-svg-personalizado svg {
+    animation: entradaCluster 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.15));
+}
+
+@keyframes entradaCluster {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+
+/* ========================================================
+   INTERFAZ COMPLEMENTARIA (BUSCADOR Y POPUPS)
+   ======================================================= */
+/* Menú del buscador inteligente predictivo */
+.item-predictivo-buscar {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease;
+}
+.item-predictivo-buscar:hover {
+    background: #f8fafc;
+}
+.badge-categoria-buscar {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Ubicación sutil absoluta del ID único en el popup */
+.popup-badge-id-tech {
+    position: absolute;
+    top: 8px;
+    right: 32px;
+    font-family: monospace;
+    font-size: 10px;
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+    z-index: 10;
+}
+
+
+/* ========================================================
+   OPTIMIZACIÓN RESPONSIVA SMARTPHONES (MOBILE)
+   ======================================================== */
+@media (max-width: 480px) {
+    #mapa-comercial-contenedor {
+        height: 420px !important; /* Altura ideal en celulares para manipular el mapa */
+        min-height: 420px !important;
+    }
+    .panel-card-gis-vertical {
+        padding: 16px; /* Reducción de márgenes muertos en pantallas chicas */
+    }
+    .capas-lista-parrilla-auto {
+        grid-template-columns: 1fr; /* Una capa por fila para facilidad táctil */
+    }
+    .aledanas-grid-auto {
+        grid-template-columns: 1fr 1fr; /* Dos botones por fila para ahorrar espacio vertical */
+    }
+}

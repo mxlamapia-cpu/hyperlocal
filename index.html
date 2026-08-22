@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Negosistema - Buscador Regional</title>
     
-    <!-- Hojas de Estilo Locales según tu Esqueleto -->
+    <!-- Hojas de Estilo Locales -->
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/all.min.css" />
     <link rel="stylesheet" href="css/styles.css" />
@@ -13,20 +13,27 @@
 
 <body>
     <!-- Contenedor Principal de la UI -->
-        <main class="app-container">
+    <main class="app-container">
         
-        <!-- Encabezado de Marca -->
-        <header class="main-header">
+        <!-- Encabezado de Marca Balanceado con Flexbox -->
+        <header class="main-header header-buscador-regional">
+            
+            <!-- EXTREMO IZQUIERDO: Identidad de Marca -->
             <div class="brand">
                 <i class="fa-solid fa-map-location-dot brand-icon"></i>
-                <div>
-                     <a href="anunciate.html" class="enlace-nav">
-                <span class="icono-nav">📢</span> Anúnciate
-            </a>
+                <div class="brand-text">
                     <h1>Negosistema</h1>
                     <p class="subtitle">Buscador Macro de Alcaldías CDMX</p>
                 </div>
             </div>
+            
+            <!-- EXTREMO DERECHO: Botón de Marketing / Llamado a la Acción -->
+            <div class="header-actions">
+                <a href="anunciate.html" class="btn-anunciate-header">
+                    <span class="icono-nav">📢</span> Anúnciate Aquí
+                </a>
+            </div>
+            
         </header>
 
         <!-- Sección del Mapa Macro -->
@@ -34,7 +41,7 @@
             <div id="mapa-macro-contenedor" class="map-canvas"></div>
         </section>
 
-        <!-- Panel de Control y Accesibilidad -->
+        <!-- Panel de Control y Accesibilidad Inferior -->
         <section class="control-panel">
             <div class="panel-card">
                 <h2 id="texto-guia"><i class="fa-solid fa-layer-group"></i> Selecciona una Región o Alcaldía</h2>
@@ -49,17 +56,23 @@
             </div>
         </section>
 
-        <!-- Pie de Página con Enlace a Términos -->
-        <footer class="main-footer">
-            <p>&copy; 2026 Negosistema. Todos los derechos reservados. <a href="terminos.html">Términos y Condiciones</a></p>
+        <!-- Pie de Página Premium Estilizado -->
+        <footer class="main-footer footer-regional">
+            <div class="footer-content">
+                <p class="copyright">&copy; 2026 <strong>Negosistema</strong>. Todos los derechos reservados.</p>
+                <div class="footer-links">
+                    <a href="terminos.html" class="enlace-legal-footer">
+                        <i class="fa-solid fa-scale-balanced"></i> Términos, Condiciones y Aviso de Privacidad
+                    </a>
+                </div>
+            </div>
         </footer>
 
     </main>
 
-    <!-- Scripts Locales según tu Esqueleto -->
+    <!-- Scripts Locales -->
     <script src="js/leaflet.js"></script>
     <script src="js/papaparse.min.js"></script>
-    <!-- Tu cerebro lógico central -->
     <script src="js/motor-mapas.js"></script>
 </body>
 </html>

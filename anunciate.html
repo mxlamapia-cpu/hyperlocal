@@ -6,26 +6,46 @@
     <title>Anúnciate - Negosistema</title>
     
     <!-- Dependencias Locales Unificadas del Proyecto -->
-    <link rel="stylesheet" href="css/leaflet.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/all.min.css">
+  <link rel="stylesheet" href="css/leaflet.css">
+  <link rel="stylesheet" href="css/MarkerCluster.css">
+  <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/all.min.css">
+
 </head>
 
 <body class="pagina-scroll-ventas">
-    <!-- Menú de navegación integrado idéntico al esqueleto -->
-    <nav class="menu-navegacion-sistema">
-        <div class="menu-enlaces">
-            <a href="index.html" class="enlace-nav">
-                <span class="icono-nav">🗺</span> Mapa CDMX
+    <!-- MENÚ DE NAVEGACIÓN PREMIUM UNIFORME CON LOGO INTERACTIVO -->
+    <!-- MENÚ DE NAVEGACIÓN PREMIUM UNIFORME CON LOGO INTERACTIVO IDÉNTICO AL INDEX -->
+    <nav class="menu-navegacion-sistema" style="background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 14px 24px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0;">
+        <div class="menu-enlaces" style="max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            
+            <!-- LOGO BOTÓN: Enlace interactivo con la estructura exacta de clases de tu index.html -->
+            <a href="index.html" style="text-decoration: none; color: inherit; display: inline-block;">
+                <div class="brand">
+                    <i class="fa-solid fa-map-location-dot brand-icon"></i>
+                    <div class="brand-text">
+                        <h1>Negosistema</h1>
+                        <p class="subtitle">Buscador Macro de Alcaldías CDMX</p>
+                    </div>
+                </div>
             </a>
-            <a href="comercial.html" class="enlace-nav">
-                <span class="icono-nav">🏪</span> Directorio Comercial
-            </a>
-            <a href="anunciate.html" class="enlace-nav activo">
-                <span class="icono-nav">📢</span> Anúnciate
-            </a>
+
+            <!-- PESTAÑAS DE NAVEGACIÓN -->
+            <div style="display: flex; gap: 24px; align-items: center;">
+                <a href="index.html" class="enlace-nav" style="text-decoration: none; color: #64748b; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+                    <span class="icono-nav">🗺️</span> Mapa CDMX
+                </a>
+                <a href="anunciate.html" class="enlace-nav activo" style="text-decoration: none; color: #2563eb; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; border-bottom: 2px solid #2563eb; padding-bottom: 4px;">
+                    <span class="icono-nav">📢</span> Anúnciate
+                </a>
+            </div>
+            
         </div>
     </nav>
+
+
+
 
     <!-- Contenedor de Contenido Comercial -->
     <div class="contenedor-servicios-ventas" style="padding: 20px; max-width: 1100px; margin: 0 auto;">
@@ -137,14 +157,22 @@
             </a>
         </div>
     </div>
-
-    <!-- Footer Técnico Unificado -->
-    <footer class="footer-sistema" style="margin-top: 40px; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
-        <a href="terminos.html" class="enlace-legal" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">Términos y condiciones / Políticas de Uso y Deslinde Legal</a>
+    <!-- PIE DE PÁGINA OSCURO CORPORATIVO -->
+    <footer class="main-footer footer-regional" style="background: #0f172a; color: #94a3b8; padding: 20px 24px; border-top: 1px solid #1e293b; margin-top: 40px; z-index: 10;">
+        <div class="footer-content" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; max-width: 1100px; margin: 0 auto; font-size: 13px; font-family: inherit;">
+            <p class="copyright" style="margin: 0;">&copy; 2026 <strong style="color: #ffffff;">Negosistema</strong>. Todos los derechos reservados.</p>
+            <div class="footer-links">
+                <a href="terminos.html" class="enlace-legal-footer" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-scale-balanced"></i> Términos, Condiciones y Aviso de Privacidad
+                </a>
+            </div>
+        </div>
     </footer>
+
 
     <!-- Al final de anunciate.html, reemplaza tus scripts por este orden específico -->
     <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.markercluster.js"></script> 
     <script src="js/papaparse.min.js"></script>
     <!-- Agregamos defer para garantizar que el script espere a las librerías anteriores -->
     <script src="js/motor-mapas.js" defer></script>
