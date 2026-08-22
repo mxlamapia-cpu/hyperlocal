@@ -161,6 +161,14 @@ function renderizarPinesComerciales(arregloComercios) {
       }
     });
 
+     const opcionesPopup = {
+ autoPan: true,
+ autoPanPadding: L.point(50, 50),
+ closeOnClick: true,
+ // En dispositivos móviles anulamos el "tap" handler nativo que causa doble disparo
+ tap: !L.Browser.mobile 
+ };
+
     marcador.bindPopup(
       typeof inyectarPopupComercioInteligente === "function" 
         ? inyectarPopupComercioInteligente(comercio, nivelPuro) 
@@ -857,10 +865,13 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
     </div>`;
   }
   
-  let html = `<div class="popup-nego-contenedor" style="position:relative;">
-    <span class="popup-badge-id-tech">ID: ${id}</span>
-    <div class="popup-nego-header">
-      <h4 class="popup-nego-titulo">${nombre}</h4>`;
+ // REDISEÑO DE UI/UX: El ID ahora se integra a la par del Nombre del Negocio, eliminando el prefijo técnico "ID"
+ let html = `<div class="popup-nego-contenedor" style="position:relative;">
+ <div class="popup-nego-header">
+ <div class="ui-titulo-fila-contenedor" style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+ <h4 class="popup-nego-titulo" style="margin: 0; font-size: 16px; font-weight: 800; color: #0F172A; line-height: 1.2;">${nombre}</h4>
+ <span class="popup-id-disenado" style="font-size: 14px; font-weight: 800; color: #64748B; font-family: monospace; background: #F1F5F9; padding: 2px 6px; border-radius: 4px; border: 1px solid #E2E8F0;">#${id}</span>
+ </div>`;
   if (slogan) html += `<p class="popup-nego-slogan">"${slogan}"</p>`;
   html += `</div>`;
 
