@@ -1,350 +1,654 @@
+/* ========================================================
+   SECCIÓN 1: RESET UNIVERSAL, TIPOGRAFÍA Y ARQUITECTURA BASE
+   ======================================================== */
 
+:root {
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --primary-color: #3498db;
+    --radius-premium: 12px;
+    --shadow-subtle: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
 
-/* Variables de dimensionamiento base */
-html, body {
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    overflow: hidden;
+}
+
+/* --- LAYOUTS CORE (SISTEMAS REUTILIZABLES) --- */
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Layout dividido para la vista comercial hiperlocal */
+.app-container.split-layout {
+    flex-direction: row;
+}
+
+/* --- CANVAS DEL MAPA LEAFLET --- */
+
+.map-canvas {
     width: 100%;
     height: 100%;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-     display: flex;
+    z-index: 1;
+}
+
+.map-section, .map-view-section {
+    flex: 1;
+    position: relative;
+    height: 100%;
+}
+
+/* --- COMPONENTES DE ENCABEZADO Y CONTROLES --- */
+
+.main-header {
+    background: var(--bg-card);
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-subtle);
+    z-index: 10;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.brand-icon {
+    font-size: 28px;
+    color: var(--primary-color);
+}
+
+.brand h1 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.brand .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+/* ========================================================
+   SECCIÓN 2: INTERFAZ DE BARRA LATERAL Y SWITCHER PREMIUM
+   ======================================================== */
+
+/* --- ESTRUCTURA DE LA BARRA LATERAL --- */
+.sidebar-panel {
+    width: 360px;
+    height: 100%;
+    background-color: var(--bg-card);
+    border-right: 1px solid var(--border-color);
+    display: flex;
     flex-direction: column;
+    z-index: 10;
+    box-shadow: 4px 0 10px rgb(0 0 0 / 0.02);
 }
 
-/* Menú de navegación global fijo */
-.menu-navegacion-sistema {
-    width: 100%;
-    background-color: #2c3e50;
-    padding: 10px 0;
-}
-.menu-enlaces {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-.enlace-nav {
-    color: #ecf0f1;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-.enlace-nav.activo {
-    color: #3498db;
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-/* Lienzo de mapas con flujo flexible */
-#mapa-macro-contenedor, 
-#mapa-comercial-contenedor {
-  width: 100%;
-  flex-grow: 1;
-  min-height: 400px;
-  background: #e0e0e0;
-}
-
-
-/* Footer legal */
-.footer-sistema {
-    width: 100%;
-    text-align: center;
-    padding: 8px 0;
-    background: #2c3e50;
-}
-.enlace-legal {
-    color: #bdc3c7;
-    font-size: 12px;
-    text-decoration: none;
-}
-/* Slider superior de ofertas */
-.carrusel-ofertas {
-    width: 100%;
-    height: 60px;
-    background: #fff;
-    overflow-x: auto;
-    white-space: nowrap;
-    border-bottom: 2px solid #e74c3c;
-}
-.riel-dinamico {
+.btn-regresar {
     display: inline-flex;
-    padding: 5px;
-    gap: 10px;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    transition: color 0.2s ease;
 }
 
-/* Buscador y switch */
-.panel-control-hiperlocal {
-    padding: 10px;
-    background: #fff;
+.btn-regresar:hover {
+    color: var(--primary-color);
+}
+
+.colonia-titulo {
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+/* --- CONTROLLER PREMIUM: SWITCHER DE ENTORNO --- */
+.switch-container-box {
+    padding: 16px 20px;
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.btn-switcher-premium {
+    width: 100%;
+    padding: 12px;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-premium);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgb(15 23 42 / 0.15);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-switcher-premium:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+}
+
+.btn-switcher-premium:active {
+    transform: translateY(1px);
+}
+
+/* --- SECCIONES DE FILTROS Y SCROLL --- */
+.filters-section, .aledanas-section {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filters-section h3, .aledanas-section h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
     gap: 8px;
 }
-.buscador-caja input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+
+.capas-lista-scroll {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 320px;
+    padding-right: 4px;
 }
-.btn-switch {
-    width: 100%;
-    padding: 10px;
-    background: #34495e;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
+
+/* Optimización de la barra de desplazamiento (Scrollbar) */
+.capas-lista-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.capas-lista-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.capas-lista-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.capas-lista-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+/* ========================================================
+   SECCIÓN 3: INTERRUPTORES TOGGLE Y CUADRÍCULAS DE BOTONES
+   ======================================================== */
+
+/* --- INTERRUPTORES GENERALES (TOGGLE SWITCHES) --- */
+.guia-item-filter, .guia-item-filtro {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.guia-item-filtro:hover {
+    background: #f8fafc;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider-palanca {
+    position: absolute;
     cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 34px;
+    opacity: 0.4;
 }
-/* Grid inferior de switches táctiles */
-.grid-capas-switches {
+
+.slider-palanca:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+/* Estado activo del Switcher */
+.filtro-capa-chk:checked + .slider-palanca {
+    opacity: 1;
+}
+
+.filtro-capa-chk:checked + .slider-palanca:before {
+    transform: translateX(18px);
+}
+
+.texto-filtro-info {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.texto-filtro-info strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.texto-filtro-info span {
+    color: var(--text-muted);
+}
+
+/* --- REJILLAS Y BOTONES DE NAVEGACIÓN (GRIDS) --- */
+.buttons-grid, .aledanas-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 5px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.btn-accesibilidad-macro, .btn-accesibilidad-micro, .btn-accesibilidad-dinamico {
+    display: block;
+    width: 100%;
     padding: 10px;
-    background: #fff;
-}
-.switch-capa-btn {
-    padding: 8px 2px;
-    border-radius: 20px;
-    border: 2px solid #ccc;
-    font-size: 11px;
-    font-weight: bold;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     text-align: center;
-    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-/* Clases de colores activos (Mapa A - Productos) */
-.btn-p-verde { background: #2ecc71; color: #fff; }
-.btn-p-naranja { background: #e67e22; color: #fff; }
-.btn-p-amarillo { background: #f1c40f; color: #000; }
-.btn-p-rojo { background: #e74c3c; color: #fff; }
-.btn-p-rosa { background: #e91e63; color: #fff; }
-.btn-p-cafe { background: #8b5a2b; color: #fff; }
-.btn-p-azul { background: #0000ff; color: #fff; }
-.btn-p-gris { background: #95a5a6; color: #fff; }
+.btn-accesibilidad-macro:hover, .btn-accesibilidad-micro:hover, .btn-accesibilidad-dinamico:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+}
 
-/* Clases de colores activos (Mapa B - Servicios) */
-.btn-s-azulclaro { background: #ecf0f1; color: #000; }
-.btn-s-azulmedio { background: #3498db; color: #fff; }
-.btn-s-morado { background: #9b59b6; color: #fff; }
-.btn-s-grisoscuro { background: #34495e; color: #fff; }
-.btn-s-vino { background: #800020; color: #fff; }
-.btn-s-blanco { background: #ffffff; color: #000; border: 2px solid #000; }
-.btn-s-negro { background: #000000; color: #fff; }
-/* Contenedor base de los marcadores personalizados */
+/* Estilo para simular carga */
+.loading-placeholder {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 24px 0;
+}
+/* ========================================================
+   SECCIÓN 4: PINES PERSONALIZADOS Y JERARQUÍAS DE NIVEL GIS
+   ======================================================== */
+
+/* --- CONTENEDOR MAESTRO DEL PIN DIVICON --- */
 .pin-personalizado {
     position: relative;
     width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    height: 42px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 }
 
-/* Pines Plata (Nivel Medio) */
-.pin-plata {
-    border: 3px solid #b4b4b4;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease-in-out;
-}
-.pin-plata:hover {
-    transform: scale(1.25);
-}
-
-/* Pines Oro Premium (Efecto de hardware: pulso expansivo) */
-.pin-oro {
-    border: 3px solid #f1c40f;
-    box-shadow: 0 0 10px #f1c40f;
-    animation: pulso-oro-hardware 1.8s infinite ease-in-out;
-}
-@keyframes pulso-oro-hardware {
-    0% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.7); }
-    70% { box-shadow: 0 0 0 12px rgba(241, 196, 15, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0); }
-}
-
-/* Corona de Flamas (Urgencia) - Efecto Fuego superpuesto */
-.pin-con-flama::after {
-    content: '';
+/* --- LA GOTA VECTORIAL DINÁMICA --- */
+.gota-vectorial {
     position: absolute;
-    top: -18px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--pin-color, #cbd5e1);
+    border-radius: 50% 50% 50% 0;
+    /* Rota el bloque para formar la punta de flecha clásica orientada abajo */
+    transform: rotate(-45deg);
+    top: 0;
+    left: 0;
+    border: 2px solid #ffffff;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.16);
+    z-index: 1;
+}
+
+/* --- EMOJI INTERIOR CENTRAL --- */
+.pin-emoji-interior {
+    position: relative;
+    z-index: 2;
+    font-size: 14px;
+    margin-top: -6px; /* Centrado preciso */
+    pointer-events: none;
+}
+
+/* --- TRATAMIENTO DE CADA NIVEL PREMIUM COMERCIAL --- */
+
+/* Nivel 5: Plan Oro Premium con Efecto Pulso de Ondas */
+.pin-oro.premium-pulse::after {
+    content: "";
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: 3px solid #f1c40f;
+    box-shadow: 0 0 12px #f1c40f;
+    top: -3px;
+    left: -3px;
+    z-index: 0;
+    animation: pulsoOndaOro 2s infinite ease-out;
+}
+
+.pin-oro .gota-vectorial {
+    border-color: #f1c40f !important;
+    box-shadow: 0 0 10px rgba(241, 196, 15, 0.6);
+}
+
+/* Nivel 4: Plan Plata con Borde Reforzado */
+.pin-plata .gota-vectorial {
+    border-color: #94a3b8 !important;
+    box-shadow: 0 0 6px rgba(148, 163, 184, 0.5);
+}
+
+/* Nivel 3: Plan Bronce */
+.pin-bronce .gota-vectorial {
+    border-color: #b45309 !important;
+}
+
+/* Nivel 2: Registro Estándar */
+.pin-estandar .gota-vectorial {
+    border-color: #ffffff;
+}
+
+/* Nivel 1: Incógnito / Directorio Base Gris sin Plan */
+.pin-incognito-gris .gota-vectorial {
+    background-color: #94a3b8 !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* --- ANIMACIONES CSS NATIVAS --- */
+@keyframes pulsoOndaOro {
+    0% {
+        transform: scale(0.6);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
+/* ========================================================
+   SECCIÓN 5: POPUPS COMERCIALES Y CARRUSEL MULTIMEDIA
+   ======================================================== */
+
+/* --- CONTENEDOR GENERAL DEL POPUP --- */
+.popup-nego-contenedor {
+    width: 280px;
+    padding: 4px;
+    font-family: inherit;
+}
+
+.popup-nego-header {
+    margin-bottom: 12px;
+}
+
+.popup-nego-titulo {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.2;
+}
+
+.popup-nego-slogan {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 2px;
+}
+
+/* --- SECCIONES DE DETALLE (HORARIOS, PRODUCTOS) --- */
+.popup-nego-seccion {
+    margin-bottom: 10px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.popup-nego-label {
+    font-weight: 700;
+    color: var(--text-dark);
+    display: block;
+}
+
+.popup-nego-contenido {
+    color: #334155;
+}
+
+/* --- CARRUSEL MULTIMEDIA UNIFICADO --- */
+.popup-multimedia-carrusel {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-subtle);
+}
+
+.carrusel-viewport {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.carrusel-item {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.carrusel-item.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.carrusel-media-elemento {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: none;
+}
+
+/* --- BOTONES DE NAVEGACIÓN DEL CARRUSEL --- */
+.carrusel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.6);
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 10;
+    border-radius: 0 4px 4px 0;
+    transition: background 0.2s;
+}
+
+.carrusel-nav.next {
+    right: 0;
+    border-radius: 4px 0 0 4px;
+}
+
+.carrusel-nav:hover {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+/* Indicadores circulares (Dots) */
+.carrusel-dots-container {
+    position: absolute;
+    bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 24px;
-    height: 24px;
-    background: radial-gradient(circle at bottom, #ffdd00 20%, #ff5500 60%, transparent 90%);
-    border-radius: 50% 50% 20% 50%;
-    transform: translateX(-50%) rotate(-45deg);
-    animation: efecto-fuego-css 0.5s infinite alternate ease-in-out;
-    filter: drop-shadow(0 -2px 4px #ff5500);
-}
-@keyframes efecto-fuego-css {
-    0% { transform: translateX(-50%) rotate(-43deg) scale(0.9); opacity: 0.8; }
-    100% { transform: translateX(-50%) rotate(-47deg) scale(1.1); opacity: 1; }
-}
-/* Estructura para las barras de accesibilidad superiores */
-.accesibilidad-contenedor {
-  background: #ffffff;
-  padding: 10px;
-  border-bottom: 1px solid #cccccc;
-}
-
-/* Rejilla adaptativa para botones dinámicos */
-.botones-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 8px;
-  margin-top: 5px;
-}
-
-/* Botones físicos de accesibilidad */
-.btn-accesibilidad-dinamico {
-  padding: 8px;
-  background: #34495e;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  text-align: center;
-}
-/* 1. RESTAURACIÓN DEL MAPA: Protege las cuadrículas de Leaflet para que vuelvan a verse */
-.leaflet-container img {
-  width: auto !important;
-  height: auto !important;
-  max-width: none !important;
-  max-height: none !important;
-  display: inline !important;
-}
-
-/* 2. AISLAMIENTO EXCLUSIVO: El tamaño fijo solo se aplicará a las fotos del carrusel */
-.foto-popup-item {
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-}
-
-/* Contenedores de la interfaz */
-.guia-colores-contenedor {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-.guia-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
-  margin-top: 10px;
-}
-.guia-item-filtro {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-}
-
-/* El interruptor (Toggle Switch) */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-  flex-shrink: 0;
-}
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider-palanca {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #b0bec5; /* Color apagado que no interfiere con las capas */
-  transition: .3s;
-  border-radius: 24px;
-  border: 1px solid #90a4ae;
-}
-.slider-palanca:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: .3s;
-  border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-/* Estado encendido dinámico según la capa */
-.toggle-switch input:checked + .slider-palanca {
-  background-color: var(--color-capa);
-  border-color: rgba(0, 0, 0, 0.15);
-}
-.toggle-switch input:checked + .slider-palanca:before {
-  transform: translateX(20px);
-}
-
-/* Ajuste específico para visibilidad del switch blanco */
-.toggle-switch input[style*="#ffffff"]:checked + .slider-palanca {
-  border-color: #ccc;
-}
-.toggle-switch input[style*="#ffffff"]:checked + .slider-palanca:before {
-  background-color: #f5f5f5;
-}
-/* Por defecto ocultamos ambas secciones para evitar parpadeos */
-#contenedor-filtros-global .seccion-productos,
-#contenedor-filtros-global .seccion-servicios {
-  display: none;
-}
-
-/* Si el contenedor padre tiene la clase de productos, muestra solo productos */
-#contenedor-filtros-global.modo-productos .seccion-productos {
-  display: block;
-}
-
-/* Si el contenedor padre tiene la clase de servicios, muestra solo servicios */
-#contenedor-filtros-global.modo-servicios .seccion-servicios {
-  display: block;
-}
-.guia-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 15px;
-    padding: 15px;
-}
-.guia-item-filtro {
     display: flex;
-    align-items: start;
-    gap: 10px;
-    background: #f8fafc;
-    padding: 10px;
-    border-radius: 8px;
+    gap: 6px;
+    z-index: 10;
 }
-/* Color para los selectores activos de los Checkboxes */
-.filtro-capa-chk[data-capa="verde"]:checked + .slider-palanca { background-color: #2ecc71; }
-.filtro-capa-chk[data-capa="naranja"]:checked + .slider-palanca { background-color: #e67e22; }
-.filtro-capa-chk[data-capa="amarillo"]:checked + .slider-palanca { background-color: #f1c40f; }
-.filtro-capa-chk[data-capa="rojo"]:checked + .slider-palanca { background-color: #e74c3c; }
-.filtro-capa-chk[data-capa="rosa"]:checked + .slider-palanca { background-color: #e91e63; }
-.filtro-capa-chk[data-capa="cafe"]:checked + .slider-palanca { background-color: #8b5a2b; }
-.filtro-capa-chk[data-capa="azul"]:checked + .slider-palanca { background-color: #0000ff; }
 
-/* Servicios */
-.filtro-capa-chk[data-capa="azulclaro"]:checked + .slider-palanca { background-color: #1565c0; }
-.filtro-capa-chk[data-capa="azulmedio"]:checked + .slider-palanca { background-color: #3498db; }
-.filtro-capa-chk[data-capa="morado"]:checked + .slider-palanca { background-color: #7b1fa2; }
-.filtro-capa-chk[data-capa="grisoscuro"]:checked + .slider-palanca { background-color: #34495e; }
-.filtro-capa-chk[data-capa="vino"]:checked + .slider-palanca { background-color: #5d001e; }
-.filtro-capa-chk[data-capa="blanco"]:checked + .slider-palanca { background-color: #ffffff; border: 1px solid #cbd5e1; }
-.filtro-capa-chk[data-capa="negro"]:checked + .slider-palanca { background-color: #000000; }
-.filtro-capa-chk[data-capa="gris"]:checked + .slider-palanca { background-color: #95a5a6; }
+.carrusel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.carrusel-dot.active {
+    background: #ffffff;
+}
+
+/* --- BOTONES DE ACCIÓN (WHATSAPP / GPS) --- */
+.popup-nego-botones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.popup-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.popup-btn-wa {
+    background-color: #25d366;
+    color: #ffffff;
+}
+
+.popup-btn-wa:hover {
+    background-color: #128c7e;
+}
+
+.popup-btn-gps {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.popup-btn-gps:hover {
+    background-color: #2980b9;
+}
+
+/* --- SECCIÓN LEGAL --- */
+.legal-page-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 24px;
+    background: var(--bg-card);
+    border-radius: var(--radius-premium);
+    box-shadow: var(--shadow-subtle);
+}
+/* ========================================================
+/* ========================================================
+   PARCHE MAESTRO GIS: LIBERACIÓN DE SCROLL Y MAPA PILOTO
+   ======================================================== */
+
+/* Descongela la app para que tenga scroll normal de arriba a abajo */
+body.pagina-scroll-ventas,
+html {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+}
+
+/* Fuerza el contenedor del mapa para que sea visible y tenga altura rígida */
+body.pagina-scroll-ventas #mapa_general {
+    display: block !important;
+    visibility: visible !important;
+    height: 500px !important;
+    min-height: 500px !important;
+    width: 100% !important;
+    position: relative !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 15px !important;
+    z-index: 100 !important;
+}
+
+/* Da un formato premium tipo cuadrícula a tus botones del simulador */
+body.pagina-scroll-ventas #capas-inferiores-contenedor {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 12px !important;
+    max-height: none !important; /* Elimina el scroll interno */
+    overflow: visible !important;
+}
+
+body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
+    display: flex !important;
+    align-items: center !important;
+    background: #ffffff !important;
+    padding: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+}

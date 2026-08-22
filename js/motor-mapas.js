@@ -1,591 +1,937 @@
-// === INICIO MÓDULO: CONFIGURACIÓN GENERAL ===
-// Configuración estricta de columnas para lectura de Sheets (Índices base 0)
-const COL_ALCALDIA = {
- CVEGEO: 0,
- NOMGEO: 1,
- ESTATUS: 2,
- COLOR_HEX: 3
-};
-const COL_COLONIA = {
- WKT: 0,
- NOMBRE: 1,
- ESTATUS: 2
-};
-const COL_COMERCIO = {
- ID: 1,
- COLONIA: 2,
- CAPA_PRODUCTO: 4,
- CAPA_SERVICIO: 5,
- NIVEL: 6,
- NOMBRE: 7,
- SLOGAN: 8,
- LISTA_PROD_SERV: 9,
- HORARIO: 10,
- REDES: 11,
- YOUTUBE: 12,
- WHATSAPP: 13,
- COORDENADAS: 14,
- MAPS_LINK: 15
-};
-const COL_OFERTA = {
- ID: 1,
- FECHA_INICIO: 2,
- FECHA_FIN: 3,
- TEXTO_MENSAJE: 4,
- TEXTO_OFERTA: 5
-};
 
-// Instancias de control global compartidas por el motor
+// ==========================================================
+// SECCIÓN 1: CONFIGURACIÓN GLOBAL Y CORE GIS
+// ==========================================================
+const COL_ALCALDIA = { CVEGEO: 0, NOMGEO: 1, ESTATUS: 2, COLOR_HEX: 3 };
+const COL_COLONIA = { WKT: 0, NOMBRE: 1, ESTATUS: 2 };
+const COL_COMERCIO = { 
+ ID: 1, COLONIA: 2, MAPA: 3, CAPA_PRODUCTO: 4, CAPA_SERVICIO: 5, 
+ NIVEL: 6, NOMBRE: 7, SLOGAN: 8, LISTA_PROD_SERV: 9, HORARIO: 10, 
+ REDES: 11, YOUTUBE: 12, WHATSAPP: 13, COORDENADAS: 14, MAPS_LINK: 15 
+};
 let mapaNegosistema = null;
 let capaPoligonosActivos = null;
 let capaPinesActivos = null;
-
-// Estructuras de almacenamiento en memoria volátil
 let datosComerciosGlobales = [];
-let datosOfertasGlobales = [];
+let marcaroresGIS = [];
 let entornoActual = "productos"; // "productos" o "servicios"
+window.esCargaInicialEntorno = true;
 
-// URL de los archivos públicos CSV de Google Sheets
+// URLs de Publicación de Google Sheets
 const URL_CSV_ALCALDIAS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtpbVZGhb318tEVKgcGJUHQ34E84mc5bSsViofcXcGMLyTmPp39k4wwxcjwT08Zl4QjM2A9xtCDPaO/pub?gid=1670206752&single=true&output=csv";
 const URL_CSV_COLONIAS  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtpbVZGhb318tEVKgcGJUHQ34E84mc5bSsViofcXcGMLyTmPp39k4wwxcjwT08Zl4QjM2A9xtCDPaO/pub?gid=383048417&single=true&output=csv";
 const URL_CSV_COMERCIOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtpbVZGhb318tEVKgcGJUHQ34E84mc5bSsViofcXcGMLyTmPp39k4wwxcjwT08Zl4QjM2A9xtCDPaO/pub?gid=1369751544&single=true&output=csv";
 const URL_CSV_OFERTAS   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQgJ-fFKkYHuLy9RR0chu_2disYAKudHI7-A3phmQ08CdOZalAqPj1A6jCz9P2gVhbpoiYuCZOMq0T7/pub?gid=1521270051&single=true&output=csv";
-const URL_CSV_PILOTO    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGcorxjHpvr9WkNUQd2cRuAf1wRFlI5Jr67WeT9aZnz74Y677ZZ9u3iAFpwCl5RcuVM8npRYOrJbJ_/pub?gid=956712165&single=true&output=csv";
-// === FIN MÓDULO: CONFIGURACIÓN GENERAL ===
+const URL_CSV_PILOTO    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpyTu542clbD3QGMLVlDJlprm_Kkl4u0QokBxOvUwmhNbAeQRZFy8q5zJdp5BSOC1ftHnkA53M74S4/pub?output=csv";
+// PALETA MAESTRA UNIFICADA (Mapea directamente la palabra clave de Apps Script / Formulario)
+const PALETAS_CAPAS_SISTEMA = {
+ productos: [
+   { id: "abarrotes", label: "Abarrotes y Tienditas", emoji: "🛒", color: "#27AE60", desc: "Tienditas, misceláneas, materias primas..." },
+   { id: "frescos", label: "Alimentos Frescos", emoji: "🥩", color: "#2ECC71", desc: "Recauderías, carnicerías, pollerías..." },
+   { id: "tortillerias", label: "Tortillerías y Purificadoras", emoji: "🌽", color: "#1E8449", desc: "Tortillerías, molinos, agua..." },
+   { id: "comida", label: "Comida Preparada", emoji: "🌮", color: "#E67E22", desc: "Taquerías, pizzerías, antojitos..." },
+   { id: "panaderias", label: "Panaderías y Postres", emoji: "🍞", color: "#F1C40F", desc: "Panaderías, pastelerías, cafeterías..." },
+   { id: "farmacias", label: "Farmacias", emoji: "💊", color: "#E74C3C", desc: "Farmacias, tiendas naturistas..." },
+   { id: "ferreterias", label: "Ferreterías y Tlapalerías", emoji: "🔧", color: "#D4AC0D", desc: "Ferreterías, materials, plomería..." },
+   { id: "gas", label: "Gas y Carbón", emoji: "🔥", color: "#D35400", desc: "Depósitos de gas, carbón, leña..." },
+   { id: "ropa", label: "Ropa y Zapaterías", emoji: "👕", color: "#9B59B6", desc: "Boutiques, ropa de paca, bazares..." },
+   { id: "papelerias", label: "Papelerías y Regalos", emoji: "🎒", color: "#F48FB1", desc: "Papelerías, ciber, cosméticos..." },
+   { id: "mascotas", label: "Alimento para Mascotas", emoji: "🐶", color: "#A04000", desc: "Croquetas por kilo, accesorios..." },
+   { id: "tecnologia", label: "Celulares y Tecnología", emoji: "📱", color: "#1A5276", desc: "Celulares, fundas, computación..." },
+   { id: "base", label: "Directorio Base", emoji: "⚪", color: "#E2E8F0", desc: "En verificación o sin plan..." }
+ ],
+ servicios: [
+   { id: "medicos", label: "Consultorios y Médicos", emoji: "🩺", color: "#5DADE2", desc: "Médicos, dentistas, ópticas, veterinarias..." },
+   { id: "talleres", label: "Talleres y Vulcanizadoras", emoji: "🚗", color: "#2471A3", desc: "Mecánicos, motos, vulcanizadoras..." },
+   { id: "oficios", label: "Oficios del Hogar", emoji: "🔧🔨", color: "#2E4053", desc: "Plomeros, electricistas, carpinteros..." },
+   { id: "esteticas", label: "Estéticas y Barberías", emoji: "✂", color: "#7D3C98", desc: "Salones de belleza, uñas, barberías..." },
+   { id: "gimnasios", label: "Gimnasios y Deportes", emoji: "🥊", color: "#4A235A", desc: "Gimnasios, boxeo, canchas locales..." },
+   { id: "lavanderias", label: "Lavanderías y Tintorerías", emoji: "🧼", color: "#138D75", desc: "Lavanderías, tintorerías, planchadurías..." },
+   { id: "cerrajerias", label: "Cerrajerías y Reparaciones", emoji: "🔑", color: "#7B241C", desc: "Cerrajería, calzado, electrodomésticos..." },
+   { id: "fletes", label: "Fletes y Paquetería", emoji: "📦", color: "#B7950B", desc: "Mudanzas, puntos de entrega..." },
+   { id: "fiestas", label: "Salones y Jardines", emoji: "🎉", color: "#117A65", desc: "Salones infantiles, inflables, fotografía..." },
+   { id: "escuelas", label: "Escuelas y Regularización", emoji: "📚", color: "#5D6D7E", desc: "Guarderías, regularización..." },
+   { id: "tramites", label: "Trámites y Cibercafés", emoji: "📄", color: "#34495E", desc: "CURP, actas, contadores, abogados..." },
+   { id: "urgencias", label: "Urgencias 24 Horas", emoji: "🚨", color: "#111111", desc: "Cerrajerías nocturnas, grúas, farmacias..." },
+   { id: "base", label: "Directorio Base", emoji: "⚪", color: "#E2E8F0", desc: "Prestadores independientes no verificados..." }
+ ]
+};
+// ========================================================
+// SECCIÓN 2: MOTOR DE FILTRADO, RENDERIZADO Y BOTONES (JS)
+// ========================================================
+function filtrarPinesPorCapasActivas() {
+  // INTERCAMBIO VISUAL EN 0MS: Alterna la visibilidad de los nodos ganándole al !important del CSS
+  document.querySelectorAll('#capas-inferiores-contenedor .guia-item-filtro').forEach(item => {
+    const origen = item.getAttribute("data-entorno-origen");
+    if (origen === entornoActual) {
+      // Forzamos el despliegue con máxima prioridad en el navegador
+      item.style.setProperty("display", "flex", "important"); 
+    } else {
+      // Forzamos el ocultamiento absoluto destruyendo visualmente el !important del CSS
+      item.style.setProperty("display", "none", "important"); 
+    }
+  });
 
-// === INICIO MÓDULO: RENDERIZADO CARTOGRÁFICO ===
-document.addEventListener("DOMContentLoaded", () => {
- const params = new URLSearchParams(window.location.search);
- const alcaldiaParam = params.get("alcaldia");
- const coloniaParam = params.get("colonia");
+  const capasActivas = [];
+  
+  // Captura qué checkboxes están encendidos para el entorno activo actual
+  document.querySelectorAll(`.filtro-capa-chk[data-tipo="${entornoActual}"]`).forEach(sw => {
+    if (sw.checked) {
+      capasActivas.push(sw.getAttribute("data-capa").trim().toLowerCase());
+    }
+  });
 
- if (document.getElementById("mapa-macro-contenedor")) {
- mapaNegosistema = L.map("mapa-macro-contenedor").setView([19.4326, -99.1332], 11);
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
- limpiarLienzoMilisegundos();
- if (!alcaldiaParam) {
- verificarYFiltarAlcaldias();
- } else {
- cargarMapaColonias(alcaldiaParam);
- }
- }
- else if (document.getElementById("mapa-comercial-contenedor")) {
- mapaNegosistema = L.map("mapa-comercial-contenedor").setView([19.373, -99.018], 14);
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
- limpiarLienzoMilisegundos();
- inicializarModoHiperlocal(coloniaParam);
- }
- else if (document.getElementById("mapa_general")) {
- mapaNegosistema = L.map("mapa_general").setView([19.361, -99.025], 14);
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
- limpiarLienzoMilisegundos();
- inicializarModoAnunciatePiloto();
- setTimeout(() => {
- if (mapaNegosistema) mapaNegosistema.invalidateSize();
- }, 800);
- }
+  const comerciosFiltradosYVisibles = datosComerciosGlobales.filter(comercio => {
+    if (!comercio || comercio.length === 0) return false;
+    
+    const entornoPin = String(comercio[COL_COMERCIO.MAPA]).trim().toLowerCase();
+    if (entornoPin !== "ambos" && entornoPin !== "" && entornoPin !== entornoActual) return false;
+    
+    let capaClaveRaw = (entornoActual === "productos") 
+      ? comercio[COL_COMERCIO.CAPA_PRODUCTO] 
+      : comercio[COL_COMERCIO.CAPA_SERVICIO];
+      
+    if (!capaClaveRaw) return false;
+    capaClaveRaw = capaClaveRaw.trim().toLowerCase();
+    
+    return capasActivas.includes(capaClaveRaw);
+  });
+
+  renderizarPinesComerciales(comerciosFiltradosYVisibles);
+}
+function renderizarPinesComerciales(arregloComercios) {
+  if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.clearLayers === 'function') {
+    window.contenedorPinesGlobal.clearLayers();
+  }
+  marcaroresGIS = []; 
+  
+  const esSimulador = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
+
+  arregloComercios.forEach(comercio => {
+    const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
+    if (!coordRaw || !coordRaw.includes(",")) return;
+    
+    const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
+    if (isNaN(lat) || isNaN(lng)) return;
+    if (!esSimulador && (lat < 19.0 || lat > 19.6 || lng > -98.8 || lng < -99.4)) return;
+
+    let capaActivaClave = (entornoActual === "productos") 
+      ? String(comercio[COL_COMERCIO.CAPA_PRODUCTO]).trim().toLowerCase()
+      : String(comercio[COL_COMERCIO.CAPA_SERVICIO]).trim().toLowerCase();
+
+    if (!capaActivaClave || capaActivaClave === "" || capaActivaClave === "vacio") {
+      capaActivaClave = "base";
+    }
+
+    const configuracionCapa = PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === capaActivaClave) || 
+                              PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === "base");
+    
+    const emojiCentral = configuracionCapa.emoji;
+    const colorHexGota = configuracionCapa.color;
+    const nivelPuro = parseInt(comercio[COL_COMERCIO.NIVEL]) || 1; 
+    
+    let claseNivelComercial = "pin-incognito-gris";
+    if (nivelPuro === 5) claseNivelComercial = "pin-oro premium-pulse";
+    else if (nivelPuro === 4) claseNivelComercial = "pin-plata";
+    else if (nivelPuro === 3) claseNivelComercial = "pin-bronce";
+    else if (nivelPuro === 2) claseNivelComercial = "pin-estandar"; 
+
+    const prefijoEntorno = (entornoActual === "productos") ? "btn-p-" : "btn-s-";
+
+    const htmlIcono = `
+      <div class="pin-personalizado ${claseNivelComercial}">
+        <div class="gota-vectorial" style="--pin-color: ${colorHexGota};"></div>
+        <span class="pin-emoji-interior">${emojiCentral}</span>
+      </div>
+    `;
+
+    const iconoGota = L.divIcon({
+      className: `leaflet-marker-selectable ${prefijoEntorno}${capaActivaClave}`,
+      html: htmlIcono,
+      iconSize:[30, 42],
+      iconAnchor:[15, 42],  
+      popupAnchor: [0, -40]
+    });
+
+    const marcador = L.marker([lat, lng], { 
+      icon: iconoGota,
+      datosNegocio: {
+        colorCapa: colorHexGota,
+        idGiro: capaActivaClave
+      }
+    });
+
+    marcador.bindPopup(
+      typeof inyectarPopupComercioInteligente === "function" 
+        ? inyectarPopupComercioInteligente(comercio, nivelPuro) 
+        : `<b>${comercio[COL_COMERCIO.NOMBRE] || "Negocio"}</b>`
+    );
+
+    if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
+    marcaroresGIS.push(marcador);
+  });
+
+  if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.getLayers === 'function' && window.contenedorPinesGlobal.getLayers().length > 0 && mapaNegosistema) {
+    if (window.esCargaInicialEntorno) {
+      mapaNegosistema.fitBounds(window.contenedorPinesGlobal.getBounds(), { 
+        maxZoom: 15, 
+        padding:[50, 59], 
+        animate: true, 
+        duration: 0.8
+      });
+      window.esCargaInicialEntorno = false;
+    }
+  }
+  if (typeof generarDatosEstructuradosSEO === "function") {
+    generarDatosEstructuradosSEO(arregloComercios);
+  }
+}
+function reconstruirBotonesCapasInferiores() {
+  const contenedor = document.getElementById("capas-inferiores-contenedor");
+  if (!contenedor) return;
+  contenedor.innerHTML = ""; // Limpia el placeholder inicial de carga
+  
+  // RENDERIZADO SIMULTÁNEO EN MEMORIA: Crea ambos entornos de golpe
+  ["productos", "servicios"].forEach(entorno => {
+    const capasEntorno = PALETAS_CAPAS_SISTEMA[entorno] || [];
+    
+    capasEntorno.forEach(capa => {
+      const itemFiltro = document.createElement("div");
+      itemFiltro.className = "guia-item-filtro guia-item-filter";
+
+      // Atributo técnico para alternar visibilidad instantánea con display:none/flex
+      itemFiltro.setAttribute("data-entorno-origen", entorno);
+      
+      itemFiltro.innerHTML = `
+        <label class="toggle-switch">
+          <input type="checkbox" class="filtro-capa-chk" data-tipo="${entorno}" data-capa="${capa.id}" checked>
+          <span class="slider-palanca visual-${capa.id}" style="background-color: ${capa.color};"></span>
+        </label>
+        <div class="texto-filtro-info" style="margin-left: 10px;">
+          <strong>${capa.emoji} ${capa.label}:</strong>
+          <span>(${capa.desc})</span>
+        </div>
+      `;
+      
+      itemFiltro.querySelector(".filtro-capa-chk").addEventListener("change", filtrarPinesPorCapasActivas);
+      contenedor.appendChild(itemFiltro);
+    });
+  });
+    filtrarPinesPorCapasActivas(); 
+}
+// FUNCIÓN MAESTRA GLOBAL GIS: Construye las donas SVG para cualquier clusterizador activo
+function iconCreateFunctionDona(cluster) {
+  const markers = cluster.getAllChildMarkers();
+  const conteoCapas = {};
+  let total = markers.length;
+
+  // Barrer marcadores colisionados y extraer colores de su capa activa
+  markers.forEach(m => {
+    const info = m.options.datosNegocio;
+    if (info) {
+      const color = info.colorCapa || "#E2E8F0";
+      conteoCapas[color] = (conteoCapas[color] || 0) + 1;
+    }
+  });
+
+  // Crear anillo perimetral dinámico en un <svg> con los colores exactos de cada giro
+  let svgHtml = `<svg width="40" height="40" viewBox="0 0 40 40" style="display:block;">`;
+  let anguloAcumulado = 0;
+
+  for (const [color, cantidad] of Object.entries(conteoCapas)) {
+    const porcentaje = cantidad / total;
+    const anguloGiro = porcentaje * 360;
+    
+    const r = 16; const cx = 20; const cy = 20;
+    const x1 = cx + r * Math.cos((anguloAcumulado - 90) * Math.PI / 180);
+    const y1 = cy + r * Math.sin((anguloAcumulado - 90) * Math.PI / 180);
+    anguloAcumulado += anguloGiro;
+    const x2 = cx + r * Math.cos((anguloAcumulado - 90) * Math.PI / 180);
+    const y2 = cy + r * Math.sin((anguloAcumulado - 90) * Math.PI / 180);
+    
+    const granArco = anguloGiro > 180 ? 1 : 0;
+    if (anguloGiro === 360) {
+      svgHtml += `<circle cx="20" cy="20" r="16" fill="none" stroke="${color}" stroke-width="5"/>`;
+    } else {
+      svgHtml += `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${granArco} 1 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="5"/>`;
+    }
+  }
+  
+  svgHtml += `<circle cx="20" cy="20" r="12" fill="#FFFFFF"/>`;
+  svgHtml += `<text x="20" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">${total}</text>`;
+  svgHtml += `</svg>`;
+
+  return L.divIcon({
+    html: svgHtml,
+    className: 'cluster-dona-svg-personalizado',
+    iconSize:[40, 40],
+    iconAnchor: [20, 20]
+  });
+}
+// INICIALIZADOR ASÍNCRONO CORE AL CARGAR LA VENTANA
+window.addEventListener("load", () => {
+  const params = new URLSearchParams(window.location.search);
+  const alcaldiaParam = params.get("alcaldia");
+  const coloniaParam = params.get("colonia");
+  
+  if (document.getElementById("mapa-macro-contenedor")) {
+    mapaNegosistema = L.map("mapa-macro-contenedor").setView([19.4326, -99.1332], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
+    limpiarLienzoMilisegundos();
+    
+    // 🛠️ RECUPERACIÓN INTELIGENTE DE NAVEGACIÓN
+    const ultimaAlcaldia = localStorage.getItem("ultima_alcaldia_explorada");
+    
+    // Si el usuario entra al index limpio pero estuvo explorando una región previa, la despliega
+    if (!alcaldiaParam && ultimaAlcaldia) {
+      cargarMapaColonias(ultimaAlcaldia);
+    } else if (!alcaldiaParam) {
+      verificarYFiltarAlcaldias();
+    } else {
+      cargarMapaColonias(alcaldiaParam);
+    }
+  }
+
+  else if (document.getElementById("mapa-comercial-contenedor")) {
+    mapaNegosistema = L.map("mapa-comercial-contenedor").setView([19.373, -99.018], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
+    
+    // Inicialización del Clusterizador para la Vista Comercial
+    window.contenedorPinesGlobal = L.markerClusterGroup({
+      maxClusterRadius: 20,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      iconCreateFunction: iconCreateFunctionDona
+    }).addTo(mapaNegosistema);
+
+    limpiarLienzoMilisegundos();
+    inicializarModoHiperlocal(coloniaParam);
+  }
+  
+  else if (document.getElementById("mapa_general")) {
+    mapaNegosistema = L.map("mapa_general").setView([19.361, -99.025], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
+    
+    // UNIFICACIÓN GIS: Activamos el clusterizador también en el mapa piloto
+    window.contenedorPinesGlobal = L.markerClusterGroup({
+      maxClusterRadius: 20,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      iconCreateFunction: iconCreateFunctionDona
+    }).addTo(mapaNegosistema);
+
+    limpiarLienzoMilisegundos();
+    inicializarModoAnunciatePiloto();
+  }
+  
+  // Forzar redibujo físico de Leaflet adaptado al Layout Vertical en ambas pantallas
+  setTimeout(() => { 
+    if (mapaNegosistema) {
+      mapaNegosistema.invalidateSize(); 
+    }
+  }, 450);
+  
+  if (mapaNegosistema) {
+    mapaNegosistema.on('zoomend', () => {
+      const zoomActual = mapaNegosistema.getZoom();
+      const contenedorActivo = document.getElementById("mapa-comercial-contenedor") ? "mapa-comercial-contenedor" : "mapa_general";
+      const mapaElemento = document.getElementById(contenedorActivo);
+      if (mapaElemento) {
+        mapaElemento.classList.remove('zoom-lejano', 'zoom-medio', 'zoom-cercano');
+        if (zoomActual < 14) mapaElemento.classList.add('zoom-lejano');
+        else if (zoomActual >= 14 && zoomActual <= 16) mapaElemento.classList.add('zoom-medio');
+        else mapaElemento.classList.add('zoom-cercano');
+      }
+    });
+  }
 });
-
 function transformarCoordenadasWKT(cadenaWKT) {
- if (!cadenaWKT || !cadenaWKT.startsWith("POLYGON")) return [];
- const textoLimpio = cadenaWKT.replace("POLYGON", "").replace(/\(/g, "").replace(/\)/g, "").trim();
- const paresPuntos = textoLimpio.split(",");
- return paresPuntos.map(par => {
- const ejes = par.trim().split(" ");
- if (ejes.length < 2) return null;
- return [parseFloat(ejes[1]), parseFloat(ejes[0])]; 
- }).filter(coord => coord !== null);
+  if (!cadenaWKT || !cadenaWKT.startsWith("POLYGON")) return [];
+  const textoLimpio = cadenaWKT.replace("POLYGON", "").replace(/\(/g, "").replace(/\)/g, "").trim();
+  return textoLimpio.split(",").map(par => {
+    const ejes = par.trim().split(" ");
+    return ejes.length < 2 ? null : [parseFloat(ejes[1]), parseFloat(ejes[0])];
+  }).filter(coord => coord !== null);
 }
 
 function limpiarLienzoMilisegundos() {
- if (capaPoligonosActivos && mapaNegosistema) mapaNegosistema.removeLayer(capaPoligonosActivos);
- if (capaPinesActivos && mapaNegosistema) mapaNegosistema.removeLayer(capaPinesActivos);
- if (mapaNegosistema) {
- capaPoligonosActivos = L.featureGroup().addTo(mapaNegosistema);
- capaPinesActivos = L.featureGroup().addTo(mapaNegosistema);
- }
+  if (capaPoligonosActivos && mapaNegosistema) {
+    mapaNegosistema.removeLayer(capaPoligonosActivos);
+  }
+  if (capaPinesActivos && mapaNegosistema) {
+    mapaNegosistema.removeLayer(capaPinesActivos);
+  }
+  if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.clearLayers === 'function') {
+    window.contenedorPinesGlobal.clearLayers();
+  }
+  if (mapaNegosistema) {
+    capaPoligonosActivos = L.featureGroup().addTo(mapaNegosistema);
+    const tieneClusterLib = typeof L.markerClusterGroup === 'function';
+    const esVistaComercial = document.getElementById("mapa-comercial-contenedor") || document.getElementById("mapa_general");
+    
+    if (!esVistaComercial || !tieneClusterLib) {
+      capaPinesActivos = L.featureGroup().addTo(mapaNegosistema);
+    }
+  }
 }
-
 function verificarYFiltarAlcaldias() {
- Papa.parse(URL_CSV_ALCALDIAS, {
- download: true,
- complete: function(results) {
- const filas = results.data.slice(1);
- const activas = filas.filter(f => {
- if (!f[COL_ALCALDIA.CVEGEO]) return false;
- const estatus = (f[COL_ALCALDIA.ESTATUS] || "").trim().toLowerCase();
- return estatus === "activo" || estatus === "explorando";
- });
- renderizarAlcaldiasMacro(activas);
- }
- });
+  Papa.parse(URL_CSV_ALCALDIAS, {
+    download: true,
+    complete: function(results) {
+      const filas = results.data.slice(1);
+      const activas = filas.filter(f => {
+        if (!f[COL_ALCALDIA.CVEGEO]) return false;
+        const estatus = (f[COL_ALCALDIA.ESTATUS] || "").trim().toLowerCase();
+        return estatus === "activo" || estatus === "explorando";
+      });
+      renderizarAlcaldiasMacro(activas);
+    }
+  });
 }
 
 function renderizarAlcaldiasMacro(alcaldiasActivas) {
- fetch("geo/alcaldias.geojson")
- .then(response => response.json())
- .then(geojsonData => {
- const contenedorBotones = document.getElementById("contenedor-botones-dinamicos");
- if (contenedorBotones) contenedorBotones.innerHTML = "";
- L.geoJSON(geojsonData, {
- style: function(feature) {
- const cvegeoGeojson = String(feature.properties.CVEGEO).trim();
- const datosCSV = alcaldiasActivas.find(a => String(a[COL_ALCALDIA.CVEGEO]).trim() === cvegeoGeojson);
- if (datosCSV) {
- return { fillColor: datosCSV[COL_ALCALDIA.COLOR_HEX] || "#3498db", weight: 2.5, opacity: 1, color: "#ffffff", fillOpacity: 0.75 };
- }
- return { fillOpacity: 0, weight: 0, color: "transparent" };
- },
- onEachFeature: function(feature, layer) {
- const cvegeoGeojson = String(feature.properties.CVEGEO).trim();
- const nombreGeo = feature.properties.NOMGEO; 
- const datosCSV = alcaldiasActivas.find(a => String(a[COL_ALCALDIA.CVEGEO]).trim() === cvegeoGeojson);
- 
- if (datosCSV) {
- const nombreURLLimpio = nombreGeo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "");
- const urlDestino = "index.html?alcaldia=" + nombreURLLimpio;
- 
- layer.on("click", () => { window.location.href = urlDestino; });
- 
- if (contenedorBotones) {
-  // CORRECCIÓN SEO: Cambiamos de button a elemento de enlace nativo 'a'
-  const boton = document.createElement("a");
-  boton.className = "btn-accesibilidad-macro";
-  boton.innerText = nombreGeo.trim();
-  boton.href = urlDestino; // Googlebot rastrea esta URL de inmediato
-  boton.style.borderColor = datosCSV[COL_ALCALDIA.COLOR_HEX];
-  boton.style.display = "inline-block";
-  contenedorBotones.appendChild(boton);
- }
- }
+  fetch("geo/alcaldias.geojson")
+    .then(response => response.json())
+    .then(geojsonData => {
+      const contenedorBotones = document.getElementById("contenedor-botones-dinamicos");
+      if (contenedorBotones) contenedorBotones.innerHTML = "";
+      L.geoJSON(geojsonData, {
+        style: function(feature) {
+          const cvegeoGeojson = String(feature.properties.CVEGEO).trim();
+          const datosCSV = alcaldiasActivas.find(a => String(a[COL_ALCALDIA.CVEGEO]).trim() === cvegeoGeojson);
+          return datosCSV ? { fillColor: datosCSV[COL_ALCALDIA.COLOR_HEX] || "#3498db", weight: 2.5, opacity: 1, color: "#ffffff", fillOpacity: 0.75 } : { fillOpacity: 0, weight: 0, color: "transparent" };
+        },
+        onEachFeature: function(feature, layer) {
+          const cvegeoGeojson = String(feature.properties.CVEGEO).trim();
+          const nombreGeo = feature.properties.NOMGEO; 
+          const datosCSV = alcaldiasActivas.find(a => String(a[COL_ALCALDIA.CVEGEO]).trim() === cvegeoGeojson);
+          if (datosCSV) {
+            const nombreURLLimpio = nombreGeo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "");
+            const urlDestino = "index.html?alcaldia=" + nombreURLLimpio;
+            layer.on("click", () => { window.location.href = urlDestino; });
+            if (contenedorBotones) {
+              const boton = document.createElement("a");
+              boton.className = "btn-accesibilidad-macro";
+              boton.innerText = nombreGeo.trim();
+              boton.href = urlDestino;
+              boton.style.borderColor = datosCSV[COL_ALCALDIA.COLOR_HEX];
+              boton.style.display = "inline-block";
+              contenedorBotones.appendChild(boton);
+            }
+          }
+        }
+      }).addTo(capaPoligonosActivos);
+    });
 }
- }).addTo(capaPoligonosActivos);
- });
-}
-
 function cargarMapaColonias(alcaldiaNombre) {
- const rutaGeojson = `geo/${alcaldiaNombre}/${alcaldiaNombre}.geojson`;
- fetch(rutaGeojson)
- .then(response => response.json())
- .then(geojsonData => {
- limpiarLienzoMilisegundos();
- const capaGeo = L.geoJSON(geojsonData).addTo(capaPoligonosActivos);
- mapaNegosistema.fitBounds(capaGeo.getBounds(), { padding: [30, 30] });
- const textoGuia = document.getElementById("texto-guia");
- if (textoGuia) textoGuia.innerText = "Selecciona una Colonia";
- Papa.parse(URL_CSV_COLONIAS, {
- download: true,
- complete: function(coloniasResults) {
- const filasColonias = coloniasResults.data.slice(1);
- const contenedorBotones = document.getElementById("contenedor-botones-dinamicos");
- if (contenedorBotones) contenedorBotones.innerHTML = "";
- filasColonias.forEach(colonia => {
-  const cadenaWKT = colonia[COL_COLONIA.WKT];
-  const nombreColonia = colonia[COL_COLONIA.NOMBRE];
-  const estatus = (colonia[COL_COLONIA.ESTATUS] || "").trim().toLowerCase();
-  if ((estatus === "activo" || estatus === "explorando") && cadenaWKT) {
-  const coords = transformarCoordenadasWKT(cadenaWKT);
-  if (coords.length === 0) return;
-  const nombreURLLimpio = nombreColonia.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "");
-  const urlDestino = `comercial.html?colonia=${nombreURLLimpio}&entorno=productos`;
-  const poligonocol = L.polygon(coords, {
-  fillColor: estatus === "activo" ? "#2ecc71" : "#f1c40f",
-  weight: 1.5,
-  opacity: 1,
-  color: "#ffffff",
-  fillOpacity: 0.5
-  }).addTo(capaPoligonosActivos);
-  poligonocol.on("click", () => { window.location.href = urlDestino; });
-  if (contenedorBotones) {
-  const boton = document.createElement("button");
-  boton.className = "btn-accesibilidad-micro";
-  boton.innerText = nombreColonia;
-  boton.addEventListener("click", () => { window.location.href = urlDestino; });
-  contenedorBotones.appendChild(boton);
-  }
-  }
- });
- }
- });
- })
- .catch(err => {
- console.error("Error GeoJSON", err);
- const textoGuia = document.getElementById("texto-guia");
- if (textoGuia) textoGuia.innerText = "Error al cargar las colonias de esta región";
- });
-}
-// === FIN MÓDULO: RENDERIZADO CARTOGRÁFICO ===
-// === INICIO MÓDULO: CONTROL DE CAPAS ===
-function inicializarModoHiperlocal(coloniaFiltro) {
- const elementoTitulo = document.getElementById("titulo-colonia-actual");
- if (elementoTitulo && coloniaFiltro) {
- elementoTitulo.innerText = "Colonia: " + coloniaFiltro.replace(/-/g, " ").toUpperCase();
- }
- Papa.parse(URL_CSV_COLONIAS, {
- download: true,
- complete: function(coloniasResults) {
- const filasColonias = coloniasResults.data.slice(1);
- const contenedorAledanas = document.getElementById("contenedor-colonias-aledanas");
- if (contenedorAledanas) {
- contenedorAledanas.innerHTML = "";
- filasColonias.forEach(colonia => {
-  const nombreColonia = colonia[COL_COLONIA.NOMBRE];
-  const estatus = (colonia[COL_COLONIA.ESTATUS] || "").trim().toLowerCase();
-  if (nombreColonia && (estatus === "activo" || estatus === "explorando")) {
-  const nombreURLLimpio = nombreColonia.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "");
-  if (nombreURLLimpio !== String(coloniaFiltro).toLowerCase().trim()) {
-   const botonVecino = document.createElement("button");
-   botonVecino.className = "btn-accesibilidad-dinamico"; 
-   botonVecino.innerText = nombreColonia;
-   botonVecino.style.borderLeft = estatus === "explorando" ? "4px solid #f1c40f" : "4px solid #2ecc71";
-   botonVecino.addEventListener("click", () => {
-   window.location.href = "comercial.html?colonia=" + nombreURLLimpio + "&entorno=productos";
-   });
-   contenedorAledanas.appendChild(botonVecino);
-  }
-  }
- });
- }
- Papa.parse(URL_CSV_OFERTAS, {
- download: true,
- complete: function(ofertasResults) {
-  datosOfertasGlobales = ofertasResults.data.slice(1);
-  renderizarSliderOfertas(datosOfertasGlobales);
-  Papa.parse(URL_CSV_COMERCIOS, {
-  download: true,
-  complete: function(comerciosResults) {
-   const todasLasFilas = comerciosResults.data.slice(1);
-   datosComerciosGlobales = todasLasFilas.filter(f => {
-   const colCSV = (f[COL_COMERCIO.COLONIA] || "").toLowerCase().replace(/ /g, "");
-   return colCSV === String(coloniaFiltro).toLowerCase().replace(/ /g,"");
-   });
-   entornoActual = "productos";
-   const btnSwitch = document.getElementById("btn-switch-entorno");
-   if (btnSwitch) {
-   btnSwitch.setAttribute("data-entorno", "productos");
-   btnSwitch.innerHTML = 'Ver Servicios <span id="emoji-switch">&#128736;</span>';
-   }
-   reconstruirBotonesCapasInferiores();
-   renderizarPinesComerciales(datosComerciosGlobales);
-   inicializarBuscadorPredictivo();
-   configurarSwitchEntornos();
-   filtrarPinesPorCapasActivas();
-  }
-  });
- }
- });
- }
- });
-}
-
-function renderizarPinesComerciales(arregloComercios) {
- if (mapaNegosistema && capaPinesActivos) capaPinesActivos.clearLayers();
- arregloComercios.forEach(comercio => {
- const coordenadasCrudas = (comercio[COL_COMERCIO.COORDENADAS] || "").split(",");
- if (coordenadasCrudas.length !== 2) return;
- const lat = parseFloat(coordenadasCrudas[0]);
- const lng = parseFloat(coordenadasCrudas[1]);
- if (isNaN(lat) || isNaN(lng)) return;
- let capaColor = (entornoActual === "productos") ? comercio[COL_COMERCIO.CAPA_PRODUCTO] : comercio[COL_COMERCIO.CAPA_SERVICIO];
- if (!capaColor || capaColor.trim() === "") capaColor = "gris";
- const tieneOferta = datosOfertasGlobales.some(o => String(o[COL_OFERTA.ID]).trim() === String(comercio[COL_COMERCIO.ID]).trim());
- let clasePinBase = parseInt(comercio[COL_COMERCIO.NIVEL]) === 5 ? "pin-personalizado pin-oro" : "pin-personalizado pin-plata";
- if (tieneOferta) clasePinBase += " pin-con-flama";
- const claseColorEntorno = (entornoActual === "productos") ? "btn-p-" + capaColor.trim().toLowerCase() : "btn-s-" + capaColor.trim().toLowerCase();
- const miIcono = L.divIcon({ className: clasePinBase + " " + claseColorEntorno, html: ' ', iconSize:[30, 30], iconAnchor: [15, 15] });
- const marcador = L.marker([lat, lng], { icon: miIcono }).bindPopup(inyectarPopupComercio(comercio));
- capaPinesActivos.addLayer(marcador);
- });
- if (capaPinesActivos.getLayers().length > 0 && mapaNegosistema) {
- mapaNegosistema.fitBounds(capaPinesActivos.getBounds(), { maxZoom: 15, padding: [20, 20] });
- }
-}
-
-function reconstruirBotonesCapasInferiores() {
- const contenedor = document.getElementById("capas-inferiores-contenedor");
- if (!contenedor) return;
- contenedor.innerHTML = "";
- const paletas = {
- productos: [
- { id: "verde", label: "Canasta Básica", emoji: "&#127822;", desc: "Abarrotes, Carnicería, Recaudería..." },
- { id: "naranja", label: "Comida Preparada", emoji: "&#127854;", desc: "Taquerías, Pizzerías, Cafeterías..." },
- { id: "amarillo", label: "Ferretería y Hogar", emoji: "&#128736;", desc: "Tlapalerías, Materiales, Pinturas..." },
- { id: "rojo", label: "Salud y Farmacia", emoji: "&#128138;", desc: "Farmacias, Ópticas, Equipo Médico..." },
- { id: "rosa", label: "Variedades y Moda", emoji: "&#128093;", desc: "Papelerías, Boutiques, Regalos..." },
- { id: "cafe", label: "Mascotas", emoji: "&#128062;", desc: "Alimento, Estética Canina..." },
- { id: "azul", label: "Tecnología", emoji: "&#128031;", desc: "Celulares, Computación, Videojuegos..." },
- { id: "gris", label: "Directorio Base", emoji: "&#127980;", desc: "Solo ubicación verificándose." }
- ],
- servicios: [
- { id: "azulclaro", label: "Salud y Consultas", emoji: "&#129658;", desc: "Médicos, Dentistas, Laboratorios..." },
- { id: "azulmedio", label: "Talleres y Oficios", emoji: "&#128295;", desc: "Mecánicos, Plomeros, Carpinteros..." },
- { id: "morado", label: "Bienestar y Estilo", emoji: "&#x2702;", desc: "Barberías, Estéticas, Gimnasios..." },
- { id: "grisoscuro", label: "Asesoría y Oficina", emoji: "&#128188;", desc: "Seguros, Contadores, Abogados..." },
- { id: "vino", label: "Hogar y Eventos", emoji: "&#127880;", desc: "Salones, Lavanderías, Cerrajerías..." },
- { id: "blanco", label: "Educación y Apoyo", emoji: "&#128214;", desc: "Tareas Dirigidas, Escuelas..." },
- { id: "negro", label: "Urgencias 24/7", emoji: "&#128680;", desc: "Cerrajerías Nocturnas, Grúas..." },
- { id: "gris", label: "Directorio Base", emoji: "&#127980;", desc: "Solo ubicación verificándose." }
- ]
- };
- const capasEntorno = paletas[entornoActual] || [];
- capasEntorno.forEach(capa => {
- const itemFiltro = document.createElement("div");
- itemFiltro.className = "guia-item-filtro";
- itemFiltro.innerHTML = '<label class="toggle-switch"><input type="checkbox" class="filtro-capa-chk" data-tipo="' + entornoActual + '" data-capa="' + capa.id + '" checked><span class="slider-palanca visual-' + capa.id + '"></span></label><div class="texto-filtro-info" style="margin-left: 10px; font-size: 13px; color: #2c3e50;"><strong>' + capa.emoji + ' ' + capa.label + ':</strong><span style="font-size: 11px; color: #7f8c8d; display:block;">(' + capa.desc + ')</span></div>';
- itemFiltro.querySelector(".filtro-capa-chk").addEventListener("change", filtrarPinesPorCapasActivas);
- contenedor.appendChild(itemFiltro);
- });
-}
-
-function filtrarPinesPorCapasActivas() {
- if (typeof capaPinesActivos !== 'undefined' && mapaNegosistema.hasLayer(capaPinesActivos)) {
- capaPinesActivos.clearLayers();
- } else {
- capaPinesActivos = L.featureGroup().addTo(mapaNegosistema);
- }
- const capasActivas = [];
- const switches = document.querySelectorAll(".filtro-capa-chk[data-tipo=\"" + entornoActual + "\"]");
- switches.forEach(sw => {
- if (sw.checked) capasActivas.push(sw.getAttribute("data-capa").trim().toLowerCase());
- });
- datosComerciosGlobales.forEach(comercio => {
- if (!comercio || comercio.length === 0) return;
- let capaColor = (entornoActual === "productos") ? comercio[COL_COMERCIO.CAPA_PRODUCTO] : comercio[COL_COMERCIO.CAPA_SERVICIO];
- if (!capaColor || capaColor.trim() === "") capaColor = "gris";
- const capaComercioNormalizada = capaColor.trim().toLowerCase();
- if (capasActivas.includes(capaComercioNormalizada)) {
- const coordenadasCrudas = (comercio[COL_COMERCIO.COORDENADAS] || "").split(",");
- if (coordenadasCrudas.length === 2) {
-  const lat = parseFloat(coordenadasCrudas[0]);
-  const lng = parseFloat(coordenadasCrudas[1]);
-  if (!isNaN(lat) && !isNaN(lng)) {
-  let clasePinBase = parseInt(comercio[COL_COMERCIO.NIVEL]) === 5 ? "pin-personalizado pin-oro" : "pin-personalizado pin-plata";
-  const claseColorEntorno = (entornoActual === "productos") ? "btn-p-" + capaComercioNormalizada : "btn-s-" + capaComercioNormalizada;
-  const miIcono = L.divIcon({ className: clasePinBase + " " + claseColorEntorno, html: ' ', iconSize:[32, 32], iconAnchor: [16, 32] });
-  const marcador = L.marker([lat, lng], { icon: miIcono });
-  marcador.bindPopup(typeof inyectarPopupComercio === "function" ? inyectarPopupComercio(comercio) : "<b>" + (comercio[7] || "Negocio") + "</b>");
-  capaPinesActivos.addLayer(marcador);
-  }
- }
- }
- });
- }
-// Agrega esta lógica al final de la función filtrarPinesPorCapasActivas(), justo después del bucle de comercios:
-function generarDatosEstructuradosSEO(comerciosFiltrados) {
- // Eliminamos scripts previos para evitar duplicar información en memoria
- const scriptPrevio = document.getElementById("seo-local-jsonld");
- if (scriptPrevio) scriptPrevio.remove();
- if (comerciosFiltrados.length === 0) return;
- // Estructura un formato unificado compatible con el estándar Schema.org
- const estructuraData = {
- "@context": "https://schema.org",
- "@type": "ItemList",
- "itemListElement": comerciosFiltrados.map((comercio, indice) => {
-  const coords = (comercio[COL_COMERCIO.COORDENADAS] || "").split(",");
-  return {
-  "@type": "ListItem",
-  "position": indice + 1,
-  "item": {
-   "@type": "LocalBusiness",
-   "name": comercio[COL_COMERCIO.NOMBRE] || "Negocio Local",
-   "description": comercio[COL_COMERCIO.SLOGAN] || "Comercio de barrio registrado en el mapa.",
-   "telephone": comercio[COL_COMERCIO.WHATSAPP] || "",
-   "geo": coords.length === 2 ? {
-   "@type": "GeoCoordinates",
-   "latitude": parseFloat(coords[0]),
-   "longitude": parseFloat(coords[1])
-   } : null
-  }
-  };
- })
- };
-
- const scriptSEO = document.createElement("script");
- scriptSEO.id = "seo-local-jsonld";
- scriptSEO.type = "application/ld+json";
- scriptSEO.text = JSON.stringify(estructuraData);
- document.head.appendChild(scriptSEO);
-}
-// === FIN MÓDULO: CONTROL DE CAPAS ===
-// === INICIO MÓDULO: CALCULO TIEMPOS Y POPUPS ===
-function calcularMotorTemporal(cadenaHorario) {
- if (!cadenaHorario || cadenaHorario.trim() === "") {
- return { colorClass: "popup-pausa", texto: "Sin horario registrado" };
- }
- const fechaActual = new Date();
- const diaIndex = fechaActual.getDay(); 
- const horaActualMinutos = (fechaActual.getHours() * 60) + fechaActual.getMinutes();
- const diasMapa = { "dom": 0, "lun": 1, "mar": 2, "mie": 3, "jue": 4, "vie": 5, "sab": 6 };
- const bloques = cadenaHorario.toLowerCase().split("|");
- let horarioHoy = null;
- for (let bloque of bloques) {
- const partes = bloque.trim().split(":");
- if (partes.length < 2) continue;
- const rangoDias = partes[0].split("-");
- let diaInicio = diasMapa[rangoDias[0].trim()];
- let diaFin = rangoDias[1] ? diasMapa[rangoDias[1].trim()] : diaInicio;
- if (diaIndex >= diaInicio && diaIndex <= diaFin) {
- horarioHoy = partes.slice(1).join(":"); 
- break;
- }
- }
- if (!horarioHoy) return { colorClass: "popup-cerrado", texto: "CERRADO (Hoy)" };
- const horasRango = horarioHoy.split("-");
- if (horasRango.length < 2) return { colorClass: "popup-cerrado", texto: "CERRADO" };
- const [hInicio, mInicio] = horasRango[0].split(":").map(Number);
- const [hFin, mFin] = horasRango[1].split(":").map(Number);
- const minutosInicioTotal = (hInicio * 60) + mInicio;
- const minutosFinTotal = (hFin * 60) + mFin;
- if (horaActualMinutos >= minutosInicioTotal && horaActualMinutos < minutosFinTotal) {
- return (minutosFinTotal - horaActualMinutos <= 30) ? { colorClass: "popup-critico", texto: "PRÓXIMO A CERRAR" } : { colorClass: "popup-abierto", texto: "ABIERTO" };
- } else {
- return { colorClass: "popup-cerrado", texto: "CERRADO" };
- }
-}
-
-function generarCarruselFotosHTML(idNegocio, alcaldiaRuta) {
- if (!idNegocio) return '';
- const rutaBase = "geo/iztapalapa/img-nego/";
- let htmlCarrusel = '<div class="popup-carrusel-fotos" style="display: flex; gap: 8px; max-height: 100px; margin-top: 8px; overflow-x: auto;">';
- const formatos = ['webp', 'jpg', 'jpeg', 'png'];
- const idLimpio = idNegocio.trim();
- for (let i = 1; i <= 1; i++) { 
- const rutaInicial = rutaBase + idLimpio + "-" + i + "." + formatos[0];
- const fallbackJpg = rutaBase + idLimpio + "-" + i + ".jpg";
- const fallbackJpeg = rutaBase + idLimpio + "-" + i + ".jpeg";
- const fallbackPng = rutaBase + idLimpio + "-" + i + ".png";
- const fallbackSvg = "data:image/svg+xml;utf8,<svg xmlns='http://w3.org' viewBox='0 0 24 24' fill='%23999'><path d='M4 4h16v16H4V4zm4 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 11h8l-4-6-4 6z'/></svg>";
- htmlCarrusel += '<div style="width: 80px; height: 80px; background-color: #e0e0e0; border-radius: 6px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center;"><img src="' + rutaInicial + '" alt="Foto" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="if(this.src.endsWith(\'.webp\')) { this.src=\'' + fallbackJpg + '\'; } else if(this.src.endsWith(\'.jpg\')) { this.src=\'' + fallbackJpeg + '\'; } else if(this.src.endsWith(\'.jpeg\')) { this.src=\'' + fallbackPng + '\'; } else if(this.src.endsWith(\'.png\')) { this.src=\'' + fallbackSvg + '\'; }"></div>';
- }
- htmlCarrusel += "</div>";
- return htmlCarrusel;
-}
-
-function inyectarPopupComercio(registro) {
- const estatusHorario = calcularMotorTemporal(registro[COL_COMERCIO.HORARIO]);
- const nivel = parseInt(registro[COL_COMERCIO.NIVEL]) || 1;
- const idNegocio = registro[COL_COMERCIO.ID] || "";
- const coloniaMapeo = (registro[COL_COMERCIO.COLONIA] || "").toLowerCase().replace(/ /g, "");
- let html = '<div class="popup-tarjeta"><div class="popup-cabecera ' + estatusHorario.colorClass + '"><h3>' + (registro[COL_COMERCIO.NOMBRE] || "Dato no disponible") + '</h3><span>' + estatusHorario.texto + '</span></div>';
- if (nivel >= 3) {
- html += '<p class="popup-slogan"><i>' + (registro[COL_COMERCIO.SLOGAN] || "") + '</i></p>';
- html += generarCarruselFotosHTML(idNegocio, coloniaMapeo);
- }
- if (nivel >= 2) {
- html += '<details class="popup-acordeon"><summary>Ver Horario y Catálogo</summary><div class="acordeon-contenido"><p><b>Productos/Servicios:</b> ' + (registro[COL_COMERCIO.LISTA_PROD_SERV] || "Dato no disponible") + '</p><p><b>Horario Completo:</b> ' + (registro[COL_COMERCIO.HORARIO] || "Dato no disponible") + '</p></div></details>';
- }
- if (nivel >= 4 && registro[COL_COMERCIO.YOUTUBE] && registro[COL_COMERCIO.YOUTUBE].trim() !== "") {
- html += '<div class="popup-multimedia"><iframe width="100%" height="120" src="' + registro[COL_COMERCIO.YOUTUBE] + '" frameborder="0" allowfullscreen></iframe></div>';
- }
- html += '<div class="popup-acciones"><a href="' + (registro[COL_COMERCIO.MAPS_LINK] || "#") + '" target="_blank" class="btn-popup-nav"><i class="fa-solid fa-location-arrow"></i> Cómo llegar</a><a href="' + (registro[COL_COMERCIO.WHATSAPP] || "#") + '" target="_blank" class="btn-popup-wa"><i class="fa-brands fa-whatsapp"></i> Contactar</a></div></div>';
- return html;
-}
-// === FIN MÓDULO: CALCULO TIEMPOS Y POPUPS ===
-// === INICIO MÓDULO: MOTOR AUXILIAR Y SEO ===
-function inicializarBuscadorPredictivo() {
- const inputBuscar = document.getElementById("input-buscador-comercial");
- if (!inputBuscar) return;
- inputBuscar.addEventListener("input", (e) => {
- const termino = e.target.value.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
- if (termino === "") {
-  renderizarPinesComerciales(datosComerciosGlobales);
-  return;
- }
- const resultados = datosComerciosGlobales.filter(comercio => {
-  const nombre = (comercio[COL_COMERCIO.NOMBRE] || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const catalogo = (comercio[COL_COMERCIO.LISTA_PROD_SERV] || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const giroColor = (entornoActual === "productos") ? (comercio[COL_COMERCIO.CAPA_PRODUCTO] || "") : (comercio[COL_COMERCIO.CAPA_SERVICIO] || "");
-  const giro = giroColor.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  return nombre.includes(termino) || giro.includes(termino) || catalogo.includes(termino);
- });
- if (mapaNegosistema && capaPinesActivos) capaPinesActivos.clearLayers();
- renderizarPinesComerciales(resultados);
- });
-}
-
-function renderizarSliderOfertas(arregloOfertas) {
- const riel = document.getElementById("carrusel-riel");
- if (!riel) return;
- riel.innerHTML = "";
- const hoy = new Date();
- arregloOfertas.forEach(oferta => {
- const fInicio = new Date(oferta[COL_OFERTA.FECHA_INICIO]);
- const fVencimiento = new Date(oferta[COL_OFERTA.FECHA_FIN]);
- if (hoy >= fInicio && hoy <= fVencimiento) {
-  const tarjeta = document.createElement("div");
-  tarjeta.className = "tarjeta-oferta-carrusel";
-  tarjeta.style.backgroundImage = "url('./ofertas/default.png')";
-  tarjeta.innerHTML = '<div class="capa-texto-seo"><span class="oferta-resaltada-html">' + (oferta[COL_OFERTA.TEXTO_OFERTA] || "Dato no disponible") + '</span><p class="condicion-oferta-html">' + (oferta[COL_OFERTA.TEXTO_MENSAJE] || "") + '</p></div><button class="btn-ir-al-pin" onclick="enfocarPinNegocio(\'' + oferta[COL_OFERTA.ID] + '\')">Ver local &#128205;</button>';
-  riel.appendChild(tarjeta);
- }
- });
-}
-
-function enfocarPinNegocio(idNegocio) {
- if (!mapaNegosistema || !capaPinesActivos) return;
- let marcadorEncontrado = null;
- capaPinesActivos.eachLayer((layer) => {
- if (layer instanceof L.Marker) {
-  const comercioAsociado = datosComerciosGlobales.find(c => String(c[COL_COMERCIO.ID]).trim() === String(idNegocio).trim());
-  if (comercioAsociado) {
-  const coords = (comercioAsociado[COL_COMERCIO.COORDENADAS] || "").split(",");
-  if (coords.length === 2 && layer.getLatLng().lat === parseFloat(coords[0]) && layer.getLatLng().lng === parseFloat(coords[1])) {
-   marcadorEncontrado = layer;
-  }
-  }
- }
- });
- if (marcadorEncontrado) {
- mapaNegosistema.setView(marcadorEncontrado.getLatLng(), 17);
- marcadorEncontrado.openPopup();
- } else {
- const comercio = datosComerciosGlobales.find(c => String(c[COL_COMERCIO.ID]).trim() === String(idNegocio).trim());
- if (comercio) {
-  const coords = (comercio[COL_COMERCIO.COORDENADAS] || "").split(",");
-  if (coords.length === 2) {
-  mapaNegosistema.setView([parseFloat(coords[0]), parseFloat(coords[1])], 17);
-  renderizarPinesComerciales(datosComerciosGlobales);
-  reconstruirBotonesCapasInferiores();
-  }
- }
- }
-}
-
-function inicializarModoAnunciatePiloto() {
- Papa.parse(URL_CSV_PILOTO, {
- download: true,
- complete: function(results) {
-  datosComerciosGlobales = results.data.slice(1);
-  datosOfertasGlobales = []; 
-  entornoActual = "productos";
-  renderizarPinesComerciales(datosComerciosGlobales);
- }
- });
-}
-
-function alternarEntornoMapa(nuevoEntorno) {
- entornoActual = nuevoEntorno;
- const contenedorFiltros = document.getElementById("contenedor-filtros-global");
- if (contenedorFiltros) contenedorFiltros.className = (entornoActual === "productos") ? "modo-productos" : "modo-servicios";
- filtrarPinesPorCapasActivas();
+  fetch(`geo/${alcaldiaNombre}/${alcaldiaNombre}.geojson`)
+    .then(response => response.json())
+    .then(geojsonData => {
+      limpiarLienzoMilisegundos();
+      const capaGeo = L.geoJSON(geojsonData).addTo(capaPoligonosActivos);
+      mapaNegosistema.fitBounds(capaGeo.getBounds(), { padding: [30, 30] });
+      if (document.getElementById("texto-guia")) {
+        document.getElementById("texto-guia").innerText = "Selecciona una Colonia";
+      }
+      
+      Papa.parse(URL_CSV_COLONIAS, {
+        download: true,
+        complete: function(coloniasResults) {
+          const filasColonias = coloniasResults.data.slice(1);
+          const contenedorBotones = document.getElementById("contenedor-botones-dinamicos");
+          if (contenedorBotones) contenedorBotones.innerHTML = "";
+          filasColonias.forEach(colonia => {
+            const cadenaWKT = colonia[COL_COLONIA.WKT];
+            const nombreColonia = colonia[COL_COLONIA.NOMBRE];
+            const estatus = (colonia[COL_COLONIA.ESTATUS] || "").trim().toLowerCase();
+            if ((estatus === "activo" || estatus === "explorando") && cadenaWKT) {
+              const coords = transformarCoordenadasWKT(cadenaWKT);
+              if (coords.length === 0) return;
+              const nombreURLLimpio = nombreColonia.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "");
+              const urlDestino = `comercial.html?colonia=${nombreURLLimpio}&entorno=productos`;
+              const poligonocol = L.polygon(coords, { fillColor: estatus === "activo" ? "#2ecc71" : "#f1c40f", weight: 1.5, opacity: 1, color: "#ffffff", fillOpacity: 0.5 }).addTo(capaPoligonosActivos);
+              poligonocol.on("click", () => { window.location.href = urlDestino; });
+              if (contenedorBotones) {
+                const boton = document.createElement("button");
+                boton.className = "btn-accesibilidad-micro";
+                boton.innerText = nombreColonia;
+                boton.addEventListener("click", () => { window.location.href = urlDestino; });
+                contenedorBotones.appendChild(boton);
+              }
+            }
+          });
+        }
+      });
+    }).catch(err => { if (document.getElementById("texto-guia")) document.getElementById("texto-guia").innerText = "Error al cargar las colonias de esta región"; });
 }
 
 function configurarSwitchEntornos() {
- const btnSwitch = document.getElementById("btn-switch-entorno");
- if (!btnSwitch) return;
- btnSwitch.replaceWith(btnSwitch.cloneNode(true));
- const botonActivo = document.getElementById("btn-switch-entorno");
- botonActivo.addEventListener("click", function() {
- if (this.getAttribute("data-entorno") === "productos") {
-  this.setAttribute("data-entorno", "servicios");
-  this.innerHTML = 'Ver Productos <span id="emoji-switch">&#127822;</span>';
-  alternarEntornoMapa("servicios");
- } else {
-  this.setAttribute("data-entorno", "productos");
-  this.innerHTML = 'Ver Servicios <span id="emoji-switch">&#128736;</span>';
-  alternarEntornoMapa("productos");
- }
- reconstruirBotonesCapasInferiores();
- });
+  const btnSwitch = document.getElementById("btn-switch-entorno");
+  if (!btnSwitch) return;
+  
+  btnSwitch.replaceWith(btnSwitch.cloneNode(true));
+  const botonActivo = document.getElementById("btn-switch-entorno");
+  botonActivo.addEventListener("click", function() {
+    if (this.getAttribute("data-entorno") === "productos") {
+      this.setAttribute("data-entorno", "servicios");
+      this.innerHTML = 'Ver Productos <span id="emoji-switch">🍎</span>';
+      entornoActual = "servicios";
+    } else {
+      this.setAttribute("data-entorno", "productos");
+      this.innerHTML = 'Ver Servicios <span id="emoji-switch">🛠️</span>';
+      entornoActual = "productos";
+    }
+    filtrarPinesPorCapasActivas();
+  });
 }
-// === FIN MÓDULO: MOTOR AUXILIAR Y SEO ===
+// ==========================================================
+// SECCIÓN 4A: INGESTA HIPERLOCAL Y MODO PILOTO (JS)
+// ==========================================================
+function inicializarModoHiperlocal(coloniaFiltro) {
+  if (coloniaFiltro) {
+    // 🛠️ GRABACIÓN MAGNÉTICA AUTOMÁTICA
+    localStorage.setItem("ultima_colonia_explorada", coloniaFiltro);
+    
+    // Obtenemos la alcaldía actual directamente desde el texto guía o la URL macro
+    const paramsMacro = new URLSearchParams(window.location.search);
+    let alcaldiaOrigen = paramsMacro.get("alcaldia");
+    
+    // Si la URL de comercial no la trae, la deducimos de forma inteligente
+    if (!alcaldiaOrigen) {
+      // Como tu sistema navega en cascada, guardamos una marca genérica o la actual activa
+      alcaldiaOrigen = "iztapalapa"; // Alcaldía piloto por defecto del árbol de carpetas
+    }
+    
+    localStorage.setItem("ultima_alcaldia_explorada", alcaldiaOrigen);
+  }
+  
+  const elementoTitulo = document.getElementById("titulo-colonia-actual");
+  if (elementoTitulo && coloniaFiltro) {
+    elementoTitulo.innerText = "Colonia: " + coloniaFiltro.replace(/-/g, " ").toUpperCase();
+  }
+  // ... (el resto de tu código de abajo se queda exactamente igual)
+
+  
+  Papa.parse(URL_CSV_COLONIAS, {
+    download: true,
+    complete: function(coloniasResults) {
+      const filasColonias = coloniasResults.data.slice(1);
+      const contenedorAledanas = document.getElementById("contenedor-colonias-aledanas");
+      if (contenedorAledanas) {
+        contenedorAledanas.innerHTML = "";
+      }
+
+      // ========================================================
+      // ENFOQUE GIS: DIBUJO AUTOMÁTICO DE LA FRANJA NEGRA PERIMETRAL
+      // ========================================================
+      const filaColoniaActiva = filasColonias.find(c => {
+        const n = String(c[COL_COLONIA.NOMBRE]).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "");
+        return n === String(coloniaFiltro).toLowerCase().trim();
+      });
+
+      if (filaColoniaActiva && filaColoniaActiva[COL_COLONIA.WKT]) {
+        const coordsBorde = transformarCoordenadasWKT(filaColoniaActiva[COL_COLONIA.WKT]);
+        if (coordsBorde.length > 0) {
+          L.polygon(coordsBorde, {
+            color: "#000000",
+            weight: 4, // Franja negra robusta y bien definida
+            opacity: 0.9,
+            fillColor: "#000000",
+            fillOpacity: 0.03, // Fondo sutil casi transparente
+            dashArray: "1, 1",
+            interactive: false
+          }).addTo(mapaNegosistema);
+        }
+      }
+      // ========================================================
+
+      // Dibujo de los botones de las colonias vecinas (Salto de Rana)
+      filasColonias.forEach(colonia => {
+        const nombreColonia = colonia[COL_COLONIA.NOMBRE];
+        const estatus = (colonia[COL_COLONIA.ESTATUS] || "").trim().toLowerCase();
+        if (nombreColonia && (estatus === "activo" || estatus === "explorando")) {
+          const nombreURLLimpio = nombreColonia.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "");
+          if (nombreURLLimpio !== String(coloniaFiltro).toLowerCase().trim()) {
+            const botonVecino = document.createElement("button");
+            botonVecino.className = "btn-accesibilidad-dinamico"; 
+            botonVecino.innerText = nombreColonia;
+            botonVecino.style.borderLeft = estatus === "explorando" ? "4px solid #f1c40f" : "4px solid #2ecc71";
+            botonVecino.addEventListener("click", () => { 
+              window.location.href = "comercial.html?colonia=" + nombreURLLimpio + "&entorno=productos"; 
+            });
+            if (contenedorAledanas) contenedorAledanas.appendChild(botonVecino);
+          }
+        }
+      });
+
+      // DISPARADOR SECUENCIAL: Llama a la Sección 12 para cargar los negocios y filtros
+      cargarDatosComerciosHiperlocales(coloniaFiltro);
+
+    } // Cierre de complete
+  }); // Cierre de Papa.parse
+} // Cierre de la función inicializarModoHiperlocal
+function cargarDatosComerciosHiperlocales(coloniaFiltro) {
+  Papa.parse(URL_CSV_OFERTAS, {
+    download: true,
+    complete: function(ofertasResults) {
+      if (typeof renderizarSliderOfertas === "function") {
+        renderizarSliderOfertas(ofertasResults.data.slice(1));
+      }
+      
+      Papa.parse(URL_CSV_COMERCIOS, {
+        download: true,
+        complete: function(comerciosResults) {
+          const todasLasFilas = comerciosResults.data.slice(1);
+          datosComerciosGlobales = todasLasFilas.filter(f => {
+            const colCSV = (f[COL_COMERCIO.COLONIA] || "").toLowerCase().replace(/ /g, "");
+            return colCSV === String(coloniaFiltro).toLowerCase().replace(/ /g,"");
+          }).map(fila => {
+            let fNorm = [];
+            fNorm[COL_COMERCIO.ID] = fila[COL_COMERCIO.ID] || "";
+            fNorm[COL_COMERCIO.COLONIA] = fila[COL_COMERCIO.COLONIA] || "";
+            
+            const tipoMapaCrudo = String(fila[COL_COMERCIO.MAPA] || "").toLowerCase().trim();
+            fNorm[COL_COMERCIO.MAPA] = tipoMapaCrudo.includes("serv") ? "servicios" : "productos";
+            const capaFinalProd = String(fila[COL_COMERCIO.CAPA_PRODUCTO] || "").trim().toLowerCase();
+            const capaFinalServ = String(fila[COL_COMERCIO.CAPA_SERVICIO] || "").trim().toLowerCase();
+            
+            fNorm[COL_COMERCIO.CAPA_PRODUCTO] = (capaFinalProd === "" || capaFinalProd === "vacio") ? "base" : capaFinalProd;
+            fNorm[COL_COMERCIO.CAPA_SERVICIO] = (capaFinalServ === "" || capaFinalServ === "vacio") ? "base" : capaFinalServ;
+            
+            fNorm[COL_COMERCIO.NIVEL] = fila[COL_COMERCIO.NIVEL] || "1";
+            fNorm[COL_COMERCIO.NOMBRE] = fila[COL_COMERCIO.NOMBRE] || "";
+            fNorm[COL_COMERCIO.SLOGAN] = fila[COL_COMERCIO.SLOGAN] || "";
+            fNorm[COL_COMERCIO.LISTA_PROD_SERV] = fila[COL_COMERCIO.LISTA_PROD_SERV] || "";
+            fNorm[COL_COMERCIO.HORARIO] = fila[COL_COMERCIO.HORARIO] || "";
+            fNorm[COL_COMERCIO.REDES] = fila[COL_COMERCIO.REDES] || "";
+            fNorm[COL_COMERCIO.YOUTUBE] = fila[COL_COMERCIO.YOUTUBE] || "";
+            fNorm[COL_COMERCIO.WHATSAPP] = fila[COL_COMERCIO.WHATSAPP] || "";
+            fNorm[COL_COMERCIO.COORDENADAS] = fila[COL_COMERCIO.COORDENADAS] || "";
+            fNorm[COL_COMERCIO.MAPS_LINK] = fila[COL_COMERCIO.MAPS_LINK] || "";
+            return fNorm;
+          });
+          
+          entornoActual = "productos";
+          const btnSwitch = document.getElementById("btn-switch-entorno");
+          if (btnSwitch) {
+            btnSwitch.setAttribute("data-entorno", "productos");
+            btnSwitch.innerHTML = 'Ver Servicios <span id="emoji-switch">🛠️</span>'; 
+          }
+          reconstruirBotonesCapasInferiores();
+          if (typeof inicializarBuscadorPredictivo === "function") {
+            inicializarBuscadorPredictivo();
+          }
+          configurarSwitchEntornos();
+          window.esCargaInicialEntorno = true;
+          filtrarPinesPorCapasActivas();
+        }
+      });
+    }
+  });
+}
+
+function inicializarBuscadorPredictivo() {
+  const inputBuscar = document.getElementById("input-buscador-predictivo");
+  const contenedorResultados = document.getElementById("resultados-autocompletado");
+  if (!inputBuscar || !contenedorResultados) return;
+
+  inputBuscar.addEventListener("input", function() {
+    const query = this.value.toLowerCase().trim();
+    contenedorResultados.innerHTML = "";
+    if (!query) { 
+      contenedorResultados.style.display = "none"; 
+      return; 
+    }
+
+    const coincidencias = datosComerciosGlobales.filter(comercio => {
+      return String(comercio[COL_COMERCIO.NOMBRE]).toLowerCase().includes(query) || 
+             String(comercio[COL_COMERCIO.SLOGAN]).toLowerCase().includes(query) || 
+             String(comercio[COL_COMERCIO.LISTA_PROD_SERV]).toLowerCase().includes(query);
+    });
+
+    if (coincidencias.length === 0) {
+      contenedorResultados.innerHTML = `<div style="padding:12px; color:#64748b; font-size:13px; text-align:center;">No se encontraron resultados</div>`;
+    } else {
+      coincidencias.slice(0, 8).forEach(comercio => {
+        const item = document.createElement("div");
+        item.className = "item-predictivo-buscar";
+        const entCom = comercio[COL_COMERCIO.MAPA];
+        const capId = (entCom === "productos") ? comercio[COL_COMERCIO.CAPA_PRODUCTO] : comercio[COL_COMERCIO.CAPA_SERVICIO];
+        const conf = PALETAS_CAPAS_SISTEMA[entCom].find(c => c.id === capId) || {color:"#94a3b8", label:"General"};
+
+        item.innerHTML = `
+          <div>
+            <strong style="display:block; color:#0f172a;">${comercio[COL_COMERCIO.NOMBRE]}</strong>
+            <span style="font-size:11px; color:#64748b;">${comercio[COL_COMERCIO.SLOGAN].slice(0,40)}...</span>
+          </div>
+          <span class="badge-categoria-buscar" style="background-color:${conf.color};">${conf.label}</span>
+        `;
+
+        item.addEventListener("click", () => {
+          inputBuscar.value = comercio[COL_COMERCIO.NOMBRE];
+          contenedorResultados.style.display = "none";
+
+          if (entornoActual !== entCom) {
+            entornoActual = entCom;
+            const btn = document.getElementById("btn-switch-entorno");
+            if (btn) {
+              btn.setAttribute("data-entorno", entornoActual);
+              btn.innerHTML = entornoActual === "productos" ? 'Ver Servicios <span id="emoji-switch">🛠️</span>' : 'Ver Productos <span id="emoji-switch">🍎</span>';
+            }
+          }
+
+          const chk = document.querySelector(`.filtro-capa-chk[data-capa="${capId}"][data-tipo="${entCom}"]`);
+          if (chk) chk.checked = true;
+          filtrarPinesPorCapasActivas();
+
+          const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
+          if (coordRaw.includes(",")) {
+            const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
+            mapaNegosistema.flyTo([lat, lng], 17, { animate: true, duration: 1.2 });
+            setTimeout(() => {
+              window.contenedorPinesGlobal.eachLayer(function(layer) {
+                if (layer instanceof L.Marker && Math.abs(layer.getLatLng().lat - lat) < 0.0001 && Math.abs(layer.getLatLng().lng - lng) < 0.0001) {
+                  layer.openPopup();
+                }
+              });
+            }, 1300);
+          }
+        });
+        contenedorResultados.appendChild(item);
+      });
+    }
+    contenedorResultados.style.display = "block";
+  });
+
+  document.addEventListener("click", function(e) {
+    if (!inputBuscar.contains(e.target) && !contenedorResultados.contains(e.target)) {
+      contenedorResultados.style.display = "none";
+    }
+  });
+}
+function inicializarModoAnunciatePiloto() {
+  if (!window.contenedorPinesGlobal && mapaNegosistema) {
+    window.contenedorPinesGlobal = L.markerClusterGroup({ 
+      maxClusterRadius: 35, 
+      iconCreateFunction: iconCreateFunctionDona 
+    }).addTo(mapaNegosistema);
+  }
+  
+  Papa.parse(URL_CSV_PILOTO, { 
+    download: true, 
+    skipEmptyLines: true, 
+    error: function() { }, 
+    complete: function(results) {
+      const contenedorFiltros = document.getElementById("capas-inferiores-contenedor");
+      if (!results || !results.data || results.data.length <= 1) return;
+      if (contenedorFiltros) contenedorFiltros.innerHTML = "";
+      
+      datosComerciosGlobales = results.data.slice(1).map(fila => {
+        if (!fila || fila.length < 5) return null;
+        let fNorm = []; 
+        fNorm[COL_COMERCIO.ID] = fila[COL_COMERCIO.ID] || ""; 
+        fNorm[COL_COMERCIO.COLONIA] = fila[COL_COMERCIO.COLONIA] || "Piloto";
+        fNorm[COL_COMERCIO.MAPA] = String(fila[COL_COMERCIO.MAPA] || "").toLowerCase().trim().includes("serv") ? "servicios" : "productos";
+        
+        let cFinal = "base"; 
+        const rP = String(fila[COL_COMERCIO.CAPA_PRODUCTO] || "").trim().toLowerCase(); 
+        const rS = String(fila[COL_COMERCIO.CAPA_SERVICIO] || "").trim().toLowerCase();
+        
+        if (rP !== "vacio" && rP !== "") cFinal = rP; 
+        else if (rS !== "vacio" && rS !== "") cFinal = rS;
+        
+        if (fNorm[COL_COMERCIO.MAPA] === "productos") { 
+          fNorm[COL_COMERCIO.CAPA_PRODUCTO] = cFinal; 
+          fNorm[COL_COMERCIO.CAPA_SERVICIO] = "base"; 
+        } else { 
+          fNorm[COL_COMERCIO.CAPA_PRODUCTO] = "base"; 
+          fNorm[COL_COMERCIO.CAPA_SERVICIO] = cFinal; 
+        }
+        
+        fNorm[COL_COMERCIO.NIVEL] = fila[COL_COMERCIO.NIVEL] || "1"; 
+        fNorm[COL_COMERCIO.NOMBRE] = fila[COL_COMERCIO.NOMBRE] || "Negocio de Muestra";
+        fNorm[COL_COMERCIO.SLOGAN] = fila[COL_COMERCIO.SLOGAN] || ""; 
+        fNorm[COL_COMERCIO.LISTA_PROD_SERV] = fila[COL_COMERCIO.LISTA_PROD_SERV] || "";
+        fNorm[COL_COMERCIO.HORARIO] = fila[COL_COMERCIO.HORARIO] || ""; 
+        fNorm[COL_COMERCIO.REDES] = fila[COL_COMERCIO.REDES] || ""; 
+        fNorm[COL_COMERCIO.YOUTUBE] = fila[COL_COMERCIO.YOUTUBE] || "";
+        fNorm[COL_COMERCIO.WHATSAPP] = fila[COL_COMERCIO.WHATSAPP] || ""; 
+        fNorm[COL_COMERCIO.COORDENADAS] = fila[COL_COMERCIO.COORDENADAS] || ""; 
+        fNorm[COL_COMERCIO.MAPS_LINK] = fila[COL_COMERCIO.MAPS_LINK] || "";
+        return fNorm;
+      }).filter(item => item !== null);
+
+      entornoActual = datosComerciosGlobales.length > 0 ? datosComerciosGlobales[0][COL_COMERCIO.MAPA] : "productos";
+      const btn = document.getElementById("btn-switch-entorno");
+      if (btn) { 
+        btn.setAttribute("data-entorno", entornoActual); 
+        btn.innerHTML = entornoActual === "productos" ? 'Ver Servicios <span id="emoji-switch">🛠️</span>' : 'Ver Productos <span id="emoji-switch">🍎</span>'; 
+      }
+      reconstruirBotonesCapasInferiores(); 
+      configurarSwitchEntornos(); 
+      window.esCargaInicialEntorno = true; 
+      filtrarPinesPorCapasActivas();
+    }
+  });
+}
+function controlarFalloImagenSlide(img, id, secuencia, extensionesRestantes, rutaBase) {
+  const cola = [...extensionesRestantes]; 
+  if (cola.length > 0) { 
+    const sExt = cola.shift(); 
+    img.onerror = function() { controlarFalloImagenSlide(this, id, secuencia, cola, rutaBase); }; 
+    img.src = `${rutaBase}${id}-${secuencia}.${sExt}`; 
+  } else { 
+    const s = img.closest('.carrusel-item'); 
+    const c = img.closest('.popup-multimedia-carrusel'); 
+    if (s && c) { 
+      const idx = s.getAttribute('data-index'); 
+      s.remove(); 
+      const dot = c.querySelector(`.carrusel-dot[data-target="${idx}"]`); 
+      if (dot) dot.remove(); 
+      reajustarEstructuraCarrusel(c); 
+    } 
+  }
+}
+
+function reajustarEstructuraCarrusel(contenedor) {
+  const items = Array.from(contenedor.querySelectorAll('.carrusel-item')); 
+  const dots = Array.from(contenedor.querySelectorAll('.carrusel-dot'));
+  if (items.length <= 1) { 
+    contenedor.querySelectorAll('.carrusel-nav').forEach(b => b.style.display = 'none'); 
+    const dc = contenedor.querySelector('.carrusel-dots-container'); 
+    if (dc) dc.style.display = 'none'; 
+  }
+  if (items.length > 0 && !contenedor.querySelector('.carrusel-item.active')) { 
+    items[0].classList.add('active'); 
+    if (dots[0]) dots[0].classList.add('active'); 
+  }
+  dots.forEach((dot, idx) => { dot.setAttribute('onclick', `irASlideMultimedia(this, ${idx})`); });
+}
+
+function moverMultimedia(btn, dir) {
+  const c = btn.closest('.popup-multimedia-carrusel'); 
+  const items = Array.from(c.querySelectorAll('.carrusel-item')); 
+  const dots = Array.from(c.querySelectorAll('.carrusel-dot'));
+  if (items.length <= 1) return; 
+  let act = items.findIndex(i => i.classList.contains('active')); 
+  if (act === -1) act = 0;
+  items[act].classList.remove('active'); 
+  if (dots[act]) dots[act].classList.remove('active');
+  let n = (act + dir + items.length) % items.length; 
+  items[n].classList.add('active'); 
+  if (dots[n]) dots[n].classList.add('active');
+}
+
+function irASlideMultimedia(dot, index) {
+  const c = dot.closest('.popup-multimedia-carrusel'); 
+  c.querySelectorAll('.carrusel-item').forEach(i => i.classList.remove('active')); 
+  c.querySelectorAll('.carrusel-dot').forEach(d => d.classList.remove('active'));
+  const items = c.querySelectorAll('.carrusel-item'); 
+  if (items[index]) items[index].classList.add('active'); 
+  dot.classList.add('active');
+}
+
+function inyectarPopupComercioInteligente(comercio, nivel) {
+  const id = comercio[COL_COMERCIO.ID] || ""; 
+  const nombre = comercio[COL_COMERCIO.NOMBRE] || "Establecimiento"; 
+  const slogan = comercio[COL_COMERCIO.SLOGAN] || "";
+  const listaItems = comercio[COL_COMERCIO.LISTA_PROD_SERV] || ""; 
+  const horarios = comercio[COL_COMERCIO.HORARIO] || ""; 
+  const redes = comercio[COL_COMERCIO.REDES] || "";
+  const youtubeUrl = comercio[COL_COMERCIO.YOUTUBE] || ""; 
+  const whatsapp = comercio[COL_COMERCIO.WHATSAPP] || ""; 
+  const mapsLinkRaw = comercio[COL_COMERCIO.MAPS_LINK] || "";
+
+  // AISLAMIENTO DE ENLACES (REGEXP)
+  const wazeMatch = mapsLinkRaw.match(/https:\/\/waze\.com\/[^\s"<>]+/);
+  const googleMatch = mapsLinkRaw.match(/https:\/\/(?:www\.)?google\.com\/maps\/[^\s"<>]+/);
+  const linkWaze = wazeMatch ? wazeMatch[0] : null;
+  const linkGoogle = googleMatch ? googleMatch[0] : null;
+
+  if (nivel === 1) {
+    return `<div class="popup-nego-contenedor">
+      <p style="margin:0; font-size:12px; font-weight:bold; color:#64748B;">Directorio Base Comercial</p>
+      <h4 style="margin:4px 0 0 0; font-size:14px; color:#1E293B;">Ubicación en verificación</h4>
+    </div>`;
+  }
+  
+  let html = `<div class="popup-nego-contenedor" style="position:relative;">
+    <span class="popup-badge-id-tech">ID: ${id}</span>
+    <div class="popup-nego-header">
+      <h4 class="popup-nego-titulo">${nombre}</h4>`;
+  if (slogan) html += `<p class="popup-nego-slogan">"${slogan}"</p>`;
+  html += `</div>`;
+
+  if (nivel >= 3 && id) {
+    const esSim = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
+    const rBase = esSim ? "geo/iztapalapa/img-nego/anunciate/" : "geo/iztapalapa/img-nego/";
+    let sH = ""; let dH = ""; let sC = 0;
+    for (let i = 1; i <= 3; i++) {
+      sH += `<div class="carrusel-item ${sC===0?"active":""}" data-index="${i}"><img src="${rBase}${id}-${i}.png" class="carrusel-media-elemento" onerror="controlarFalloImagenSlide(this, '${id}', ${i}, ['jpg','jpeg','webp'], '${rBase}')" alt="Imagen ${i}"></div>`;
+      dH += `<span class="carrusel-dot ${sC===0?"active":""}" data-target="${i}" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
+      sC++;
+    }
+    if (nivel >= 4 && youtubeUrl) {
+      let vId = "";
+      if (youtubeUrl.includes("v=")) vId = youtubeUrl.split("v=")[1].split("&")[0];
+      else if (youtubeUrl.includes("youtu.be/")) vId = youtubeUrl.split("youtu.be/")[1].split("?")[0];
+      else if (youtubeUrl.includes("shorts/")) vId = youtubeUrl.split("shorts/")[1].split("?")[0];
+      
+      if (vId && vId.trim() !== "") { 
+        sH += `<div class="carrusel-item" data-index="video"><iframe src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento" allowfullscreen></iframe></div>`; 
+        dH += `<span class="carrusel-dot" data-target="video" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
+      }
+    }
+    html += `<div class="popup-multimedia-carrusel"><div class="carrusel-viewport">${sH}</div><button class="carrusel-nav prev" onclick="moverMultimedia(this, -1)">&#10094;</button><button class="carrusel-nav next" onclick="moverMultimedia(this, 1)">&#10095;</button><div class="carrusel-dots-container">${dH}</div></div>`;
+  }
+
+  if (listaItems) html += `<div class="popup-nego-seccion"><span class="popup-nego-label">${entornoActual==="productos"?"Lista de Productos":"Lista de Servicios"}:</span><span class="popup-nego-contenido">${listaItems}</span></div>`;
+  if (nivel >= 3 && horarios) html += `<div class="popup-nego-seccion"><span class="popup-nego-label">⏰ Horarios Oficiales:</span><span class="popup-nego-contenido">${horarios}</span></div>`;
+  if (nivel >= 4 && redes) html += `<div class="popup-nego-seccion"><span class="popup-nego-label">🌐 Canales Digitales:</span><a href="${redes}" target="_blank" style="color:#3498DB; font-size:12px; text-decoration:none; font-weight:500;">Visitar Enlace Oficial</a></div>`;
+
+  html += `<div class="popup-nego-botones">`;
+  if (nivel >= 4 && whatsapp) html += `<a href="${String(whatsapp).trim()}" target="_blank" class="popup-btn popup-btn-wa">WhatsApp</a>`;
+  if (linkGoogle) html += `<a href="${linkGoogle}" target="_blank" class="popup-btn popup-btn-gps">¿Cómo llegar?</a>`;
+  else if (linkWaze) html += `<a href="${linkWaze}" target="_blank" class="popup-btn popup-btn-gps" style="background-color:#30a5ff;">Waze</a>`;
+  else if (mapsLinkRaw && mapsLinkRaw.trim() !== "") html += `<a href="${mapsLinkRaw.replace(/"/g, "").trim()}" target="_blank" class="popup-btn popup-btn-gps">¿Cómo llegar?</a>`;
+  html += `</div></div>`;
+  return html;
+}
+
+function generarDatosEstructuradosSEO(comerciosFiltrados) {
+  const scriptPrevio = document.getElementById("seo-local-jsonld");
+  if (scriptPrevio) scriptPrevio.remove();
+  if (comerciosFiltrados.length === 0) return;
+
+  const scriptSEO = document.createElement("script");
+  scriptSEO.id = "seo-local-jsonld";
+  scriptSEO.type = "application/ld+json";
+
+  const estructuraData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": comerciosFiltrados.map((c, i) => {
+      const co = (c[COL_COMERCIO.COORDENADAS] || "").split(",");
+      return {
+        "@type": "ListItem",
+        "position": i + 1,
+        "item": {
+          "@type": "LocalBusiness",
+          "name": c[COL_COMERCIO.NOMBRE] || "Negocio Local",
+          "description": c[COL_COMERCIO.SLOGAN] || "Comercio de barrio.",
+          "telephone": c[COL_COMERCIO.WHATSAPP] || "",
+          "geo": co.length === 2 ? {
+            "@type": "GeoCoordinates",
+            "latitude": parseFloat(co[0]),
+            "longitude": parseFloat(co[1])
+          } : null
+        }
+      };
+    })
+  };
+
+  scriptSEO.text = JSON.stringify(estructuraData);
+  document.head.appendChild(scriptSEO);
+}

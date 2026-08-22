@@ -3,71 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Negosistema - Directorio Activo</title>
+    <title>Negosistema - Mapa Comercial Hiperlocal</title>
     
-    <!-- CARGA LOCAL: Iconos y fuentes nativas sin depender de CDNs externos -->
-    <link rel="stylesheet" href="css/all.min.css">
-    <link rel="stylesheet" href="css/leaflet.css">
-    <link rel="stylesheet" href="css/styles.css">
-
-    <!-- ANCLA SEO: Espacio reservado para la inyección del árbol JSON-LD -->
-    <script type="application/ld+json" id="seo-local-jsonld">{}</script>
+    <!-- Hojas de Estilo Locales -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/all.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-    <!-- Menú de navegación integrado -->
-    <nav class="menu-navegacion-sistema">
-        <div class="menu-enlaces">
-            <a href="index.html" class="enlace-nav">
-                <span class="icono-nav">🗺️</span> Mapa CDMX
-            </a>
-            <a href="comercial.html" class="enlace-nav activo">
-                <span class="icono-nav">🏪</span> Directorio Comercial
-            </a>
-            <a href="anunciate.html" class="enlace-nav">
-                <span class="icono-nav">📢</span> Anúnciate
-            </a>
-        </div>
-    </nav>
 
-    <!-- Slider Superior Independiente alimentado por CSV -->
-    <div id="slider-ofertas-contenedor" class="carrusel-ofertas">
-        <div id="carrusel-riel" class="riel-dinamico"></div>
-    </div>
+    <main class="app-container split-layout">
+        
+        <!-- BARRA LATERAL: Control de Entornos, Filtros Dinámicos y Navegación -->
+        <aside class="sidebar-panel">
+            <header class="sidebar-header">
+                <a href="index.html" class="btn-regresar">
+                    <i class="fa-solid fa-arrow-left"></i> Regresar al Inicio
+                </a>
+                <h2 id="titulo-colonia-actual" class="colonia-titulo">Cargando Colonia...</h2>
+            </header>
 
-    <!-- Cabecera dinámica para nombre de colonia y botones aledaños -->
-    <div class="encabezado-hiperlocal" style="padding: 15px; background: #ffffff; text-align: center; border-bottom: 1px solid #e2e8f0;">
-        <h2 id="titulo-colonia-actual" style="color: #2c3e50; margin: 5px 0; font-size: 1.8rem;">Cargando zona...</h2>
-        <p style="font-size: 13px; color: #7f8c8d; margin: 8px 0 5px 0; font-weight: bold;">Otras colonias disponibles:</p>
-        <div id="contenedor-colonias-aledanas" class="botones-grid" style="margin-top: 10px;"></div>
-    </div>
+            <!-- CONTROLLER PREMIUM: Switcher de Entornos (Productos / Servicios) -->
+            <div class="switch-container-box">
+                <button id="btn-switch-entorno" class="btn-switcher-premium" data-entorno="productos">
+                    Ver Servicios <span id="emoji-switch">🛠</span>
+                </button>
+            </div>
 
-    <!-- Panel de control interactivo sobre el mapa -->
-    <div class="panel-control-hiperlocal">
-        <div class="buscador-caja">
-            <input type="text" id="input-buscador-comercial" placeholder="Escribe comercio, ramo o producto (ej: tacos)...">
-        </div>
+            <!-- CONTENEDOR DE FILTROS: Capas Inferiores Dibujadas por JS -->
+            <section class="filters-section">
+                <h3><i class="fa-solid fa-filter"></i> Capas Comerciales</h3>
+                <div id="capas-inferiores-contenedor" class="capas-lista-scroll">
+                    <!-- Los switches e información se inyectan dinámicamente aquí -->
+                    <div class="loading-placeholder">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Cargando filtros...
+                    </div>
+                </div>
+            </section>
 
-        <div class="switch-entorno-contenedor">
-            <button id="btn-switch-entorno" class="btn-switch" data-entorno="productos">
-                Ver Servicios <span id="emoji-switch">🛠</span>
-            </button>
-        </div>
-    </div>
+            <!-- SECCIÓN: Colonias Vecinas o Aledañas -->
+            <section class="aledanas-section">
+                <h3><i class="fa-solid fa-map-signs"></i> Colonias Aledañas</h3>
+                <div id="contenedor-colonias-aledanas" class="aledanas-grid">
+                    <!-- Botones de colonias vecinas inyectados aquí -->
+                </div>
+            </section>
+        </aside>
 
-    <!-- Lienzo del mapa hiperlocal -->
-    <div id="mapa-comercial-contenedor"></div>
+        <!-- SECCIÓN CENTRAL: Canvas del Mapa Leaflet -->
+        <section class="map-view-section">
+            <div id="mapa-comercial-contenedor" class="map-canvas"></div>
+        </section>
 
-    <!-- Contenedor donde JS dibujará automáticamente los Checkboxes -->
-    <div id="capas-inferiores-contenedor" class="guia-grid" style="padding: 15px;"></div>
+    </main>
 
-    <!-- Footer con enlace legal -->
-    <footer class="footer-sistema">
-        <a href="terminos.html" class="enlace-legal">Términos y condiciones</a>
+    <!-- PIE DE PÁGINA ACCESIBLE FLOTANTE -->
+    <footer class="floating-footer">
+        <p>&copy; 2026 Negosistema. <a href="terminos.html">Términos y Condiciones</a></p>
     </footer>
 
-    <!-- Scripts de inicialización y control -->
+    <!-- Scripts Locales -->
     <script src="js/leaflet.js"></script>
     <script src="js/papaparse.min.js"></script>
+    <!-- Cerebro lógico central -->
     <script src="js/motor-mapas.js"></script>
 </body>
 </html>

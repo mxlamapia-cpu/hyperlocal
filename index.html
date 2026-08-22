@@ -3,47 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Negosistema - Mapa Geográfico</title>
-    <!-- Estilos de Leaflet -->
-    <link rel="stylesheet" href="css/leaflet.css">
-    <!-- Estilos personalizados de la plataforma -->
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Negosistema - Buscador Regional</title>
+    
+    <!-- Hojas de Estilo Locales según tu Esqueleto -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/all.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
-        <!-- Menú de navegación del sistema -->
-    <nav class="menu-navegacion-sistema">
-        <div class="menu-enlaces">
-            <a href="index.html" class="enlace-nav activo">
-                <span class="icono-nav">🗺️</span> Mapa CDMX
-            </a>
-            <a href="comercial.html" class="enlace-nav">
-                <span class="icono-nav">🏪</span> Directorio Comercial
-            </a>
-            <a href="anunciate.html" class="enlace-nav">
+    <!-- Contenedor Principal de la UI -->
+        <main class="app-container">
+        
+        <!-- Encabezado de Marca -->
+        <header class="main-header">
+            <div class="brand">
+                <i class="fa-solid fa-map-location-dot brand-icon"></i>
+                <div>
+                     <a href="anunciate.html" class="enlace-nav">
                 <span class="icono-nav">📢</span> Anúnciate
             </a>
-        </div>
-    </nav>
-    <!-- Barra superior para inyección dinámica de botones -->
-    <div id="barra-accesibilidad" class="accesibilidad-contenedor">
-        <div class="instruccion-navegacion">
-            <span id="texto-guia">Selecciona una Alcaldía o Colonia</span>
-        </div>
-        <!-- El script auto-construirá los botones aquí desde Sheets -->
-        <div id="contenedor-botones-dinamicos" class="botones-grid"></div>
-    </div>
-    <!-- Contenedor principal donde Leaflet renderizará los polígonos -->
-    <div id="mapa-macro-contenedor"></div>
+                    <h1>Negosistema</h1>
+                    <p class="subtitle">Buscador Macro de Alcaldías CDMX</p>
+                </div>
+            </div>
+        </header>
 
-    <!-- Librerías de soporte externas -->
+        <!-- Sección del Mapa Macro -->
+        <section class="map-section">
+            <div id="mapa-macro-contenedor" class="map-canvas"></div>
+        </section>
+
+        <!-- Panel de Control y Accesibilidad -->
+        <section class="control-panel">
+            <div class="panel-card">
+                <h2 id="texto-guia"><i class="fa-solid fa-layer-group"></i> Selecciona una Región o Alcaldía</h2>
+                <p class="panel-desc">Haz clic directamente sobre el mapa o utiliza los accesos rápidos inferiores para explorar las colonias.</p>
+                
+                <!-- Botones Dinámicos inyectados por JavaScript -->
+                <div id="contenedor-botones-dinamicos" class="buttons-grid">
+                    <div class="loading-placeholder">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Cargando regiones activas...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pie de Página con Enlace a Términos -->
+        <footer class="main-footer">
+            <p>&copy; 2026 Negosistema. Todos los derechos reservados. <a href="terminos.html">Términos y Condiciones</a></p>
+        </footer>
+
+    </main>
+
+    <!-- Scripts Locales según tu Esqueleto -->
     <script src="js/leaflet.js"></script>
     <script src="js/papaparse.min.js"></script>
-
-    <!-- Motor unificado de la plataforma -->
+    <!-- Tu cerebro lógico central -->
     <script src="js/motor-mapas.js"></script>
-        <!-- Footer con enlace legal único -->
-    <footer class="footer-sistema">
-        <a href="terminos.html" class="enlace-legal">Términos y condiciones</a>
-    </footer>
 </body>
 </html>
