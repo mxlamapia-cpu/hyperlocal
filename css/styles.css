@@ -1370,39 +1370,39 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
    ARQUITECTURA DE FILTROS RESPONSIVOS (PC -> MEDIA -> MOVIL)
    ======================================================== */
 
-/* --- 🖥️ ESTADO 1: VISTA PC COMPLETA (Estilo original recuperado) --- */
+/* --- 🖥️ ESTADO 1: VISTA PC COMPLETA --- */
 body.pagina-scroll-ventas #capas-inferiores-contenedor {
   display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
-  gap: 12px !important;
+  gap: 12px !important; /* */
 }
 
 body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
   display: flex !important;
   align-items: center !important;
   background: #ffffff !important;
-  padding: 12px !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 8px !important;
+  padding: 12px !important; /* */
+  border: 1px solid #e2e8f0 !important; /* */
+  border-radius: 8px !important; /* */
 }
 
-/* --- 📐 ESTADO 2: PANTALLA MEDIANA / PC RECORTE (Quitar descripciones largas) --- */
+/* --- 📐 ESTADO 2: PC EN PANTALLA RECORTADA --- */
 @media (max-width: 1024px) {
   body.pagina-scroll-ventas #capas-inferiores-contenedor {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
   }
   
-  /* Ocultamos la descripción de negocios asociados de la capa (...) */
+  /* Ocultamos de forma automática el texto descriptivo (...) */
   .desc-filtro-span {
     display: none !important;
   }
   
   .texto-filtro-info {
-    font-size: 12px !important;
+    font-size: 13px !important;
   }
 }
 
-/* --- 📱 ESTADO 3: SMARTPHONES / CELULARES (Ultra Compacto: Solo Switch + Emoji) --- */
+/* --- 📱 ESTADO 3: CELULARES Y SMARTPHONES --- */
 @media (max-width: 480px) {
   body.pagina-scroll-ventas #capas-inferiores-contenedor {
     display: flex !important;
@@ -1415,56 +1415,61 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
   body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
     display: inline-flex !important;
     align-items: center !important;
-    padding: 6px 10px !important;
-    border-radius: 30px !important; /* Estilo píldora/burbuja en móvil */
+    padding: 6px 12px !important;
+    border-radius: 30px !important; /* Transforma la barra en una píldora circular compacta */
     background: #ffffff !important;
   }
 
-  /* Ocultamos el nombre de la capa en celular por defecto para que quepan decenas en pantalla */
+  /* Ocultamos el texto de la capa para que solo quede el [ Switch ] + [ Emoji ] */
   .label-filtro-span {
     display: none !important;
   }
   
   .texto-filtro-info {
-    margin-left: 4px !important;
+    margin-left: 2px !important;
     cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
   }
 
-  /* --- 🔍 SISTEMA CLICK DESPLEGABLE DE DETALLES EN MÓVIL --- */
-  /* Cuando el usuario presiona el texto al costado del emoji, el botón se expande */
+  /* --- 🔍 INTERACCIÓN MÓVIL: TARJETA FLOTANTE AL DAR CLIC --- */
   .texto-filtro-info.expandido-movil {
     position: fixed !important;
-    bottom: 20px !important;
+    bottom: 24px !important;
     left: 5% !important;
     width: 90% !important;
-    background: #0f172a !important; /* Menú flotante elegante oscuro */
+    background: #0f172a !important; /* Fondo gris oscuro premium corporativo */
     color: #ffffff !important;
-    padding: 14px !important;
+    padding: 16px !important;
     border-radius: 12px !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
-    z-index: 99999 !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3) !important;
+    z-index: 99999 !important; /* Capa sobre el mapa */
     display: block !important;
-    animation: entradaFiltroPop 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation: entradaFlotantePop 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
-  .texto-filtro-info.expandido-movil strong {
+  /* Forzamos a que aparezcan los textos ocultos dentro de la tarjeta flotante */
+  .texto-filter-info.expandido-movil strong {
     color: #ffffff !important;
-    display: block !important;
+  }
+  
+  .texto-filtro-info.expandido-movil .label-filtro-span {
+    display: inline-block !important;
+    color: #ffffff !important;
     font-size: 14px !important;
-    margin-bottom: 4px !important;
+    font-weight: 700 !important;
+    margin-right: 4px;
   }
 
-  .texto-filtro-info.expandido-movil .label-filtro-span,
   .texto-filtro-info.expandido-movil .desc-filtro-span {
-    display: inline !important; /* Forzamos a que aparezca toda la info de la capa */
-    color: #94a3b8 !important;
+    display: block !important; /* Pone la descripción abajo del título */
+    color: #94a3b8 !important; /* Color gris suave nítido */
+    font-size: 12px !important;
+    margin-top: 4px !important;
+    font-weight: 400 !important;
   }
 }
 
-/* Animación de emergencia flotante para el menú móvil */
-@keyframes entradaFiltroPop {
-  from { transform: translateY(20px); opacity: 0; }
+/* Animación de entrada suave para la tarjeta móvil */
+@keyframes entradaFlotantePop {
+  from { transform: translateY(30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }

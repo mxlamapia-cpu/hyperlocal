@@ -207,31 +207,41 @@ function reconstruirBotonesCapasInferiores() {
     
     capasEntorno.forEach(capa => {
       const itemFiltro = document.createElement("div");
-      itemFiltro.className = "guia-item-filtro guia-item-filter";
+      itemFiltro.className = "guia-item-filtro guia-item-filter"; //
 
       // Atributo técnico para alternar visibilidad instantánea con display:none/flex
       itemFiltro.setAttribute("data-entorno-origen", entorno);
       
+      // Ajuste estructural: Separamos cada dato en un span con su propia clase de control
       itemFiltro.innerHTML = `
         <label class="toggle-switch">
           <input type="checkbox" class="filtro-capa-chk" data-tipo="${entorno}" data-capa="${capa.id}" checked>
           <span class="slider-palanca visual-${capa.id}" style="background-color: ${capa.color};"></span>
         </label>
-        <div class="texto-filtro-info" style="margin-left: 10px;">
-          <strong>${capa.emoji} ${capa.label}:</strong>
-          <span>(${capa.desc})</span>
+        <div class="texto-filtro-info" style="margin-left: 10px;" onclick="alternarDetalleFiltroMovil(this)">
+          <strong>
+            <span class="emoji-filtro-span">${capa.emoji}</span> 
+            <span class="label-filtro-span">${capa.label}:</span>
+          </strong>
+          <span class="desc-filtro-span">(${capa.desc})</span>
         </div>
-      `;
+      `; //
       
-      itemFiltro.querySelector(".filtro-capa-chk").addEventListener("change", filtrarPinesPorCapasActivas);
-      contenedor.appendChild(itemFiltro);
+      itemFiltro.querySelector(".filtro-capa-chk").addEventListener("change", filtrarPinesPorCapasActivas); //
+      contenedor.appendChild(itemFiltro); //
     });
   });
-    filtrarPinesPorCapasActivas(); 
+  filtrarPinesPorCapasActivas(); //
 }
-// Nueva microfunción JS de apoyo para celulares (Abre la descripción al tocar a un costado)
+
+// Microfunción JS que abre o cierra la tarjeta flotante al dar clic en celulares
 function alternarDetalleFiltroMovil(elemento) {
   if (window.innerWidth <= 480) {
+    // Si ya hay un elemento abierto en pantalla, lo cerramos antes de abrir el nuevo
+    document.querySelectorAll('.texto-filtro-info').forEach(el => {
+      if (el !== elemento) el.classList.remove('expandido-movil');
+    });
+    // Alternamos el estado del elemento actual
     elemento.classList.toggle("expandido-movil");
   }
 }
