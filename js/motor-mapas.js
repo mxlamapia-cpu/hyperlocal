@@ -161,19 +161,21 @@ function renderizarPinesComerciales(arregloComercios) {
       }
     });
 
-     const opcionesPopup = {
+ const opcionesPopup = {
  autoPan: true,
- autoPanPadding: L.point(50, 50),
+ autoPanPadding: L.point(15, 15), // Ajuste quirúrgico para pantallas compactas
  closeOnClick: true,
- // En dispositivos móviles anulamos el "tap" handler nativo que causa doble disparo
+ className: 'popup-movil-optimizado', // Clase de control CSS
+ maxHeight: 420, // Techo rígido para evitar colapsos
  tap: !L.Browser.mobile 
  };
-
-    marcador.bindPopup(
-      typeof inyectarPopupComercioInteligente === "function" 
-        ? inyectarPopupComercioInteligente(comercio, nivelPuro) 
-        : `<b>${comercio[COL_COMERCIO.NOMBRE] || "Negocio"}</b>`
-    );
+ 
+ marcador.bindPopup(
+ typeof inyectarPopupComercioInteligente === "function" 
+ ? inyectarPopupComercioInteligente(comercio, nivelPuro) 
+ : `<b>${comercio[COL_COMERCIO.NOMBRE] || "Negocio"}</b>`,
+ opcionesPopup // IMPORTANTE: Agregamos la configuración que le faltaba a tu bindPopup
+ );
 
     if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
     marcaroresGIS.push(marcador);
@@ -227,6 +229,13 @@ function reconstruirBotonesCapasInferiores() {
   });
     filtrarPinesPorCapasActivas(); 
 }
+// Nueva microfunción JS de apoyo para celulares (Abre la descripción al tocar a un costado)
+function alternarDetalleFiltroMovil(elemento) {
+  if (window.innerWidth <= 480) {
+    elemento.classList.toggle("expandido-movil");
+  }
+}
+
 // FUNCIÓN MAESTRA GLOBAL GIS: Construye las donas SVG para cualquier clusterizador activo
 function iconCreateFunctionDona(cluster) {
   const markers = cluster.getAllChildMarkers();
@@ -842,74 +851,195 @@ function irASlideMultimedia(dot, index) {
 }
 
 function inyectarPopupComercioInteligente(comercio, nivel) {
-  const id = comercio[COL_COMERCIO.ID] || ""; 
-  const nombre = comercio[COL_COMERCIO.NOMBRE] || "Establecimiento"; 
-  const slogan = comercio[COL_COMERCIO.SLOGAN] || "";
-  const listaItems = comercio[COL_COMERCIO.LISTA_PROD_SERV] || ""; 
-  const horarios = comercio[COL_COMERCIO.HORARIO] || ""; 
-  const redes = comercio[COL_COMERCIO.REDES] || "";
-  const youtubeUrl = comercio[COL_COMERCIO.YOUTUBE] || ""; 
-  const whatsapp = comercio[COL_COMERCIO.WHATSAPP] || ""; 
-  const mapsLinkRaw = comercio[COL_COMERCIO.MAPS_LINK] || "";
+ const id = comercio[COL_COMERCIO.ID] || ""; 
+ const nombre = comercio[COL_COMERCIO.NOMBRE] || "Establecimiento"; 
+ const slogan = comercio[COL_COMERCIO.SLOGAN] || "";
+ const listaItems = comercio[COL_COMERCIO.LISTA_PROD_SERV] || ""; 
+ const horarios = comercio[COL_COMERCIO.HORARIO] || ""; 
+ const redes = comercio[COL_COMERCIO.REDES] || "";
+ const youtubeUrl = comercio[COL_COMERCIO.YOUTUBE] || ""; 
+ const whatsapp = comercio[COL_COMERCIO.WHATSAPP] || ""; 
+ const mapsLinkRaw = comercio[COL_COMERCIO.MAPS_LINK] || "";
 
-  // AISLAMIENTO DE ENLACES (REGEXP)
-  const wazeMatch = mapsLinkRaw.match(/https:\/\/waze\.com\/[^\s"<>]+/);
-  const googleMatch = mapsLinkRaw.match(/https:\/\/(?:www\.)?google\.com\/maps\/[^\s"<>]+/);
-  const linkWaze = wazeMatch ? wazeMatch[0] : null;
-  const linkGoogle = googleMatch ? googleMatch[0] : null;
+ const wazeMatch = mapsLinkRaw.match(/https:\/\/waze\.com\/[^\s"<>]+/);
+ const googleMatch = mapsLinkRaw.match(/https:\/\/(?:www\.)?google\.com\/maps\/[^\s"<>]+/);
+ const linkWaze = wazeMatch ? wazeMatch[0] : null;
+ const linkGoogle = googleMatch ? googleMatch[0] : null;
 
-  if (nivel === 1) {
-    return `<div class="popup-nego-contenedor">
-      <p style="margin:0; font-size:12px; font-weight:bold; color:#64748B;">Directorio Base Comercial</p>
-      <h4 style="margin:4px 0 0 0; font-size:14px; color:#1E293B;">Ubicación en verificación</h4>
-    </div>`;
-  }
-  
- // REDISEÑO DE UI/UX: El ID ahora se integra a la par del Nombre del Negocio, eliminando el prefijo técnico "ID"
+ if (nivel === 1) {
+ return `<div class="popup-nego-contenedor">
+ <p style="margin:0; font-size:12px; font-weight:bold; color:#64748B;">Directorio Base Comercial</p>
+ <h4 style="margin:4px 0 0 0; font-size:14px; color:#1E293B;">Ubicación en verificación</h4>
+ </div>`;
+ }
+ 
+ // CABECERA FIJA Y COMPACTA
  let html = `<div class="popup-nego-contenedor" style="position:relative;">
  <div class="popup-nego-header">
  <div class="ui-titulo-fila-contenedor" style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
  <h4 class="popup-nego-titulo" style="margin: 0; font-size: 16px; font-weight: 800; color: #0F172A; line-height: 1.2;">${nombre}</h4>
  <span class="popup-id-disenado" style="font-size: 14px; font-weight: 800; color: #64748B; font-family: monospace; background: #F1F5F9; padding: 2px 6px; border-radius: 4px; border: 1px solid #E2E8F0;">#${id}</span>
  </div>`;
-  if (slogan) html += `<p class="popup-nego-slogan">"${slogan}"</p>`;
-  html += `</div>`;
+ if (slogan) html += `<p class="popup-nego-slogan">"${slogan}"</p>`;
+ html += `</div>`;
 
-  if (nivel >= 3 && id) {
-    const esSim = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
-    const rBase = esSim ? "geo/iztapalapa/img-nego/anunciate/" : "geo/iztapalapa/img-nego/";
-    let sH = ""; let dH = ""; let sC = 0;
-    for (let i = 1; i <= 3; i++) {
-      sH += `<div class="carrusel-item ${sC===0?"active":""}" data-index="${i}"><img src="${rBase}${id}-${i}.png" class="carrusel-media-elemento" onerror="controlarFalloImagenSlide(this, '${id}', ${i}, ['jpg','jpeg','webp'], '${rBase}')" alt="Imagen ${i}"></div>`;
-      dH += `<span class="carrusel-dot ${sC===0?"active":""}" data-target="${i}" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
-      sC++;
-    }
-    if (nivel >= 4 && youtubeUrl) {
-      let vId = "";
-      if (youtubeUrl.includes("v=")) vId = youtubeUrl.split("v=")[1].split("&")[0];
-      else if (youtubeUrl.includes("youtu.be/")) vId = youtubeUrl.split("youtu.be/")[1].split("?")[0];
-      else if (youtubeUrl.includes("shorts/")) vId = youtubeUrl.split("shorts/")[1].split("?")[0];
-      
-      if (vId && vId.trim() !== "") { 
-        sH += `<div class="carrusel-item" data-index="video"><iframe src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento" allowfullscreen></iframe></div>`; 
-        dH += `<span class="carrusel-dot" data-target="video" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
-      }
-    }
-    html += `<div class="popup-multimedia-carrusel"><div class="carrusel-viewport">${sH}</div><button class="carrusel-nav prev" onclick="moverMultimedia(this, -1)">&#10094;</button><button class="carrusel-nav next" onclick="moverMultimedia(this, 1)">&#10095;</button><div class="carrusel-dots-container">${dH}</div></div>`;
-  }
+ // CONTENEDOR DE ACORDEONES (AJUSTE 2)
+ html += `<div class="popup-acordeon-grupo">`;
 
-  if (listaItems) html += `<div class="popup-nego-seccion"><span class="popup-nego-label">${entornoActual==="productos"?"Lista de Productos":"Lista de Servicios"}:</span><span class="popup-nego-contenido">${listaItems}</span></div>`;
-  if (nivel >= 3 && horarios) html += `<div class="popup-nego-seccion"><span class="popup-nego-label">⏰ Horarios Oficiales:</span><span class="popup-nego-contenido">${horarios}</span></div>`;
-  if (nivel >= 4 && redes) html += `<div class="popup-nego-seccion"><span class="popup-nego-label">🌐 Canales Digitales:</span><a href="${redes}" target="_blank" style="color:#3498DB; font-size:12px; text-decoration:none; font-weight:500;">Visitar Enlace Oficial</a></div>`;
+ // SECCIÓN 1: MULTIMEDIA (FOTOS Y VIDEO)
+ if (nivel >= 3 && id) {
+ html += `
+ <div class="acordeon-item">
+ <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this, 'multimedia')">
+ <span>📸 Fotos y Video</span> <i class="flecha-icono">▼</i>
+ </button>
+ <div class="acordeon-contenido cont-multimedia">`;
+ 
+ const esSim = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
+ const rBase = esSim ? "geo/iztapalapa/img-nego/anunciate/" : "geo/iztapalapa/img-nego/";
+ let sH = ""; let dH = ""; let sC = 0;
+ 
+ for (let i = 1; i <= 3; i++) {
+ sH += `<div class="carrusel-item ${sC===0?'active':''}" data-index="${i}"><img data-src="${rBase}${id}-${i}.png" class="carrusel-media-elemento lazy-popup-img" onerror="controlarFalloImagenSlide(this, '${id}', ${i}, ['jpg','jpeg','webp'], '${rBase}')" alt="Imagen ${i}"></div>`;
+ dH += `<span class="carrusel-dot ${sC===0?'active':''}" data-target="${i}" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
+ sC++;
+ }
+ if (nivel >= 4 && youtubeUrl) {
+ let vId = "";
+ if (youtubeUrl.includes("v=")) vId = youtubeUrl.split("v=")[1].split("&")[0];
+ else if (youtubeUrl.includes("youtu.be/")) vId = youtubeUrl.split("youtu.be/")[1].split("?")[0];
+ else if (youtubeUrl.includes("shorts/")) vId = youtubeUrl.split("shorts/")[1].split("?")[0];
+ 
+ if (vId && vId.trim() !== "") { 
+ sH += `<div class="carrusel-item" data-index="video"><iframe data-src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento lazy-popup-iframe" allowfullscreen></iframe></div>`; 
+ dH += `<span class="carrusel-dot" data-target="video" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
+ }
+ }
+ html += `<div class="popup-multimedia-carrusel"><div class="carrusel-viewport">${sH}</div><button class="carrusel-nav prev" onclick="moverMultimedia(this, -1)">&#10094;</button><button class="carrusel-nav next" onclick="moverMultimedia(this, 1)">&#10095;</button><div class="carrusel-dots-container">${dH}</div></div>`;
+ html += `</div></div>`;
+ }
 
-  html += `<div class="popup-nego-botones">`;
-  if (nivel >= 4 && whatsapp) html += `<a href="${String(whatsapp).trim()}" target="_blank" class="popup-btn popup-btn-wa">WhatsApp</a>`;
-  if (linkGoogle) html += `<a href="${linkGoogle}" target="_blank" class="popup-btn popup-btn-gps">¿Cómo llegar?</a>`;
-  else if (linkWaze) html += `<a href="${linkWaze}" target="_blank" class="popup-btn popup-btn-gps" style="background-color:#30a5ff;">Waze</a>`;
-  else if (mapsLinkRaw && mapsLinkRaw.trim() !== "") html += `<a href="${mapsLinkRaw.replace(/"/g, "").trim()}" target="_blank" class="popup-btn popup-btn-gps">¿Cómo llegar?</a>`;
-  html += `</div></div>`;
-  return html;
+ // SECCIÓN 2: LISTA DE PRODUCTOS O SERVICIOS
+ if (listaItems) {
+ html += `
+ <div class="acordeon-item">
+ <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
+ <span>📋 ${entornoActual==="productos"?"Productos":"Servicios"}</span> <i class="flecha-icono">▼</i>
+ </button>
+ <div class="acordeon-contenido">
+ <div class="popup-nego-seccion"><span class="popup-nego-contenido">${listaItems}</span></div>
+ </div>
+ </div>`;
+ }
+
+ // SECCIÓN 3: HORARIOS (BASE PARA EL AJUSTE 3 DEL CRONÓMETRO)
+ if (nivel >= 3 && horarios) {
+ html += `
+ <div class="acordeon-item">
+ <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
+ <span>⏰ Horario de Atención</span> <i class="flecha-icono">▼</i>
+ </button>
+ <div class="acordeon-contenido">
+ <div class="popup-nego-seccion">
+ <div id="cronometro-contenedor-modulo" data-horario-crudo="${horarios}">
+ <span class="reloj-cargando">Calculando...</span>
+ </div>
+ <span class="popup-nego-label" style="margin-top:6px;">Horario Completo:</span>
+ <span class="popup-nego-contenido">${horarios}</span>
+ </div>
+ </div>
+ </div>`;
+ }
+
+ // SECCIÓN 4: REDES SOCIALES
+ if (nivel >= 4 && redes) {
+ html += `
+ <div class="acordeon-item">
+ <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
+ <span>🌐 Canales Digitales</span> <i class="flecha-icono">▼</i>
+ </button>
+ <div class="acordeon-contenido">
+ <div class="popup-nego-seccion"><a href="${redes}" target="_blank" class="enlace-web-profesional">Visitar Sitio Web Oficial</a></div>
+ </div>
+ </div>`;
+ }
+
+ html += `</div>`; // Cierre de popup-acordeon-grupo
+
+  // BOTONES DE ACCIÓN ICONOGRÁFICOS CÍRCULARES (CON ETIQUETA UI)
+ html += `
+ <div class="popup-seccion-enlaces-contenedor">
+   <span class="popup-enlaces-subtitulo-ui">Contacto y Navegación</span>
+   <div class="popup-nego-botones-circulares">
+ `;
+
+ 
+ // Botón 1: WhatsApp (Círculo Puro)
+ if (nivel >= 4 && whatsapp && String(whatsapp).trim() !== "") {
+ html += `<a href="${String(whatsapp).trim()}" target="_blank" class="btn-circular-ui btn-ui-wa" title="WhatsApp">
+ <svg class="icono-svg-puro" viewBox="0 0 24 24"><path fill="currentColor" d="M12.004 2c-5.523 0-10 4.477-10 10a9.95 9.95 0 0 0 1.393 5.075L2 22l5.121-1.344A9.95 9.95 0 0 0 12.004 22c5.523 0 10-4.477 10-10s-4.477-10-10-10zm0 1.5c4.687 0 8.5 3.813 8.5 8.5s-3.813 8.5-8.5 8.5a8.45 8.45 0 0 1-4.321-1.185l-.309-.181-3.053.801.815-2.973-.2-.33A8.44 8.44 0 0 1 3.504 12c0-4.687 3.813-8.5 8.5-8.5zm-3.553 4.54a.65.65 0 0 0-.47.22c-.156.17-.597.583-.597 1.42s.61 1.64.695 1.76c.086.115 1.177 1.796 2.85 2.517.399.172.71.274.953.351.401.127.766.109 1.054.066.32-.047 1.055-.43 1.203-.844.148-.414.148-.77.104-.844-.044-.074-.162-.117-.339-.205-.178-.089-1.055-.52-1.218-.58-.163-.059-.281-.088-.4.089-.118.177-.457.577-.56.695-.104.118-.207.133-.385.044-.177-.089-.75-.276-1.428-.881-.527-.47-.883-.995-1.06-1.113-.178-.118-.019-.182.07-.27.079-.08.177-.207.266-.31.089-.104.118-.178.177-.296.059-.119.03-.222-.015-.311-.044-.088-.4-1.02-.548-1.378-.144-.347-.291-.3-.4-.3z"/></svg>
+ </a>`;
+ }
+ 
+ // Botón 2: Google Maps (Círculo Puro)
+ if (linkGoogle) {
+ html += `<a href="${linkGoogle}" target="_blank" class="btn-circular-ui btn-ui-gmaps" title="Google Maps">
+ <svg class="icono-svg-puro" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+ </a>`;
+ } else if (mapsLinkRaw && mapsLinkRaw.trim() !== "" && !linkWaze) {
+ html += `<a href="${mapsLinkRaw.replace(/"/g, "").trim()}" target="_blank" class="btn-circular-ui btn-ui-gmaps" title="Ubicación">
+ <svg class="icono-svg-puro" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+ </a>`;
+ }
+
+ // Botón 3: Waze (Círculo Puro - Se renderiza de forma independiente si existe en la cadena)
+ if (linkWaze) {
+ html += `<a href="${linkWaze}" target="_blank" class="btn-circular-ui btn-ui-waze" title="Waze">
+ <svg class="icono-svg-puro" viewBox="0 0 24 24"><path fill="currentColor" d="M22.043 12.338a2.533 2.533 0 0 0-2.47-1.996h-.565a6.953 6.953 0 0 0-6.1-5.32 6.955 6.955 0 0 0-7.394 6.924c0 .324.025.644.07.96a2.235 2.235 0 0 0-.256 4.316l.228.046a2.23 2.23 0 0 0 4.195-.81h3.454a2.234 2.234 0 0 0 4.2.03l.067-.03a2.232 2.232 0 0 0 4.103-.925 2.53 2.53 0 0 0 .468-3.215zm-15.11 1.637a1.18 1.18 0 1 1 0-2.36 1.18 1.18 0 0 1 0 2.36zm6.208 0a1.18 1.18 0 1 1 0-2.36 1.18 1.18 0 0 1 0 2.36z"/></svg>
+ </a>`;
+ }
+ 
+ html += `</div></div>`;
+ return html;
+
 }
+
+function alternarAcordeonSeccion(btn, tipo) {
+ const item = btn.closest('.acordeon-item');
+ const contenido = item.querySelector('.acordeon-contenido');
+ const estaAbierto = item.classList.contains('activo');
+ 
+ btn.closest('.popup-acordeon-grupo').querySelectorAll('.acordeon-item').forEach(i => {
+ i.classList.remove('activo');
+ i.querySelector('.acordeon-contenido').style.maxHeight = null;
+ });
+
+ if (!estaAbierto) {
+ item.classList.add('activo');
+ contenido.style.maxHeight = contenido.scrollHeight + "px";
+ 
+ // DISPARADOR SEGURO (Fix Calculando): Si abren la sección de horarios, arranca el cronómetro
+ if (contenido.querySelector('#cronometro-contenedor-modulo')) {
+   setTimeout(iniciarCronometroPopup, 50);
+ }
+ 
+ if (tipo === 'multimedia') {
+ contenido.querySelectorAll('.lazy-popup-img').forEach(img => {
+ if (img.getAttribute('data-src')) {
+ img.src = img.getAttribute('data-src');
+ img.removeAttribute('data-src');
+ }
+ });
+ contenido.querySelectorAll('.lazy-popup-iframe').forEach(iframe => {
+ if (iframe.getAttribute('data-src')) {
+ iframe.src = iframe.getAttribute('data-src');
+ iframe.removeAttribute('data-src');
+ }
+ });
+ }
+ }
+}
+
 
 function generarDatosEstructuradosSEO(comerciosFiltrados) {
   const scriptPrevio = document.getElementById("seo-local-jsonld");
@@ -945,4 +1075,141 @@ function generarDatosEstructuradosSEO(comerciosFiltrados) {
 
   scriptSEO.text = JSON.stringify(estructuraData);
   document.head.appendChild(scriptSEO);
+}
+
+// Oyentes globales para activar/desactivar el cronómetro dinámico en segundo plano
+if (mapaNegosistema) {
+ mapaNegosistema.on('popupopen', function(e) {
+ iniciarCronometroPopup();
+ // Forzar a Leaflet a reajustar el tamaño si se expande una sección acordeón
+ setTimeout(() => { mapaNegosistema.invalidateSize(); }, 300);
+ });
+ mapaNegosistema.on('popupclose', function(e) {
+ if (window.intervaloCronometro) {
+ clearInterval(window.intervaloCronometro);
+ }
+ });
+}
+// CONTROLADOR GLOBAL DEL TEMPORIZADOR DE PANTALLA (VERSIÓN ULTRA-SEGURA A PRUEBA DE FALLAS)
+function iniciarCronometroPopup() {
+  const modulo = document.getElementById("cronometro-contenedor-modulo");
+  if (!modulo) return;
+
+  try {
+    const horarioTexto = modulo.getAttribute("data-horario-crudo").trim().toLowerCase();
+    
+    // Si la celda del CSV está vacía o dice cerrado/sin horario
+    if (!horarioTexto || horarioTexto === "vacio" || horarioTexto === "cerrado") {
+      modulo.innerHTML = `<span class="reloj-badge cerrado-now">● CERRADO</span>`;
+      return;
+    }
+
+    function actualizarReloj() {
+      const ahora = new Date();
+      const diaSemana = ahora.getDay(); // 0 = dom, 1 = lun...
+      const horaActual = ahora.getHours();
+      const minActual = ahora.getMinutes();
+      const tiempoActualEnMinutos = (horaActual * 60) + minActual;
+
+      const mapaDias = ["dom", "lun", "mar", "mie", "jue", "vie", "sab"];
+      const diaHoyTexto = mapaDias[diaSemana];
+
+      const bloques = horarioTexto.split("|");
+      let horarioDeHoy = "";
+
+      for (let bloque of bloques) {
+        bloque = bloque.trim();
+        if (bloque.startsWith("lun-vie:") && (diaSemana >= 1 && diaSemana <= 5)) {
+          horarioDeHoy = bloque.replace("lun-vie:", "");
+          break;
+        } else if (bloque.startsWith(diaHoyTexto + ":")) {
+          horarioDeHoy = bloque.replace(diaHoyTexto + ":", "");
+          break;
+        }
+      }
+
+      if (!horarioDeHoy) {
+        modulo.innerHTML = `
+          <div class="cronometro-flex-wrapper">
+            <span class="reloj-badge cerrado-now">● CERRADO</span>
+            <span class="cuenta-regresiva-reloj cerrado">No abre hoy</span>
+          </div>
+        `;
+        return;
+      }
+
+      const regexRangos = /(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g;
+      let rangosEncontrados = [];
+      let coincidencia;
+
+      while ((coincidencia = regexRangos.exec(horarioDeHoy)) !== null) {
+        const minApertura = (parseInt(coincidencia[1], 10) * 60) + parseInt(coincidencia[2], 10);
+        const minCierre = (parseInt(coincidencia[3], 10) * 60) + parseInt(coincidencia[4], 10);
+        rangosEncontrados.push({ inicio: minApertura, fin: minCierre });
+      }
+
+      if (rangosEncontrados.length === 0) {
+        modulo.innerHTML = `<span class="reloj-badge horario-estatico">⏰ Abierto</span>`;
+        return;
+      }
+
+      let rangoActual = null;
+      let siguienteRango = null;
+
+      for (let rango of rangosEncontrados) {
+        if (tiempoActualEnMinutos >= rango.inicio && tiempoActualEnMinutos < rango.fin) {
+          rangoActual = rango;
+          break;
+        }
+        if (rango.inicio > tiempoActualEnMinutos && !siguienteRango) {
+          siguienteRango = rango;
+        }
+      }
+
+      if (rangoActual) {
+        let minutosRestantes = rangoActual.fin - tiempoActualEnMinutos;
+        const hrsRegreso = Math.floor(minutosRestantes / 60);
+        const minRegreso = minutosRestantes % 60;
+        const segRegreso = 59 - ahora.getSeconds();
+
+        let textoCuentaRegresiva = "";
+        if (hrsRegreso > 0) textoCuentaRegresiva += `${hrsRegreso}h `;
+        textoCuentaRegresiva += `${minRegreso}m ${segRegreso}s`;
+
+        modulo.innerHTML = `
+          <div class="cronometro-flex-wrapper">
+            <span class="reloj-badge abierto-now">● ABIERTO</span>
+            <span class="cuenta-regresiva-reloj">Cierra en: <b>${textoCuentaRegresiva}</b></span>
+          </div>
+        `;
+      } else if (siguienteRango) {
+        let minutosParaAbrir = siguienteRango.inicio - tiempoActualEnMinutos;
+        const hrsAbre = Math.floor(minutosParaAbrir / 60);
+        const minAbre = minutosParaAbrir % 60;
+
+        modulo.innerHTML = `
+          <div class="cronometro-flex-wrapper" style="background:#fffbeb; border-color:#fde68a;">
+            <span class="reloj-badge cerrado-now" style="background:#fef3c7; color:#d97706;">● PAUSA</span>
+            <span class="cuenta-regresiva-reloj" style="color:#b45309;">Reabre en: <b>${hrsAbre}h ${minAbre}m</b></span>
+          </div>
+        `;
+      } else {
+        modulo.innerHTML = `
+          <div class="cronometro-flex-wrapper">
+            <span class="reloj-badge cerrado-now">● CERRADO</span>
+            <span class="cuenta-regresiva-reloj cerrado">Terminó jornada</span>
+          </div>
+        `;
+      }
+    }
+
+    actualizarReloj();
+    if (window.intervaloCronometro) clearInterval(window.intervaloCronometro);
+    window.intervaloCronometro = setInterval(actualizarReloj, 1000);
+
+  } catch (error) {
+    // SALVAVIDAS TÉCNICO: Si algo falla en el texto, muestra esto en lugar de trabarse
+    console.error("Error en formato de horario:", error);
+    modulo.innerHTML = `<span class="reloj-badge horario-estatico" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;">⏰ Horario Establecido</span>`;
+  }
 }
