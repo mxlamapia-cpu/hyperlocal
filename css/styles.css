@@ -1404,33 +1404,51 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
 
 /* --- 📱 ESTADO 3: CELULARES Y SMARTPHONES --- */
 @media (max-width: 480px) {
+  /* 1. Transformamos el contenedor en una parrilla compacta real */
   body.pagina-scroll-ventas #capas-inferiores-contenedor {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
+    display: grid !important; /* Cambiado de flex a grid para armar la parrilla */
+    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)) !important; /* Fuerza columnas pequeñas de 65px */
     gap: 8px !important;
     padding: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
+  /* 2. Convertimos el botón en un contenedor cuadrado/vertical compacto */
   body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
-    display: inline-flex !important;
+    display: flex !important; /* Cambiado de inline-flex a flex estándar */
+    flex-direction: column-reverse !important; /* Emoji ARRIBA, Switch ABAJO */
     align-items: center !important;
-    padding: 6px 12px !important;
-    border-radius: 30px !important; /* Transforma la barra en una píldora circular compacta */
+    justify-content: center !important;
+    padding: 8px 4px !important; /* Reducimos padding horizontal para que no se estire */
+    border-radius: 10px !important; /* Cambiado de 30px (píldora) a 10px (tarjeta/botón cuadrado) */
     background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-sizing: border-box !important;
+    height: auto !important;
   }
 
-  /* Ocultamos el texto de la capa para que solo quede el [ Switch ] + [ Emoji ] */
+  /* 3. Ocultamos el texto base de la capa para que solo quede el Switch + Emoji */
   .label-filtro-span {
     display: none !important;
   }
   
+  /* Centramos el emoji dentro del espacio del botón */
   .texto-filtro-info {
-    margin-left: 2px !important;
+    margin-left: 0 !important; /* Eliminamos el margen horizontal de PC */
+    margin-bottom: 6px !important; /* Añadimos espacio inferior para separarlo del switch */
+    text-align: center !important;
     cursor: pointer !important;
   }
 
+  /* Hacemos que el emoji tenga buena presencia táctil */
+  .emoji-filtro-span {
+    font-size: 18px !important;
+    display: block !important;
+  }
+
   /* --- 🔍 INTERACCIÓN MÓVIL: TARJETA FLOTANTE AL DAR CLIC --- */
+  /* Corrección de typo en tu CSS de .texto-filter-info a .texto-filtro-info */
   .texto-filtro-info.expandido-movil {
     position: fixed !important;
     bottom: 24px !important;
@@ -1443,12 +1461,14 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3) !important;
     z-index: 99999 !important; /* Capa sobre el mapa */
     display: block !important;
+    margin-bottom: 0 !important; /* Resetea el margen de la parrilla cuando flota */
     animation: entradaFlotantePop 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
   /* Forzamos a que aparezcan los textos ocultos dentro de la tarjeta flotante */
-  .texto-filter-info.expandido-movil strong {
+  .texto-filtro-info.expandido-movil strong {
     color: #ffffff !important;
+    display: block !important;
   }
   
   .texto-filtro-info.expandido-movil .label-filtro-span {
@@ -1456,7 +1476,7 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
     color: #ffffff !important;
     font-size: 14px !important;
     font-weight: 700 !important;
-    margin-right: 4px;
+    margin-right: 4px !important;
   }
 
   .texto-filtro-info.expandido-movil .desc-filtro-span {
@@ -1467,9 +1487,92 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
     font-weight: 400 !important;
   }
 }
+/* ==========================================================================
+ 🎨 FIX MAESTRO: RECONSTRUCCIÓN DE GOTAS SIMÉTRICAS SIN ARRASTRE
+ ========================================================================== */
 
-/* Animación de entrada suave para la tarjeta móvil */
-@keyframes entradaFlotantePop {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+/* Forzamos a Leaflet a dejar el contenedor del icono completamente plano, sin márgenes ni fondos */
+.leaflet-marker-selectable,
+.leaflet-marker-icon.leaflet-marker-selectable {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 30px !important;
+    height: 42px !important;
+    overflow: visible !important;
+}
+
+/* El contenedor del pin se desfasa a la mitad exacta para que la punta calce en la coordenada real */
+.pin-personalizado {
+    position: relative !important;
+    width: 30px !important;
+    height: 30px !important; /* Caja cuadrada superior para formar el círculo de la gota */
+    margin-top: -42px !important; /* Jala el pin hacia arriba para que la punta apunte abajo */
+    margin-left: -15px !important; /* Centra el pin horizontalmente sobre el punto */
+    display: block !important;
+}
+
+/* La Gota Clásica: Redonda de tres lados y con punta abajo a -45 grados */
+.gota-vectorial {
+    position: absolute !important;
+    width: 30px !important;
+    height: 30px !important;
+    top: 0 !important;
+    left: 0 !important;
+    background-color: var(--pin-color, #3498db) !important;
+    border-radius: 50% 50% 50% 0 !important; /* Tres lados redondos, una esquina en punta */
+    transform: rotate(-45deg) !important; /* Rota la punta para que mire estrictamente hacia ABAJO */
+    box-shadow: -2px 4px 8px rgba(0, 0, 0, 0.3) !important;
+    z-index: 1 !important;
+}
+
+/* El centro blanco para alojar el emoji o el logo de Bimbo */
+.pin-centro-blanco {
+    position: absolute !important;
+    width: 20px !important;
+    height: 20px !important;
+    background: #ffffff !important;
+    border-radius: 50% !important;
+    top: 5px !important; /* Centrado perfecto dentro de la gota rotada */
+    left: 5px !important;
+    z-index: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Ajuste del emoji para que no se mueva por la rotación de la gota */
+.pin-emoji-interior {
+    font-size: 13px !important;
+    line-height: 20px !important;
+    display: block !important;
+    text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Logo de marcas (Bimbo) perfectamente contenido */
+.pin-logo-interior {
+    width: 20px !important;
+    height: 20px !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    display: block !important;
+}
+
+/* Animación Premium Nivel 5 (Oro) */
+.premium-pulse .gota-vectorial {
+    animation: pulsoGisGotaRotada 2s infinite ease-in-out !important;
+}
+
+@keyframes pulsoGisGotaRotada {
+    0% { transform: rotate(-45deg) scale(1); }
+    50% { transform: rotate(-45deg) scale(1.08); }
+    100% { transform: rotate(-45deg) scale(1); }
+}
+
+.pin-incognito-gris .gota-vectorial {
+    --pin-color: #94a3b8 !important;
 }
