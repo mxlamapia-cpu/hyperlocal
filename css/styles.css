@@ -1,3 +1,23 @@
+/* ==========================================================================
+   🔤 REGISTRO DE FUENTES LOCALES: INTER Y MONTSERRAT 🔤
+   ========================================================================== */
+
+@font-face {
+    font-family: 'Inter';
+    src: url('webfonts/inter-v20-latin-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('webfonts/montserrat-v31-latin-900.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* ========================================================
    SECCIÓN 1: RESET UNIVERSAL, TIPOGRAFÍA Y ARQUITECTURA BASE
    ======================================================== */
@@ -1487,11 +1507,11 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
     font-weight: 400 !important;
   }
 }
+
 /* ==========================================================================
- 🎨 FIX MAESTRO: RECONSTRUCCIÓN DE GOTAS SIMÉTRICAS SIN ARRASTRE
+ 🎨 FIX MAESTRO CALIBRADO: ARQUITECTURA DE PINES ANTI-DEFORMACIÓN MULTIPANTALLA
  ========================================================================== */
 
-/* Forzamos a Leaflet a dejar el contenedor del icono completamente plano, sin márgenes ni fondos */
 .leaflet-marker-selectable,
 .leaflet-marker-icon.leaflet-marker-selectable {
     background: transparent !important;
@@ -1501,19 +1521,20 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
     width: 30px !important;
     height: 42px !important;
     overflow: visible !important;
+    box-sizing: border-box !important;
 }
 
-/* El contenedor del pin se desfasa a la mitad exacta para que la punta calce en la coordenada real */
+/* El contenedor del pin: AHORA SIN MÁRGENES NEGATIVOS */
 .pin-personalizado {
     position: relative !important;
     width: 30px !important;
-    height: 30px !important; /* Caja cuadrada superior para formar el círculo de la gota */
-    margin-top: -42px !important; /* Jala el pin hacia arriba para que la punta apunte abajo */
-    margin-left: -15px !important; /* Centra el pin horizontalmente sobre el punto */
+    height: 30px !important; 
     display: block !important;
+    margin: 0 !important;    /* 🛠️ ¡CORREGIDO! 0 márgenes para que use el anclaje del JS */
+    padding: 0 !important;
+    box-sizing: border-box !important;
 }
 
-/* La Gota Clásica: Redonda de tres lados y con punta abajo a -45 grados */
 .gota-vectorial {
     position: absolute !important;
     width: 30px !important;
@@ -1521,45 +1542,65 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
     top: 0 !important;
     left: 0 !important;
     background-color: var(--pin-color, #3498db) !important;
-    border-radius: 50% 50% 50% 0 !important; /* Tres lados redondos, una esquina en punta */
-    transform: rotate(-45deg) !important; /* Rota la punta para que mire estrictamente hacia ABAJO */
-    box-shadow: -2px 4px 8px rgba(0, 0, 0, 0.3) !important;
+    border-radius: 50% 50% 50% 0 !important; 
+    transform: rotate(-45deg) !important; 
+    box-shadow: -2px 4px 8px rgba(0, 0, 0, 0.25) !important;
     z-index: 1 !important;
+    box-sizing: border-box !important;
 }
 
-/* El centro blanco para alojar el emoji o el logo de Bimbo */
+.pin-personalizado .pin-centro-blanco,
 .pin-centro-blanco {
     position: absolute !important;
-    width: 20px !important;
-    height: 20px !important;
+    width: 22px !important;       
+    height: 22px !important;
     background: #ffffff !important;
     border-radius: 50% !important;
-    top: 5px !important; /* Centrado perfecto dentro de la gota rotada */
-    left: 5px !important;
-    z-index: 2 !important;
+    top: 4px !important;          
+    left: 4px !important;
+    z-index: 3 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    box-sizing: border-box !important;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.15) !important;
 }
 
-/* Ajuste del emoji para que no se mueva por la rotación de la gota */
 .pin-emoji-interior {
     font-size: 13px !important;
-    line-height: 20px !important;
+    line-height: 22px !important; 
     display: block !important;
     text-align: center !important;
     margin: 0 !important;
     padding: 0 !important;
+    z-index: 4 !important;
     pointer-events: none !important;
 }
 
-/* Logo de marcas (Bimbo) perfectamente contenido */
 .pin-logo-interior {
-    width: 20px !important;
-    height: 20px !important;
-    object-fit: cover !important;
+    width: 18px !important;       
+    height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    object-fit: contain !important; /* 🛠️ Protege el logo contra deformaciones en PC */
+    background: #ffffff !important;
     border-radius: 50% !important;
     display: block !important;
+    margin: 0 auto !important;
+}
+
+
+/* Logo de marcas (Bimbo) perfectamente contenido y protegido contra deformaciones en monitores anchos */
+.pin-logo-interior {
+    width: 18px !important;       
+    height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    object-fit: contain !important; /* 🛠️ ¡EVITA EL EFECTO ÓVALO/HUEVO APLASTADO EN PC! */
+    background: #ffffff !important;
+    border-radius: 50% !important;
+    display: block !important;
+    margin: 0 auto !important;
 }
 
 /* Animación Premium Nivel 5 (Oro) */
@@ -1575,4 +1616,706 @@ body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
 
 .pin-incognito-gris .gota-vectorial {
     --pin-color: #94a3b8 !important;
+}
+
+/* ==========================================================================
+   MÓDULO: INTERFAZ DE CATÁLOGO Y STAGING CRONOLÓGICO (NEGOSISTEMA)
+   ========================================================================== */
+.catalog-header {
+    background: var(--bg-card);
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.catalog-brand h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0a2540; /* Azul Marino de Negosistema */
+    letter-spacing: -0.03em;
+}
+.catalog-brand h1 span {
+    color: #0070f3; /* Azul Insignia de Negosistema */
+}
+.catalog-brand p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+.catalog-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+    max-width: 480px;
+}
+.search-wrapper {
+    position: relative;
+    width: 100%;
+}
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 44px;
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 14px;
+    background-color: var(--bg-main);
+    outline: none;
+    transition: all 0.2s ease;
+}
+.search-input:focus {
+    border-color: #0070f3;
+    background-color: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.15);
+}
+.catalog-container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px;
+    flex-grow: 1;
+}
+.catalog-section {
+    margin-bottom: 40px;
+}
+.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0a2540;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.icon-active { color: #f1c40f; }
+.icon-scheduled { color: #0070f3; }
+
+/* --- DISEÑO DE PARRILLA Y TARJETAS DUALES --- */
+.offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+.offers-grid.scheduled-section .feature-card {
+    opacity: 0.82;
+    border-style: dashed;
+}
+.offers-grid.scheduled-section .feature-card:hover {
+    opacity: 1;
+}
+
+.feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
+}
+
+.card-logo-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 44px;
+    height: 44px;
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 3px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* ==========================================================================
+   REDISEÑO CORE: TARJETA PANORÁMICA 16:9 FLUIDA (REEMPLAZO) 🚀
+   ========================================================================== */
+
+.feature-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-premium);
+    box-shadow: var(--shadow-subtle);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Empuja el texto hacia la base */
+    position: relative;
+    width: 320px;       /* Ancho responsivo del slide */
+    height: 180px;      /* 🚨 RATIO 16:9 PERFECTO: Proporción exacta de la imagen */
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+}
+
+/* Encabezado absoluto: Ahora la imagen es el fondo total de la tarjeta */
+.card-promo-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    padding: 0; /* Limpiamos padding viejo */
+}
+
+/* Tratamiento responsivo de la imagen */
+.card-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ajusta e infla la imagen sin deformarla */
+    object-position: center;
+    z-index: 1;
+}
+
+/* 🚨 CAPA DE MARKETING: Degradado oscuro para que el texto blanco sea 100% legible */
+.card-body-wrapper {
+    position: relative;
+    z-index: 2; /* Flota sobre la imagen */
+    padding: 14px;
+    width: 100%;
+    background: linear-gradient(to top, rgba(10, 37, 64, 0.95) 0%, rgba(10, 37, 64, 0.6) 60%, transparent 100%);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Ajustes de tipografía para contraste sobre imagen oscura */
+.biz-identity-box h3 {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important; /* Letras blancas */
+    margin-bottom: 2px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.promo-description {
+    color: #e2e8f0 !important; /* Blanco suavizado nítido */
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Máximo dos líneas para que no tape toda la tarjeta */
+    -webkit-box-orient: vertical;
+}
+
+/* Badge del descuento flotando elegantemente */
+.promo-hero-title {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 3;
+    font-size: 1.2rem !important; /* Escala tipográfica controlada */
+    font-weight: 900;
+    color: #ffffff;
+    background: #ef4444; /* Rojo conversión */
+    padding: 2px 8px;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+/* Footer de metadatos absoluto en la esquina superior */
+.card-meta-footer {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 3;
+    display: flex;
+    gap: 6px;
+    border-top: none !important; /* Eliminamos la línea divisoria vieja */
+    padding-top: 0 !important;
+    width: auto !important;
+}
+
+.meta-colonia, .meta-vigencia {
+    font-size: 9px !important;
+    background: rgba(10, 37, 64, 0.8);
+    backdrop-filter: blur(4px);
+    color: #ffffff !important;
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Ajuste del botón flotante de WhatsApp de la promo */
+.btn-wa-order {
+    position: absolute;
+    top: 10px; /* Lo movemos arriba a la derecha para no obstruir el texto inferior */
+    right: 10px;
+    bottom: auto !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+    box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
+}
+
+.badge-status {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.badge-status.scheduled {
+    background: rgba(241, 196, 15, 0.2);
+    border-color: rgba(241, 196, 15, 0.4);
+    color: #f1c40f;
+}
+.promo-hero-title {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    max-width: 80%;
+}
+
+.biz-identity-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0a2540;
+    margin-bottom: 6px;
+}
+.promo-description {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+.card-meta-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+.meta-colonia {
+    color: #0070f3;
+}
+.btn-wa-order {
+    position: absolute;
+    bottom: 60px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background-color: #25D366;
+    color: #ffffff !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    text-decoration: none !important;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+    z-index: 10;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.btn-wa-order:hover {
+    background-color: #128c7e;
+    transform: scale(1.1);
+}
+
+/* --- LÍNEA DIVISORIA CRONOLÓGICA --- */
+.timeline-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 50px 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent);
+}
+.timeline-badge {
+    background: #0a2540;
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2);
+}
+/* Animación nativa para el desplazamiento del carrusel */
+@keyframes scroll-autoslide {
+    0%, 25% { transform: translateX(0); }
+    33%, 58% { transform: translateX(-33.333%); }
+    66%, 91% { transform: translateX(-66.666%); }
+    100% { transform: translateX(0); }
+}
+.ofertas-slider-container {
+    width: 100%;
+    overflow: hidden;    
+    padding: 20px 0;
+}
+.ofertas-slider-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 10px;
+}
+.slide-group {
+    display: flex;
+    gap: 16px;
+    flex-shrink: 0;
+}
+/* ==========================================================================
+   MÓDULO DE INTELIGENCIA VISUAL: ANUNCIOS DINÁMICOS HIPERLOCALES
+   ========================================================================== */
+
+/* 1. Contenedor de Píldoras Superiores (Id, Ubicación y Vencimiento) */
+.badge-container-top {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.badge-dinamico-gis {
+    background: rgba(15, 23, 42, 0.85) !important;
+    backdrop-filter: blur(4px);
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* 2. Reestructuración del Cuerpo: Distribución Bicameral */
+.card-body-wrapper {
+    background: linear-gradient(to top, rgba(10, 37, 64, 0.98) 0%, rgba(10, 37, 64, 0.75) 65%, transparent 100%) !important;
+    display: flex !important;
+    flex-direction: row !important; /* Alineación horizontal: Textos a la Izq, Gancho a la Der */
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    gap: 12px !important;
+    padding: 12px 14px !important;
+}
+
+/* Columna de Contenido Escrito */
+.biz-identity-box {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1px !important;
+    max-width: 70% !important;
+}
+
+/* 3. Estilos del Gancho Comercial (El Botón Impactante de Descuento) */
+.gancho-marketing-container {
+    flex: 0 0 30% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-gancho-premium {
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%) !important; /* Oro Vibrante */
+    color: #0f172a !important; /* Texto Oscuro para Contraste Puro */
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-shadow: 0 4px 10px rgba(255, 153, 0, 0.4) !important;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    border: none !important;
+    animation: sutilBrillo 3s infinite ease-in-out;
+}
+
+.subtexto-gancho {
+    color: #94a3b8 !important;
+    font-size: 8px !important;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+@keyframes sutilBrillo {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.15); }
+}
+
+/* --- BOTÓN MINIMALISTA ESCAPARATE STAGING --- */
+.escaparate-p {
+    font-family: monospace !important;
+    background: #1e293b !important; /* Gris un poco más claro que el fondo del footer */
+    color: #64748b !important; /* Texto atenuado */
+    padding: 2px 8px !important;
+    border-radius: 4px !important;
+    border: 1px solid #334155 !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center;
+    transition: all 0.2s ease !important;
+}
+
+.escaparate-p:hover {
+    background: #0070f3 !important; /* Azul insignia al pasar el mouse */
+    color: #ffffff !important;
+    border-color: #0070f3 !important;
+    box-shadow: 0 0 8px rgba(0, 112, 243, 0.4);
+}
+
+
+/* ========================================================
+   DISEÑO DE ACORDEONES, CRONÓMETRO Y BOTONES (AJUSTES 2, 3 Y 4)
+   ======================================================== */
+/* ... (Aquí dejas todo el código tal cual me lo enviaste) ... */
+.btn-ui-waze:hover {
+  box-shadow: 0 4px 14px rgba(51, 204, 255, 0.4) !important;
+}
+
+
+/* ==========================================================================
+   📱📱 (AQUÍ AL FINAL SÍ) PARCHE PANTALLA COMPLETA PARA SMARTPHONES 📱📱
+   ========================================================================== */
+@media (max-width: 480px) {
+    /* Fuerza al popup flotante a transformarse en un entorno Bottom Sheet fijo */
+    .popup-movil-optimizado {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 99999 !important;
+        transform: none !important;
+        display: flex !important;
+        align-items: flex-end !important;
+    }
+
+    /* El cascarón blanco se estira al 85% de la pantalla con scroll libre */
+    .popup-movil-optimizado .leaflet-popup-content-wrapper {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 85vh !important;
+        max-height: 85vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        margin: 0 !important;
+        padding: 16px 4px 24px 4px !important;
+        box-sizing: border-box !important;
+        overflow-y: auto !important; 
+        background: #ffffff !important;
+        box-shadow: 0 -10px 25px rgba(15, 23, 42, 0.25) !important;
+    }
+
+    .popup-movil-optimizado .leaflet-popup-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Botón circular táctil para cerrar el panel */
+    .popup-movil-optimizado .leaflet-popup-close-button {
+        position: fixed !important;
+        top: calc(15vh + 12px) !important;
+        right: 16px !important;
+        background: #0f172a !important;
+        color: #ffffff !important;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 22px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+        z-index: 100000 !important;
+        padding: 0 !important;
+    }
+
+    .popup-movil-optimizado .leaflet-popup-tip-container {
+        display: none !important;
+    }
+
+    .popup-movil-optimizado .popup-multimedia-carrusel {
+        height: 210px !important;
+    }
+}
+
+/* ==========================================================================
+   ESTILOS PARA EL VISOR LIGHTBOX HD Y TARJETAS 100% VISUALES (16:9)
+   ========================================================================== */
+
+/* Contenedor principal del Lightbox (Cubre toda la pantalla) */
+#negosistema-lightbox-visor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.95); /* Fondo oscuro premium */
+  backdrop-filter: blur(10px); /* Difuminado moderno de fondo */
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 99999; /* Por encima de mapas, popups y menús */
+  display: none; /* Controlado dinámicamente por JS (flex) */
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Estado activo para la animación de entrada suave */
+#negosistema-lightbox-visor.activo {
+  opacity: 1;
+}
+
+/* Cascarón interno que protege la proporción de la imagen ampliada */
+.lightbox-contenido {
+  position: relative;
+  max-width: 90%;
+  max-height: 85vh;
+  aspect-ratio: 16 / 9; /* Mantiene la proporción horizontal perfecta */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#lightbox-imagen-hd {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Evita que la foto se deforme o se corte en las esquinas */
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Botón cerrar flotante optimizado para dedos (Celulares) */
+#lightbox-btn-cerrar {
+  position: absolute;
+  top: -60px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+  z-index: 100000;
+}
+
+#lightbox-btn-cerrar:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+/* ==========================================================================
+   NUEVO SISTEMA DE DESPLAZAMIENTO FLUIDO Y COMPORTAMIENTO RESPONSIVO SLIDER
+   ========================================================================== */
+
+.ofertas-slider-container {
+    width: 100%;
+    overflow: hidden;
+    padding: 16px 0;
+    position: relative;
+}
+
+#ofertasSliderTrack, .ofertas-slider-track {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 16px !important; /* Espaciado premium uniforme entre promociones */
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Transición ultra suave */
+    width: 100%;
+}
+
+/* Forzamos a la tarjeta para que mantenga su estructura rígida sin deformar la imagen */
+.tarjeta-promo-slide {
+    position: relative !important;
+    height: 180px !important; /* Proporción horizontal exacta de la tarjeta */
+    flex-shrink: 0 !important; /* Evita que el navegador colapse las tarjetas */
+    background: #0f172a !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    box-sizing: border-box !important;
+}
+
+/* Ajustes de proporción responsiva mediante CSS nativo puro */
+@media (max-width: 480px) {
+    .tarjeta-promo-slide {
+        width: 100%;
+        flex: 1 0 100%;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+    .tarjeta-promo-slide {
+        width: calc(50% - 8px);
+        flex: 1 0 calc(50% - 8px);
+    }
+}
+
+@media (min-width: 1025px) {
+    .tarjeta-promo-slide {
+        /* 🚨 CAMBIO CLAVE: Permite que las tarjetas crezcan simétricamente si son pocas */
+        flex: 1 0 calc(33.333% - 11px); 
+        max-width: calc(33.333% - 11px);
+    }
 }

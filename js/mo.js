@@ -1,14 +1,17 @@
-
 // ==========================================================
-// SECCIÓN 1: CONFIGURACIÓN GLOBAL Y CORE GIS
+// SECCIÓN 1: CONFIGURACIÓN GLOBAL Y CORE GIS (REPARACIÓN PASO 1)
 // ==========================================================
 const COL_ALCALDIA = { CVEGEO: 0, NOMGEO: 1, ESTATUS: 2, COLOR_HEX: 3 };
 const COL_COLONIA = { WKT: 0, NOMBRE: 1, ESTATUS: 2 };
+
+// Mapeo estructural base del negocio
 const COL_COMERCIO = { 
  ID: 1, COLONIA: 2, MAPA: 3, CAPA_PRODUCTO: 4, CAPA_SERVICIO: 5, 
  NIVEL: 6, NOMBRE: 7, SLOGAN: 8, LISTA_PROD_SERV: 9, HORARIO: 10, 
- REDES: 11, YOUTUBE: 12, WHATSAPP: 13, COORDENADAS: 14, MAPS_LINK: 15 
+ REDES: 11, YOUTUBE: 12, WHATSAPP: 13, COORDENADAS: 14, MAPS_LINK: 15,
+ LOGO: 16 // 👈 Por defecto apunta a la columna 17 (Caso Piloto)
 };
+
 let mapaNegosistema = null;
 let capaPoligonosActivos = null;
 let capaPinesActivos = null;
@@ -43,7 +46,7 @@ const PALETAS_CAPAS_SISTEMA = {
  servicios: [
    { id: "medicos", label: "Consultorios y Médicos", emoji: "🩺", color: "#5DADE2", desc: "Médicos, dentistas, ópticas, veterinarias..." },
    { id: "talleres", label: "Talleres y Vulcanizadoras", emoji: "🚗", color: "#2471A3", desc: "Mecánicos, motos, vulcanizadoras..." },
-   { id: "oficios", label: "Oficios del Hogar", emoji: "🔧🔨", color: "#2E4053", desc: "Plomeros, electricistas, carpinteros..." },
+   { id: "oficios", label: "Oficios del Hogar", emoji: "🛠️", color: "#2E4053", desc: "Plomeros, electricistas, carpinteros..." },
    { id: "esteticas", label: "Estéticas y Barberías", emoji: "✂", color: "#7D3C98", desc: "Salones de belleza, uñas, barberías..." },
    { id: "gimnasios", label: "Gimnasios y Deportes", emoji: "🥊", color: "#4A235A", desc: "Gimnasios, boxeo, canchas locales..." },
    { id: "lavanderias", label: "Lavanderías y Tintorerías", emoji: "🧼", color: "#138D75", desc: "Lavanderías, tintorerías, planchadurías..." },
@@ -97,76 +100,100 @@ function filtrarPinesPorCapasActivas() {
     return capasActivas.includes(capaClaveRaw);
   });
 
-  renderizarPinesComerciales(comerciosFiltradosYVisibles);
+renderizarPinesComerciales(comerciosFiltradosYVisibles);
 }
 function renderizarPinesComerciales(arregloComercios) {
-  if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.clearLayers === 'function') {
-    window.contenedorPinesGlobal.clearLayers();
-  }
-  marcaroresGIS = []; 
-  
-  const esSimulador = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
+ if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.clearLayers === 'function') {
+ window.contenedorPinesGlobal.clearLayers();
+ }
+ marcaroresGIS = []; 
+ 
+ const esSimulador = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
+ 
+ arregloComercios.forEach(comercio => {
+ const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
+ if (!coordRaw || !coordRaw.includes(",")) return;
+ 
+ const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
+ if (isNaN(lat) || isNaN(lng)) return;
+ if (!esSimulador && (lat < 19.0 || lat > 19.6 || lng > -98.8 || lng < -99.4)) return;
 
-  arregloComercios.forEach(comercio => {
-    const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
-    if (!coordRaw || !coordRaw.includes(",")) return;
-    
-    const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
-    if (isNaN(lat) || isNaN(lng)) return;
-    if (!esSimulador && (lat < 19.0 || lat > 19.6 || lng > -98.8 || lng < -99.4)) return;
+ let capaActivaClave = (entornoActual === "productos") 
+ ? String(comercio[COL_COMERCIO.CAPA_PRODUCTO]).trim().toLowerCase()
+ : String(comercio[COL_COMERCIO.CAPA_SERVICIO]).trim().toLowerCase();
+ if (!capaActivaClave || capaActivaClave === "" || capaActivaClave === "vacio") {
+ capaActivaClave = "base";
+ }
+ const configuracionCapa = PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === capaActivaClave) || 
+ PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === "base");
+ 
+ const emojiCentral = configuracionCapa.emoji;
+ const colorHexGota = configuracionCapa.color;
+ 
+ const nivelComercioRaw = String(comercio[COL_COMERCIO.NIVEL]).trim(); 
+ const nivelPuro = parseInt(nivelComercioRaw) || 1; 
+ const idComercio = String(comercio[COL_COMERCIO.ID]).trim(); 
+ 
+ const partesId = idComercio.split("-");
+ const codigoColonia = partesId[1] || "306"; // 🛠️ CORRECCIÓN CLAVE: Regresa el índice [1] para que no se trabe el JS
 
-    let capaActivaClave = (entornoActual === "productos") 
-      ? String(comercio[COL_COMERCIO.CAPA_PRODUCTO]).trim().toLowerCase()
-      : String(comercio[COL_COMERCIO.CAPA_SERVICIO]).trim().toLowerCase();
+ // ==========================================================================
+ // ⚡ ARQUITECTURA DE CONTENEDORES PARA EL PIN COMERCIAL
+ // ==========================================================================
+ let contenidoInteriorPin = `<span class="pin-emoji-interior">${emojiCentral}</span>`;
+ 
+ let campoLogoCSV = (comercio[COL_COMERCIO.LOGO] || "").trim().toLowerCase();
+ campoLogoCSV = campoLogoCSV.replace(/\.[^/.]+$/, "");
 
-    if (!capaActivaClave || capaActivaClave === "" || capaActivaClave === "vacio") {
-      capaActivaClave = "base";
-    }
+ if (nivelPuro >= 2 && campoLogoCSV !== "" && campoLogoCSV !== "vacio") {
+   const urlFinalLogo = `css/logo/${campoLogoCSV}.png`;
+   contenidoInteriorPin = `
+     <img src="${urlFinalLogo}" class="pin-logo-interior" 
+          onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\\'pin-emoji-interior\\'>${emojiCentral}</span>';">
+   `;
+ }
 
-    const configuracionCapa = PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === capaActivaClave) || 
-                              PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === "base");
-    
-    const emojiCentral = configuracionCapa.emoji;
-    const colorHexGota = configuracionCapa.color;
-    const nivelPuro = parseInt(comercio[COL_COMERCIO.NIVEL]) || 1; 
-    
-    let claseNivelComercial = "pin-incognito-gris";
-    if (nivelPuro === 5) claseNivelComercial = "pin-oro premium-pulse";
-    else if (nivelPuro === 4) claseNivelComercial = "pin-plata";
-    else if (nivelPuro === 3) claseNivelComercial = "pin-bronce";
-    else if (nivelPuro === 2) claseNivelComercial = "pin-estandar"; 
+ // Determinación de la clase del pin por nivel
+ let claseNivelComercial = "pin-incognito-gris";
+ if (nivelPuro === 5) claseNivelComercial = "pin-oro premium-pulse";
+ else if (nivelPuro === 4) claseNivelComercial = "pin-plata";
+ else if (nivelPuro === 3) claseNivelComercial = "pin-bronce";
+ else if (nivelPuro === 2) claseNivelComercial = "pin-estandar"; 
 
-    const prefijoEntorno = (entornoActual === "productos") ? "btn-p-" : "btn-s-";
+ const prefijoEntorno = (entornoActual === "productos") ? "btn-p-" : "btn-s-";
+ 
+ // NUEVO DISEÑO UI/UX: Inyección directa del color y la clase para evitar el "embarrado"
+ const htmlIcono = `
+ <div class="pin-personalizado ${claseNivelComercial}">
+   <div class="gota-vectorial" style="--pin-color: ${colorHexGota};"></div>
+   <div class="pin-centro-blanco">
+     ${contenidoInteriorPin}
+   </div>
+ </div>
+ `;
 
-    const htmlIcono = `
-      <div class="pin-personalizado ${claseNivelComercial}">
-        <div class="gota-vectorial" style="--pin-color: ${colorHexGota};"></div>
-        <span class="pin-emoji-interior">${emojiCentral}</span>
-      </div>
-    `;
-
-    const iconoGota = L.divIcon({
-      className: `leaflet-marker-selectable ${prefijoEntorno}${capaActivaClave}`,
-      html: htmlIcono,
-      iconSize:[30, 42],
-      iconAnchor:[15, 42],  
-      popupAnchor: [0, -40]
-    });
-
-    const marcador = L.marker([lat, lng], { 
-      icon: iconoGota,
-      datosNegocio: {
-        colorCapa: colorHexGota,
-        idGiro: capaActivaClave
-      }
-    });
-
+ const iconoGota = L.divIcon({
+ className: `leaflet-marker-selectable ${prefijoEntorno}${capaActivaClave}`,
+ html: htmlIcono,
+ iconSize:[30, 42],
+ iconAnchor:[15, 42], 
+ popupAnchor: [0, -40]
+ });
+ 
+ const marcador = L.marker([lat, lng], { 
+ icon: iconoGota,
+ datosNegocio: {
+ colorCapa: colorHexGota,
+ idGiro: capaActivaClave
+ }
+ });
+ 
  const opcionesPopup = {
  autoPan: true,
- autoPanPadding: L.point(15, 15), // Ajuste quirúrgico para pantallas compactas
+ autoPanPadding: L.point(15, 15),
  closeOnClick: true,
- className: 'popup-movil-optimizado', // Clase de control CSS
- maxHeight: 420, // Techo rígido para evitar colapsos
+ className: 'popup-movil-optimizado', 
+ maxHeight: 420, 
  tap: !L.Browser.mobile 
  };
  
@@ -174,28 +201,29 @@ function renderizarPinesComerciales(arregloComercios) {
  typeof inyectarPopupComercioInteligente === "function" 
  ? inyectarPopupComercioInteligente(comercio, nivelPuro) 
  : `<b>${comercio[COL_COMERCIO.NOMBRE] || "Negocio"}</b>`,
- opcionesPopup // IMPORTANTE: Agregamos la configuración que le faltaba a tu bindPopup
+ opcionesPopup 
  );
-
-    if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
-    marcaroresGIS.push(marcador);
-  });
-
-  if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.getLayers === 'function' && window.contenedorPinesGlobal.getLayers().length > 0 && mapaNegosistema) {
-    if (window.esCargaInicialEntorno) {
-      mapaNegosistema.fitBounds(window.contenedorPinesGlobal.getBounds(), { 
-        maxZoom: 15, 
-        padding:[50, 59], 
-        animate: true, 
-        duration: 0.8
-      });
-      window.esCargaInicialEntorno = false;
-    }
-  }
-  if (typeof generarDatosEstructuradosSEO === "function") {
-    generarDatosEstructuradosSEO(arregloComercios);
-  }
+ 
+ if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
+ marcaroresGIS.push(marcador);
+ });
+ 
+ if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.getLayers === 'function' && window.contenedorPinesGlobal.getLayers().length > 0 && mapaNegosistema) {
+ if (window.esCargaInicialEntorno) {
+ mapaNegosistema.fitBounds(window.contenedorPinesGlobal.getBounds(), { 
+ maxZoom: 15, 
+ padding:[50, 59], 
+ animate: true, 
+ duration: 0.8
+ });
+ window.esCargaInicialEntorno = false;
+ }
+ }
+ if (typeof generarDatosEstructuradosSEO === "function") {
+ generarDatosEstructuradosSEO(arregloComercios);
+ }
 }
+
 function reconstruirBotonesCapasInferiores() {
   const contenedor = document.getElementById("capas-inferiores-contenedor");
   if (!contenedor) return;
@@ -360,7 +388,7 @@ window.addEventListener("load", () => {
     }
   }, 450);
   
-  if (mapaNegosistema) {
+    if (mapaNegosistema) {
     mapaNegosistema.on('zoomend', () => {
       const zoomActual = mapaNegosistema.getZoom();
       const contenedorActivo = document.getElementById("mapa-comercial-contenedor") ? "mapa-comercial-contenedor" : "mapa_general";
@@ -373,14 +401,103 @@ window.addEventListener("load", () => {
       }
     });
   }
-});
+
+  // ==========================================================
+  // INYECCIÓN DEL CONTROL DE UBICACIÓN EN TIEMPO REAL (GPS)
+  // ==========================================================
+  if (mapaNegosistema && (document.getElementById("mapa-comercial-contenedor") || document.getElementById("mapa_general"))) {
+    const botonGps = document.createElement("button");
+    botonGps.className = "boton-gps-flotante";
+    botonGps.setAttribute("title", "Mi ubicación actual");
+    botonGps.innerHTML = `
+      <svg viewBox="0 0 24 24">
+        <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 21c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9-4.03 9-9 9z"/>
+      </svg>
+    `;
+    
+    const contenedorMapaId = document.getElementById("mapa-comercial-contenedor") ? "mapa-comercial-contenedor" : "mapa_general";
+    document.getElementById(contenedorMapaId).appendChild(botonGps);
+
+    let marcadorUsuarioGps = null;
+    let circuloPrecisionGps = null;
+
+    botonGps.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        alert("Tu navegador o dispositivo no soporta el acceso a la geolocalización.");
+        return;
+      }
+      botonGps.style.color = "#3b82f6";
+
+      navigator.geolocation.getCurrentPosition(
+        (posicion) => {
+          const lat = posicion.coords.latitude;
+          const lng = posicion.coords.longitude;
+          const precision = posicion.coords.accuracy;
+
+          if (marcadorUsuarioGps) mapaNegosistema.removeLayer(marcadorUsuarioGps);
+          if (circuloPrecisionGps) mapaNegosistema.removeLayer(circuloPrecisionGps);
+
+          circuloPrecisionGps = L.circle([lat, lng], {
+            radius: precision,
+            color: "#3b82f6",
+            weight: 1,
+            fillColor: "#3b82f6",
+            fillOpacity: 0.15,
+            interactive: false
+          }).addTo(mapaNegosistema);
+
+          const iconoPuntoAzul = L.divIcon({
+            className: "contenedor-icono-punto-azul",
+            html: '<div class="punto-azul-gps"></div>',
+            iconSize:[14, 14],
+            iconAnchor: [7, 7]
+          });
+
+          marcadorUsuarioGps = L.marker([lat, lng], { icon: iconoPuntoAzul }).addTo(mapaNegosistema);
+          marcadorUsuarioGps.bindPopup("<b style='color:#0f172a;'>Estás aquí</b><br><span style='font-size:11px; color:#64748b;'>Navegando por el barrio</span>");
+
+          mapaNegosistema.flyTo([lat, lng], 16, { animate: true, duration: 1.2 });
+          botonGps.style.color = "#0f172a";
+        },
+        (error) => {
+          console.error("Error al obtener la geolocalización activa:", error);
+          botonGps.style.color = "#ef4444";
+          setTimeout(() => { botonGps.style.color = "#0f172a"; }, 2000);
+          if (error.code === error.PERMISSION_DENIED) {
+            alert("Por favor, activa los permisos de ubicación en tu celular para ver tu posición en el mapa.");
+          } else {
+            alert("No fue posible determinar tu ubicación. Inténtalo de nuevo en unos segundos.");
+          }
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      );
+    });
+  }
+
+}); 
 function transformarCoordenadasWKT(cadenaWKT) {
-  if (!cadenaWKT || !cadenaWKT.startsWith("POLYGON")) return [];
-  const textoLimpio = cadenaWKT.replace("POLYGON", "").replace(/\(/g, "").replace(/\)/g, "").trim();
-  return textoLimpio.split(",").map(par => {
-    const ejes = par.trim().split(" ");
-    return ejes.length < 2 ? null : [parseFloat(ejes[1]), parseFloat(ejes[0])];
-  }).filter(coord => coord !== null);
+ if (!cadenaWKT || !String(cadenaWKT).toUpperCase().trim().startsWith("POLYGON")) return [];
+ 
+ // Limpieza absoluta de la estructura de control WKT conservando el orden original
+ let textoLimpio = String(cadenaWKT)
+ .replace(/POLYGON/i, "")
+ .replace(/\(/g, "")
+ .replace(/\)/g, "")
+ .trim();
+ 
+ // Dividimos cada vértice por la coma
+ return textoLimpio.split(",").map(par => {
+ // \s+ es el secreto GIS: intercepta 1 o infinitos espacios en blanco, tabuladores o saltos de línea
+ const ejes = par.trim().split(/\s+/);
+ 
+ if (ejes.length < 2) return null;
+ 
+ const lng = parseFloat(ejes[0]);
+ const lat = parseFloat(ejes[1]);
+ 
+ // Retorna la estructura nativa que Leaflet espera para dibujar e interpretar [Lat, Lng]
+ return (!isNaN(lat) && !isNaN(lng)) ? [lat, lng] : null;
+ }).filter(coord => coord !== null);
 }
 
 function limpiarLienzoMilisegundos() {
@@ -538,8 +655,7 @@ function inicializarModoHiperlocal(coloniaFiltro) {
   if (elementoTitulo && coloniaFiltro) {
     elementoTitulo.innerText = "Colonia: " + coloniaFiltro.replace(/-/g, " ").toUpperCase();
   }
-  // ... (el resto de tu código de abajo se queda exactamente igual)
-
+  
   
   Papa.parse(URL_CSV_COLONIAS, {
     download: true,
@@ -553,15 +669,25 @@ function inicializarModoHiperlocal(coloniaFiltro) {
       // ========================================================
       // ENFOQUE GIS: DIBUJO AUTOMÁTICO DE LA FRANJA NEGRA PERIMETRAL
       // ========================================================
+      const normalizarTextoGIS = (str) => {
+        return String(str || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "") // Remueve acentos de forma segura
+          .replace(/[^a-z0-9]/g, "")       // Deja solo letras y números
+          .trim();
+      };
+
+      const tokenBusqueda = normalizarTextoGIS(coloniaFiltro);
+
       const filaColoniaActiva = filasColonias.find(c => {
-        const n = String(c[COL_COLONIA.NOMBRE]).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "");
-        return n === String(coloniaFiltro).toLowerCase().trim();
+        return normalizarTextoGIS(c[COL_COLONIA.NOMBRE]) === tokenBusqueda;
       });
 
       if (filaColoniaActiva && filaColoniaActiva[COL_COLONIA.WKT]) {
         const coordsBorde = transformarCoordenadasWKT(filaColoniaActiva[COL_COLONIA.WKT]);
         if (coordsBorde.length > 0) {
-          L.polygon(coordsBorde, {
+          const poligonoLimiteColonia = L.polygon(coordsBorde, {
             color: "#000000",
             weight: 4, // Franja negra robusta y bien definida
             opacity: 0.9,
@@ -570,8 +696,19 @@ function inicializarModoHiperlocal(coloniaFiltro) {
             dashArray: "1, 1",
             interactive: false
           }).addTo(mapaNegosistema);
+
+          // 🔥 ENCUADRE DE CÁMARA AUTOMÁTICO EN TIEMPO REAL
+          if (mapaNegosistema) {
+            mapaNegosistema.fitBounds(poligonoLimiteColonia.getBounds(), {
+              padding:[30, 30], // Margen de seguridad estético en píxeles
+              maxZoom: 16,       // Limita el zoom para mantener la escala comercial
+              animate: true,
+              duration: 1.2      // Transición fluida de la cámara
+            });
+          }
         }
       }
+
       // ========================================================
 
       // Dibujo de los botones de las colonias vecinas (Salto de Rana)
@@ -607,62 +744,127 @@ function cargarDatosComerciosHiperlocales(coloniaFiltro) {
         renderizarSliderOfertas(ofertasResults.data.slice(1));
       }
       
-      Papa.parse(URL_CSV_COMERCIOS, {
-        download: true,
-        complete: function(comerciosResults) {
-          const todasLasFilas = comerciosResults.data.slice(1);
-          datosComerciosGlobales = todasLasFilas.filter(f => {
-            const colCSV = (f[COL_COMERCIO.COLONIA] || "").toLowerCase().replace(/ /g, "");
-            return colCSV === String(coloniaFiltro).toLowerCase().replace(/ /g,"");
-          }).map(fila => {
-            let fNorm = [];
-            fNorm[COL_COMERCIO.ID] = fila[COL_COMERCIO.ID] || "";
-            fNorm[COL_COMERCIO.COLONIA] = fila[COL_COMERCIO.COLONIA] || "";
-            
-            const tipoMapaCrudo = String(fila[COL_COMERCIO.MAPA] || "").toLowerCase().trim();
-            fNorm[COL_COMERCIO.MAPA] = tipoMapaCrudo.includes("serv") ? "servicios" : "productos";
-            const capaFinalProd = String(fila[COL_COMERCIO.CAPA_PRODUCTO] || "").trim().toLowerCase();
-            const capaFinalServ = String(fila[COL_COMERCIO.CAPA_SERVICIO] || "").trim().toLowerCase();
-            
-            fNorm[COL_COMERCIO.CAPA_PRODUCTO] = (capaFinalProd === "" || capaFinalProd === "vacio") ? "base" : capaFinalProd;
-            fNorm[COL_COMERCIO.CAPA_SERVICIO] = (capaFinalServ === "" || capaFinalServ === "vacio") ? "base" : capaFinalServ;
-            
-            fNorm[COL_COMERCIO.NIVEL] = fila[COL_COMERCIO.NIVEL] || "1";
-            fNorm[COL_COMERCIO.NOMBRE] = fila[COL_COMERCIO.NOMBRE] || "";
-            fNorm[COL_COMERCIO.SLOGAN] = fila[COL_COMERCIO.SLOGAN] || "";
-            fNorm[COL_COMERCIO.LISTA_PROD_SERV] = fila[COL_COMERCIO.LISTA_PROD_SERV] || "";
-            fNorm[COL_COMERCIO.HORARIO] = fila[COL_COMERCIO.HORARIO] || "";
-            fNorm[COL_COMERCIO.REDES] = fila[COL_COMERCIO.REDES] || "";
-            fNorm[COL_COMERCIO.YOUTUBE] = fila[COL_COMERCIO.YOUTUBE] || "";
-            fNorm[COL_COMERCIO.WHATSAPP] = fila[COL_COMERCIO.WHATSAPP] || "";
-            fNorm[COL_COMERCIO.COORDENADAS] = fila[COL_COMERCIO.COORDENADAS] || "";
-            fNorm[COL_COMERCIO.MAPS_LINK] = fila[COL_COMERCIO.MAPS_LINK] || "";
-            return fNorm;
-          });
-          
-          entornoActual = "productos";
-          const btnSwitch = document.getElementById("btn-switch-entorno");
-          if (btnSwitch) {
-            btnSwitch.setAttribute("data-entorno", "productos");
-            btnSwitch.innerHTML = 'Ver Servicios <span id="emoji-switch">🛠️</span>'; 
+          Papa.parse(URL_CSV_COMERCIOS, {
+      download: true,
+      complete: function(comerciosResults) {
+        window.datosComerciosGlobales = comerciosResults.data.slice(1);
+        const todasLasFilas = comerciosResults.data.slice(1);
+        
+        // 1. OBTENER COORDENADAS PROMEDIO DE LA COLONIA ACTUAL ANTES DEL FILTRADO
+        // Buscamos comercios locales para promediar el centro geográfico de la colonia actual
+        const comerciosLocalesBase = todasLasFilas.filter(f => {
+          const colCSV = (f[COL_COMERCIO.COLONIA] || "").toLowerCase().replace(/ /g, "");
+          return colCSV === String(coloniaFiltro).toLowerCase().replace(/ /g,"");
+        });
+        
+        let latCentroColonia = 19.373; // Coordenadas de respaldo por si la colonia está vacía
+        let lngCentroColonia = -99.018;
+        let conteoValidas = 0;
+        let sumaLat = 0;
+        let sumaLng = 0;
+
+        comerciosLocalesBase.forEach(f => {
+          const coordRaw = String(f[COL_COMERCIO.COORDENADAS]).trim();
+          if (coordRaw.includes(",")) {
+            const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
+            if (!isNaN(lat) && !isNaN(lng)) {
+              sumaLat += lat;
+              sumaLng += lng;
+              conteoValidas++;
+            }
           }
-          reconstruirBotonesCapasInferiores();
-          if (typeof inicializarBuscadorPredictivo === "function") {
-            inicializarBuscadorPredictivo();
-          }
-          configurarSwitchEntornos();
-          window.esCargaInicialEntorno = true;
-          filtrarPinesPorCapasActivas();
+        });
+        if (conteoValidas > 0) {
+          latCentroColonia = sumaLat / conteoValidas;
+          lngCentroColonia = sumaLng / conteoValidas;
         }
-      });
+
+        // 2. FILTRADO CON EXPANSIÓN GEOGRÁFICA COBERTURA PREMIUM (NIVEL 5)
+        datosComerciosGlobales = todasLasFilas.filter(f => {
+          if (!f || f.length < 7) return false;
+          
+          const colCSV = (f[COL_COMERCIO.COLONIA] || "").toLowerCase().replace(/ /g, "");
+          const esDeEstaColonia = (colCSV === String(coloniaFiltro).toLowerCase().replace(/ /g,""));
+          
+          // Si es de la colonia seleccionada, pasa directo (Nivel 1 al 5)
+          if (esDeEstaColonia) return true;
+          
+          // Si NO es de esta colonia, evaluamos si califica para Cobertura Premium
+          const nivelNegocio = parseInt(f[COL_COMERCIO.NIVEL]) || 1;
+          const coordRaw = String(f[COL_COMERCIO.COORDENADAS]).trim();
+          
+          if (nivelNegocio === 5 && coordRaw.includes(",")) {
+            const [latN5, lngN5] = coordRaw.split(",").map(num => parseFloat(num.trim()));
+            if (!isNaN(latN5) && !isNaN(lngN5)) {
+              // Calculamos distancia real contra el centro de la colonia explorada
+              const distanciaEnKm = calcularDistanciaEntreCoordenadas(latCentroColonia, lngCentroColonia, latN5, lngN5);
+              return distanciaEnKm <= 2.0; // Cambiar a la distancia que necesites (ej. 2 km)
+            }
+          }
+          return false;
+        }).map(fila => {
+          let fNorm = [];
+          fNorm[COL_COMERCIO.ID] = fila[COL_COMERCIO.ID] || "";
+          fNorm[COL_COMERCIO.COLONIA] = fila[COL_COMERCIO.COLONIA] || "";
+          
+          const tipoMapaCrudo = String(fila[COL_COMERCIO.MAPA] || "").toLowerCase().trim();
+          fNorm[COL_COMERCIO.MAPA] = tipoMapaCrudo.includes("serv") ? "servicios" : "productos";
+          const capaFinalProd = String(fila[COL_COMERCIO.CAPA_PRODUCTO] || "").trim().toLowerCase();
+          const capaFinalServ = String(fila[COL_COMERCIO.CAPA_SERVICIO] || "").trim().toLowerCase();
+          
+          fNorm[COL_COMERCIO.CAPA_PRODUCTO] = (capaFinalProd === "" || capaFinalProd === "vacio") ? "base" : capaFinalProd;
+          fNorm[COL_COMERCIO.CAPA_SERVICIO] = (capaFinalServ === "" || capaFinalServ === "vacio") ? "base" : capaFinalServ;
+          
+          fNorm[COL_COMERCIO.NIVEL] = fila[COL_COMERCIO.NIVEL] || "1";
+          fNorm[COL_COMERCIO.NOMBRE] = fila[COL_COMERCIO.NOMBRE] || "";
+          fNorm[COL_COMERCIO.SLOGAN] = fila[COL_COMERCIO.SLOGAN] || "";
+          fNorm[COL_COMERCIO.LISTA_PROD_SERV] = fila[COL_COMERCIO.LISTA_PROD_SERV] || "";
+          fNorm[COL_COMERCIO.HORARIO] = fila[COL_COMERCIO.HORARIO] || "";
+          fNorm[COL_COMERCIO.REDES] = fila[COL_COMERCIO.REDES] || "";
+          fNorm[COL_COMERCIO.YOUTUBE] = fila[COL_COMERCIO.YOUTUBE] || "";
+          fNorm[COL_COMERCIO.WHATSAPP] = fila[COL_COMERCIO.WHATSAPP] || "";
+          fNorm[COL_COMERCIO.COORDENADAS] = fila[COL_COMERCIO.COORDENADAS] || "";
+          fNorm[COL_COMERCIO.MAPS_LINK] = fila[COL_COMERCIO.MAPS_LINK] || "";
+          fNorm[COL_COMERCIO.LOGO] = fila[COL_COMERCIO.LOGO] || "default_comercio.png";
+          return fNorm;
+        });
+        
+        entornoActual = "productos";
+        const btnSwitch = document.getElementById("btn-switch-entorno");
+        if (btnSwitch) {
+          btnSwitch.setAttribute("data-entorno", "productos");
+          btnSwitch.innerHTML = 'Ver Servicios <span id="emoji-switch">⚙️</span>';
+        }
+        reconstruirBotonesCapasInferiores();
+        if (typeof inicializarBuscadorPredictivo === "function") {
+          inicializarBuscadorPredictivo();
+        }
+        configurarSwitchEntornos();
+        window.esCargaInicialEntorno = true;
+        filtrarPinesPorCapasActivas();
+      }
+    });
+
     }
   });
 }
-
+// ==========================================================
+// SECCIÓN: BUSCADOR PREDICTIVO GEOLOCALIZADO (PARTE 1 DE 2)
+// ==========================================================
 function inicializarBuscadorPredictivo() {
   const inputBuscar = document.getElementById("input-buscador-predictivo");
   const contenedorResultados = document.getElementById("resultados-autocompletado");
   if (!inputBuscar || !contenedorResultados) return;
+
+  // Monitoreo pasivo de la ubicación del dispositivo móvil del vecino
+  let coorUsuario = null;
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => { coorUsuario = { lat: pos.coords.latitude, lng: pos.coords.longitude }; },
+      (err) => { console.log("Navegación por GPS declinada. Usando centro de colonia para ordenamiento."); },
+      { enableHighAccuracy: true, timeout: 5000 }
+    );
+  }
 
   inputBuscar.addEventListener("input", function() {
     const query = this.value.toLowerCase().trim();
@@ -672,63 +874,106 @@ function inicializarBuscadorPredictivo() {
       return; 
     }
 
-    const coincidencias = datosComerciosGlobales.filter(comercio => {
-      return String(comercio[COL_COMERCIO.NOMBRE]).toLowerCase().includes(query) || 
-             String(comercio[COL_COMERCIO.SLOGAN]).toLowerCase().includes(query) || 
+    // 1. Filtrar coincidencias por palabras clave en los campos de texto
+    let coincidencias = datosComerciosGlobales.filter(comercio => {
+      return String(comercio[COL_COMERCIO.NOMBRE]).toLowerCase().includes(query) ||
+             String(comercio[COL_COMERCIO.SLOGAN]).toLowerCase().includes(query) ||
              String(comercio[COL_COMERCIO.LISTA_PROD_SERV]).toLowerCase().includes(query);
     });
 
     if (coincidencias.length === 0) {
       contenedorResultados.innerHTML = `<div style="padding:12px; color:#64748b; font-size:13px; text-align:center;">No se encontraron resultados</div>`;
-    } else {
-      coincidencias.slice(0, 8).forEach(comercio => {
-        const item = document.createElement("div");
-        item.className = "item-predictivo-buscar";
-        const entCom = comercio[COL_COMERCIO.MAPA];
-        const capId = (entCom === "productos") ? comercio[COL_COMERCIO.CAPA_PRODUCTO] : comercio[COL_COMERCIO.CAPA_SERVICIO];
-        const conf = PALETAS_CAPAS_SISTEMA[entCom].find(c => c.id === capId) || {color:"#94a3b8", label:"General"};
-
-        item.innerHTML = `
-          <div>
-            <strong style="display:block; color:#0f172a;">${comercio[COL_COMERCIO.NOMBRE]}</strong>
-            <span style="font-size:11px; color:#64748b;">${comercio[COL_COMERCIO.SLOGAN].slice(0,40)}...</span>
-          </div>
-          <span class="badge-categoria-buscar" style="background-color:${conf.color};">${conf.label}</span>
-        `;
-
-        item.addEventListener("click", () => {
-          inputBuscar.value = comercio[COL_COMERCIO.NOMBRE];
-          contenedorResultados.style.display = "none";
-
-          if (entornoActual !== entCom) {
-            entornoActual = entCom;
-            const btn = document.getElementById("btn-switch-entorno");
-            if (btn) {
-              btn.setAttribute("data-entorno", entornoActual);
-              btn.innerHTML = entornoActual === "productos" ? 'Ver Servicios <span id="emoji-switch">🛠️</span>' : 'Ver Productos <span id="emoji-switch">🍎</span>';
-            }
-          }
-
-          const chk = document.querySelector(`.filtro-capa-chk[data-capa="${capId}"][data-tipo="${entCom}"]`);
-          if (chk) chk.checked = true;
-          filtrarPinesPorCapasActivas();
-
-          const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
-          if (coordRaw.includes(",")) {
-            const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
-            mapaNegosistema.flyTo([lat, lng], 17, { animate: true, duration: 1.2 });
-            setTimeout(() => {
-              window.contenedorPinesGlobal.eachLayer(function(layer) {
-                if (layer instanceof L.Marker && Math.abs(layer.getLatLng().lat - lat) < 0.0001 && Math.abs(layer.getLatLng().lng - lng) < 0.0001) {
-                  layer.openPopup();
-                }
-              });
-            }, 1300);
-          }
-        });
-        contenedorResultados.appendChild(item);
-      });
+      contenedorResultados.style.display = "block";
+      return;
     }
+
+    // 2. CÁLCULO DE MATRIZ DE DISTANCIAS EN TIEMPO REAL PARA EL ORDENAMIENTO
+    coincidencias = coincidencias.map(comercio => {
+      const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
+      let distanciaCalculada = 99999; // Distancia infinita por si no tiene coordenadas válidas
+
+      if (coordRaw.includes(",")) {
+        const [latC, lngC] = coordRaw.split(",").map(num => parseFloat(num.trim()));
+        if (!isNaN(latC) && !isNaN(lngC)) {
+          if (coorUsuario) {
+            // Ordenar por distancia real al celular del usuario
+            distanciaCalculada = calcularDistanciaEntreCoordenadas(coorUsuario.lat, coorUsuario.lng, latC, lngC);
+          } else if (typeof latCentroColonia !== "undefined" && typeof lngCentroColonia !== "undefined") {
+            // Respaldar ordenando por cercanía al centro de la colonia actual
+            distanciaCalculada = calcularDistanciaEntreCoordenadas(latCentroColonia, lngCentroColonia, latC, lngC);
+          }
+        }
+      }
+      return { datos: comercio, distancia: distanciaCalculada };
+    });
+
+    // 3. ORDENAR AUTOMÁTICAMENTE DE MENOR A MAYOR DISTANCIA (MÁS CERCANO PRIMERO)
+    coincidencias.sort((a, b) => a.distancia - b.distancia);
+    // ==========================================================
+    // SECCIÓN: BUSCADOR PREDICTIVO GEOLOCALIZADO (PARTE 2 DE 2)
+    // ==========================================================
+    // Tomamos los 8 locales comerciales más cercanos que coinciden
+    coincidencias.slice(0, 8).forEach(itemObjeto => {
+      const comercio = itemObjeto.datos;
+      const distancia = itemObjeto.distancia;
+      const item = document.createElement("div");
+      item.className = "item-predictivo-buscar";
+      
+      const entCom = comercio[COL_COMERCIO.MAPA];
+      const capId = (entCom === "productos") ? comercio[COL_COMERCIO.CAPA_PRODUCTO] : comercio[COL_COMERCIO.CAPA_SERVICIO];
+      const conf = PALETAS_CAPAS_SISTEMA[entCom].find(c => c.id === capId) || {color:"#94a3b8", label:"General"};
+      
+      // Formatear el texto de la distancia para el vecino (Metros o Kilómetros)
+      let textoDistancia = "";
+      if (distancia !== 99999) {
+        textoDistancia = distancia < 1 
+          ? `📍 A ${Math.round(distancia * 1000)}m` 
+          : `📍 A ${distancia.toFixed(1)} km`;
+      }
+
+      item.innerHTML = `
+        <div style="flex: 1; min-width: 0;">
+          <strong style="display:block; color:#0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${comercio[COL_COMERCIO.NOMBRE]}</strong>
+          <span style="font-size:11px; color:#64748b; display:block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${comercio[COL_COMERCIO.SLOGAN]}</span>
+          <span style="font-size:10px; color:#10b981; font-weight: 600; margin-top: 2px; display: inline-block;">${textoDistancia}</span>
+        </div>
+        <span class="badge-categoria-buscar" style="background-color:${conf.color}; flex-shrink: 0; margin-left: 8px;">${conf.label}</span>
+      `;
+
+      item.addEventListener("click", () => {
+        inputBuscar.value = comercio[COL_COMERCIO.NOMBRE];
+        contenedorResultados.style.display = "none";
+        
+        if (entornoActual !== entCom) {
+          entornoActual = entCom;
+          const btn = document.getElementById("btn-switch-entorno");
+          if (btn) {
+            btn.setAttribute("data-entorno", entornoActual);
+            btn.innerHTML = entornoActual === "productos" ? 'Ver Servicios <span id="emoji-switch">⚙️</span>' : 'Ver Productos <span id="emoji-switch">🍎</span>';
+          }
+        }
+        
+        const chk = document.querySelector(`.filtro-capa-chk[data-capa="${capId}"][data-tipo="${entCom}"]`);
+        if (chk) chk.checked = true;
+        filtrarPinesPorCapasActivas();
+        
+        const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
+        if (coordRaw.includes(",")) {
+          const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
+          mapaNegosistema.flyTo([lat, lng], 17, { animate: true, duration: 1.2 });
+          
+          setTimeout(() => {
+            window.contenedorPinesGlobal.eachLayer(function(layer) {
+              if (layer instanceof L.Marker && Math.abs(layer.getLatLng().lat - lat) < 0.0001 && Math.abs(layer.getLatLng().lng - lng) < 0.0001) {
+                layer.openPopup();
+              }
+            });
+          }, 1300);
+        }
+      });
+      contenedorResultados.appendChild(item);
+    });
+    
     contenedorResultados.style.display = "block";
   });
 
@@ -738,6 +983,7 @@ function inicializarBuscadorPredictivo() {
     }
   });
 }
+
 function inicializarModoAnunciatePiloto() {
   if (!window.contenedorPinesGlobal && mapaNegosistema) {
     window.contenedorPinesGlobal = L.markerClusterGroup({ 
@@ -787,6 +1033,7 @@ function inicializarModoAnunciatePiloto() {
         fNorm[COL_COMERCIO.WHATSAPP] = fila[COL_COMERCIO.WHATSAPP] || ""; 
         fNorm[COL_COMERCIO.COORDENADAS] = fila[COL_COMERCIO.COORDENADAS] || ""; 
         fNorm[COL_COMERCIO.MAPS_LINK] = fila[COL_COMERCIO.MAPS_LINK] || "";
+        fNorm[COL_COMERCIO.LOGO] = fila[COL_COMERCIO.LOGO] || "default_comercio.png";
         return fNorm;
       }).filter(item => item !== null);
 
@@ -893,162 +1140,247 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
  if (slogan) html += `<p class="popup-nego-slogan">"${slogan}"</p>`;
  html += `</div>`;
 
- // CONTENEDOR DE ACORDEONES (AJUSTE 2)
- html += `<div class="popup-acordeon-grupo">`;
+   // CONTENEDOR DE ACORDEONES (APERTURA OFICIAL DEL GRUPO)
+  html += `<div class="popup-acordeon-grupo">`;
 
- // SECCIÓN 1: MULTIMEDIA (FOTOS Y VIDEO)
- if (nivel >= 3 && id) {
- html += `
- <div class="acordeon-item">
- <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this, 'multimedia')">
- <span>📸 Fotos y Video</span> <i class="flecha-icono">▼</i>
- </button>
- <div class="acordeon-contenido cont-multimedia">`;
- 
- const esSim = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
- const rBase = esSim ? "geo/iztapalapa/img-nego/anunciate/" : "geo/iztapalapa/img-nego/";
- let sH = ""; let dH = ""; let sC = 0;
- 
- for (let i = 1; i <= 3; i++) {
- sH += `<div class="carrusel-item ${sC===0?'active':''}" data-index="${i}"><img data-src="${rBase}${id}-${i}.png" class="carrusel-media-elemento lazy-popup-img" onerror="controlarFalloImagenSlide(this, '${id}', ${i}, ['jpg','jpeg','webp'], '${rBase}')" alt="Imagen ${i}"></div>`;
- dH += `<span class="carrusel-dot ${sC===0?'active':''}" data-target="${i}" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
- sC++;
- }
- if (nivel >= 4 && youtubeUrl) {
- let vId = "";
- if (youtubeUrl.includes("v=")) vId = youtubeUrl.split("v=")[1].split("&")[0];
- else if (youtubeUrl.includes("youtu.be/")) vId = youtubeUrl.split("youtu.be/")[1].split("?")[0];
- else if (youtubeUrl.includes("shorts/")) vId = youtubeUrl.split("shorts/")[1].split("?")[0];
- 
- if (vId && vId.trim() !== "") { 
- sH += `<div class="carrusel-item" data-index="video"><iframe data-src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento lazy-popup-iframe" allowfullscreen></iframe></div>`; 
- dH += `<span class="carrusel-dot" data-target="video" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
- }
- }
- html += `<div class="popup-multimedia-carrusel"><div class="carrusel-viewport">${sH}</div><button class="carrusel-nav prev" onclick="moverMultimedia(this, -1)">&#10094;</button><button class="carrusel-nav next" onclick="moverMultimedia(this, 1)">&#10095;</button><div class="carrusel-dots-container">${dH}</div></div>`;
- html += `</div></div>`;
- }
+  // ==========================================================================
+  // SECCIÓN 1: MULTIMEDIA (GALERÍA Y VIDEO CORREGIDO)
+  // ==========================================================================
+  if (nivel >= 3 && id) {
+    const partesIdPopup = String(id).split("-");
+    const codigoColoniaPopup = partesIdPopup[1] || "306";
+    
+    const esSim = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
+    
+    // Segmentación por subcarpeta hiperlocal
+    const rBase = esSim 
+      ? "geo/iztapalapa/img-nego/anunciate/" 
+      : `geo/iztapalapa/img-nego/colonia-${codigoColoniaPopup}/`;
+    
+    let sH = ""; let dH = ""; let sC = 0;
+    for (let i = 1; i <= 3; i++) {
+      sH += `<div class="carrusel-item ${sC===0?'active':''}" data-index="${i}"><img data-src="${rBase}${id}-${i}.png" class="carrusel-media-elemento lazy-popup-img" onerror="controlarFalloImagenSlide(this, '${id}', ${i}, ['jpg','jpeg','webp'], '${rBase}')" alt="Imagen ${i}"></div>`;
+      dH += `<span class="carrusel-dot ${sC===0?'active':''}" data-target="${i}" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
+      sC++;
+    }
 
- // SECCIÓN 2: LISTA DE PRODUCTOS O SERVICIOS
- if (listaItems) {
- html += `
- <div class="acordeon-item">
- <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
- <span>📋 ${entornoActual==="productos"?"Productos":"Servicios"}</span> <i class="flecha-icono">▼</i>
- </button>
- <div class="acordeon-contenido">
- <div class="popup-nego-seccion"><span class="popup-nego-contenido">${listaItems}</span></div>
- </div>
- </div>`;
- }
+    // EXTRACTOR INTELIGENTE DE YOUTUBE SHORTS (BLINDAJE DE PARÁMETROS)
+    if (nivel >= 4 && youtubeUrl) {
+      let vId = "";
+      if (youtubeUrl.includes("v=")) {
+        vId = youtubeUrl.split("v=")[1].split("&")[0];
+      } else if (youtubeUrl.includes("youtu.be/")) {
+        vId = youtubeUrl.split("youtu.be/")[1].split("?")[0];
+      } else if (youtubeUrl.includes("shorts/")) {
+        // Corrección de Oro: Limpia el parámetro de rastreo ?si= de los Shorts
+        vId = youtubeUrl.split("shorts/")[1].split("?")[0].split("&")[0];
+      }
+      
+      if (vId && vId.trim() !== "") { 
+        sH += `<div class="carrusel-item" data-index="video"><iframe data-src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento lazy-popup-iframe" allowfullscreen></iframe></div>`; 
+        dH += `<span class="carrusel-dot" data-target="video" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
+      }
+    }
 
- // SECCIÓN 3: HORARIOS (BASE PARA EL AJUSTE 3 DEL CRONÓMETRO)
- if (nivel >= 3 && horarios) {
- html += `
- <div class="acordeon-item">
- <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
- <span>⏰ Horario de Atención</span> <i class="flecha-icono">▼</i>
- </button>
- <div class="acordeon-contenido">
- <div class="popup-nego-seccion">
- <div id="cronometro-contenedor-modulo" data-horario-crudo="${horarios}">
- <span class="reloj-cargando">Calculando...</span>
- </div>
- <span class="popup-nego-label" style="margin-top:6px;">Horario Completo:</span>
- <span class="popup-nego-contenido">${horarios}</span>
- </div>
- </div>
- </div>`;
- }
+    // Inyección del Acordeón Multimedia estructurado limpiamente sin romper etiquetas div
+    html += `
+    <div class="acordeon-item">
+      <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
+        <span>📸 Galería Multimedia y Video</span> <i class="flecha-icono">▼</i>
+      </button>
+      <div class="acordeon-contenido">
+        <div class="popup-multimedia-carrusel" style="padding-top: 10px;">
+          <div class="carrusel-viewport">${sH}</div>
+          <button class="carrusel-nav prev" onclick="moverMultimedia(this, -1)">&#10094;</button>
+          <button class="carrusel-nav next" onclick="moverMultimedia(this, 1)">&#10095;</button>
+          <div class="carrusel-dots-container">${dH}</div>
+        </div>
+      </div>
+    </div>`;
+  }
 
- // SECCIÓN 4: REDES SOCIALES
- if (nivel >= 4 && redes) {
- html += `
- <div class="acordeon-item">
- <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
- <span>🌐 Canales Digitales</span> <i class="flecha-icono">▼</i>
- </button>
- <div class="acordeon-contenido">
- <div class="popup-nego-seccion"><a href="${redes}" target="_blank" class="enlace-web-profesional">Visitar Sitio Web Oficial</a></div>
- </div>
- </div>`;
- }
+  // ==========================================================================
+  // SECCIÓN 2: LISTA DE PRODUCTOS O SERVICIOS (CON TU LÓGICA DE MOTONETAS)
+  // ==========================================================================
+  if (listaItems) {
+    let htmlBadgesServicio = "";
+    if (nivel >= 4) {
+      const textoAnalizar = String(listaItems).toLowerCase();
+      const palabrasEnvio = ["envio", "domicilio", "reparto", "entregamos", "lleva", "mandamos", "enviamos"];
+      const palabrasGratis = ["gratis", "sin costo", "incluido", "cortesia"];
+      const palabrasLlevar = ["llevar", "pasar", "recoger", "takeout", "pick up"];
+      
+      let tieneEntrega = palabrasEnvio.some(palabra => textoAnalizar.includes(palabra));
+      let esGratis = palabrasGratis.some(palabra => textoAnalizar.includes(palabra));
+      let tieneParaLlevar = palabrasLlevar.some(palabra => textoAnalizar.includes(palabra));
+      
+      htmlBadgesServicio = `<div class="contenedor-micro-badges-ui" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">`;
+      
+      if (tieneEntrega) {
+        if (esGratis) {
+          htmlBadgesServicio += `<span class="badge-micro-item" style="background: #e6f4ea; color: #137333; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">🛵 Entrega Gratis</span>`;
+        } else {
+          htmlBadgesServicio += `<span class="badge-micro-item" style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">📦 Envío a Domicilio</span>`;
+        }
+      }
+      if (tieneParaLlevar) {
+        htmlBadgesServicio += `<span class="badge-micro-item" style="background: #fef7e0; color: #b06000; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">🛍️ Ordena y Recoge</span>`;
+      }
+      htmlBadgesServicio += `</div>`;
+      
+      if (!tieneEntrega && !tieneParaLlevar) {
+        htmlBadgesServicio = "";
+      }
+    }
 
- html += `</div>`; // Cierre de popup-acordeon-grupo
+    html += `
+    <div class="acordeon-item">
+      <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
+        <span>📋 ${entornoActual==="productos"?"Productos":"Servicios"}</span> <i class="flecha-icono">▼</i>
+      </button>
+      <div class="acordeon-contenido">
+        <div class="popup-nego-seccion" style="padding-top: 10px;">
+          ${htmlBadgesServicio}
+          <span class="popup-nego-contenido" style="display: block; line-height: 1.5; color: #334155;">${listaItems}</span>
+        </div>
+      </div>
+    </div>`;
+  }
 
-  // BOTONES DE ACCIÓN ICONOGRÁFICOS CÍRCULARES (CON ETIQUETA UI)
- html += `
- <div class="popup-seccion-enlaces-contenedor">
-   <span class="popup-enlaces-subtitulo-ui">Contacto y Navegación</span>
-   <div class="popup-nego-botones-circulares">
- `;
+    // ==========================================================================
+  // SECCIÓN 3: REINCORPORACIÓN DE HORARIOS (CON CRONÓMETRO DE CONTEO REGRESIVO)
+  // ==========================================================================
+  if (nivel >= 3 && horarios) {
+    html += `
+    <div class="acordeon-item">
+      <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
+        <span>⏰ Horario de Atención</span> <i class="flecha-icono">▼</i>
+      </button>
+      <div class="acordeon-contenido">
+        <div class="popup-nego-seccion" style="padding-top: 10px;">
+          <div id="cronometro-contenedor-modulo" data-horario-crudo="${horarios}">
+            <span class="reloj-cargando">Calculando...</span>
+          </div>
+          <span class="popup-nego-label" style="margin-top:6px; display:block; font-weight:700; font-size:11px; color:#64748b; text-transform:uppercase;">Horario Completo:</span>
+          <span class="popup-nego-contenido" style="font-size:13px; color:#334155;">${horarios}</span>
+        </div>
+      </div>
+    </div>`;
+  }
 
- 
- // Botón 1: WhatsApp (Círculo Puro)
- if (nivel >= 4 && whatsapp && String(whatsapp).trim() !== "") {
- html += `<a href="${String(whatsapp).trim()}" target="_blank" class="btn-circular-ui btn-ui-wa" title="WhatsApp">
- <svg class="icono-svg-puro" viewBox="0 0 24 24"><path fill="currentColor" d="M12.004 2c-5.523 0-10 4.477-10 10a9.95 9.95 0 0 0 1.393 5.075L2 22l5.121-1.344A9.95 9.95 0 0 0 12.004 22c5.523 0 10-4.477 10-10s-4.477-10-10-10zm0 1.5c4.687 0 8.5 3.813 8.5 8.5s-3.813 8.5-8.5 8.5a8.45 8.45 0 0 1-4.321-1.185l-.309-.181-3.053.801.815-2.973-.2-.33A8.44 8.44 0 0 1 3.504 12c0-4.687 3.813-8.5 8.5-8.5zm-3.553 4.54a.65.65 0 0 0-.47.22c-.156.17-.597.583-.597 1.42s.61 1.64.695 1.76c.086.115 1.177 1.796 2.85 2.517.399.172.71.274.953.351.401.127.766.109 1.054.066.32-.047 1.055-.43 1.203-.844.148-.414.148-.77.104-.844-.044-.074-.162-.117-.339-.205-.178-.089-1.055-.52-1.218-.58-.163-.059-.281-.088-.4.089-.118.177-.457.577-.56.695-.104.118-.207.133-.385.044-.177-.089-.75-.276-1.428-.881-.527-.47-.883-.995-1.06-1.113-.178-.118-.019-.182.07-.27.079-.08.177-.207.266-.31.089-.104.118-.178.177-.296.059-.119.03-.222-.015-.311-.044-.088-.4-1.02-.548-1.378-.144-.347-.291-.3-.4-.3z"/></svg>
- </a>`;
- }
- 
- // Botón 2: Google Maps (Círculo Puro)
- if (linkGoogle) {
- html += `<a href="${linkGoogle}" target="_blank" class="btn-circular-ui btn-ui-gmaps" title="Google Maps">
- <svg class="icono-svg-puro" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
- </a>`;
- } else if (mapsLinkRaw && mapsLinkRaw.trim() !== "" && !linkWaze) {
- html += `<a href="${mapsLinkRaw.replace(/"/g, "").trim()}" target="_blank" class="btn-circular-ui btn-ui-gmaps" title="Ubicación">
- <svg class="icono-svg-puro" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
- </a>`;
- }
+  // ==========================================================================
+  // SECCIÓN 4: REDES SOCIALES (SITIO WEB / LANDING PAGE)
+  // ==========================================================================
+  if (nivel >= 4 && redes) {
+    html += `
+    <div class="acordeon-item">
+      <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
+        <span>🌐 Canales Digitales</span> <i class="flecha-icono">▼</i>
+      </button>
+      <div class="acordeon-contenido">
+        <div class="popup-nego-seccion" style="padding: 10px 0;"><a href="${redes}" target="_blank" class="enlace-web-profesional" style="display:block; text-align:center; background:#0f172a; color:#fff; text-decoration:none; padding:8px; border-radius:6px; font-size:13px; font-weight:600;">Visitar Sitio Web Oficial</a></div>
+      </div>
+    </div>`;
+  }
 
- // Botón 3: Waze (Círculo Puro - Se renderiza de forma independiente si existe en la cadena)
- if (linkWaze) {
- html += `<a href="${linkWaze}" target="_blank" class="btn-circular-ui btn-ui-waze" title="Waze">
- <svg class="icono-svg-puro" viewBox="0 0 24 24"><path fill="currentColor" d="M22.043 12.338a2.533 2.533 0 0 0-2.47-1.996h-.565a6.953 6.953 0 0 0-6.1-5.32 6.955 6.955 0 0 0-7.394 6.924c0 .324.025.644.07.96a2.235 2.235 0 0 0-.256 4.316l.228.046a2.23 2.23 0 0 0 4.195-.81h3.454a2.234 2.234 0 0 0 4.2.03l.067-.03a2.232 2.232 0 0 0 4.103-.925 2.53 2.53 0 0 0 .468-3.215zm-15.11 1.637a1.18 1.18 0 1 1 0-2.36 1.18 1.18 0 0 1 0 2.36zm6.208 0a1.18 1.18 0 1 1 0-2.36 1.18 1.18 0 0 1 0 2.36z"/></svg>
- </a>`;
- }
- 
- html += `</div></div>`;
- return html;
+  html += `</div>`; // Cierre definitivo y seguro de .popup-acordeon-grupo
 
+  // ==========================================================================
+  // BOTONES DE ACCIÓN ICONOGRÁFICOS INFERIORES (CON NUEVA MOTITO DE ENTREGA)
+  // ==========================================================================
+  html += `
+  <div class="popup-seccion-enlaces-contenedor" style="margin-top:12px; border-top:1px solid #e2e8f0; padding-top:10px;">
+    <span class="popup-enlaces-subtitulo-ui" style="display:block; font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:8px;">Contacto y Navegación</span>
+    <div class="popup-nego-botones-circulares" style="display:flex; gap:8px; align-items:center;">
+  `;
+
+  // 1. Botón Universal de WhatsApp
+  if (nivel >= 4 && whatsapp && String(whatsapp).trim() !== "") {
+    html += `
+    <a href="${String(whatsapp).trim()}" target="_blank" class="btn-circular-ui btn-ui-wa" title="WhatsApp" style="width:36px; height:36px; border-radius:50%; background:#25D366; color:white; display:flex; align-items:center; justify-content:center; text-decoration:none;">
+      <svg style="width:20px; height:20px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12.004 2c-5.523 0-10 4.477-10 10a9.95 9.95 0 0 0 1.393 5.075L2 22l5.121-1.344A9.95 9.95 0 0 0 12.004 22c5.523 0 10-4.477 10-10s-4.477-10-10-10zm0 1.5c4.687 0 8.5 3.813 8.5 8.5s-3.813 8.5-8.5 8.5a8.45 8.45 0 0 1-4.321-1.185l-.309-.181-3.053.801.815-2.973-.2-.33A8.44 8.44 0 0 1 3.504 12c0-4.687 3.813-8.5 8.5-8.5zm-3.553 4.54a.65.65 0 0 0-.47.22c-.156.17-.597.583-.597 1.42s.61 1.64.695 1.76c.086.115 1.177 1.796 2.85 2.517.399.172.71.274.953.351.401.127.766.109 1.054.066.32-.047 1.055-.43 1.203-.844.148-.414.148-.77.104-.844-.044-.074-.162-.117-.339-.205-.178-.089-1.055-.52-1.218-.58-.163-.059-.281-.088-.4.089-.118.177-.457.577-.56.695-.104.118-.207.133-.385.044-.177-.089-.75-.276-1.428-.881-.527-.47-.883-.995-1.06-1.113-.178-.118-.019-.182.07-.27.079-.08.177-.207.266-.31.089-.104.118-.178.177-.296.059-.119.03-.222-.015-.311-.044-.088-.4-1.02-.548-1.378-.144-.347-.291-.3-.4-.3z"/></svg>
+    </a>`;
+  }
+
+  // 2. NUEVO BOTÓN DE CONVERSIÓN DE MARKETING: ACCIÓN DE REPARTO / ENTREGA A DOMICILIO (🛵)
+  if (nivel >= 4 && listaItems) {
+    const textoAnalizar = String(listaItems).toLowerCase();
+    const palabrasEnvio = ["envio", "domicilio", "reparto", "entregamos", "lleva", "mandamos", "enviamos"];
+    let tieneEntrega = palabrasEnvio.some(palabra => textoAnalizar.includes(palabra));
+
+    if (tieneEntrega && whatsapp && String(whatsapp).trim() !== "") {
+      // Estrategia de conversión: Si tiene envío, creamos un enlace directo de pedido por WhatsApp con un mensaje pre-cargado
+      const linkPedidoEnvio = `${String(whatsapp).trim()}&text=¡Hola!%20Vi%20en%20el%20mapa%20que%20tienen%20servicio%20a%20domicilio.%20Me%20gustaría%20hacer%20un%20pedido.`;
+      
+      html += `
+      <a href="${linkPedidoEnvio}" target="_blank" class="btn-circular-ui btn-ui-delivery" title="Pedir a Domicilio" style="width:36px; height:36px; border-radius:50%; background:#e6f4ea; color:#137333; display:flex; align-items:center; justify-content:center; text-decoration:none; border: 1px solid #137333;">
+        <span style="font-size:16px;">🛵</span>
+      </a>`;
+    }
+  }
+
+  // 3. Botón de Google Maps
+  if (linkGoogle) {
+    html += `
+    <a href="${linkGoogle}" target="_blank" class="btn-circular-ui btn-ui-gmaps" title="Google Maps" style="width:36px; height:36px; border-radius:50%; background:#4285F4; color:white; display:flex; align-items:center; justify-content:center; text-decoration:none;">
+      <svg style="width:18px; height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    </a>`;
+  } else if (mapsLinkRaw && mapsLinkRaw.trim() !== "" && !linkWaze) {
+    html += `
+    <a href="${mapsLinkRaw.replace(/"/g, "").trim()}" target="_blank" class="btn-circular-ui btn-ui-gmaps" title="Ubicación" style="width:36px; height:36px; border-radius:50%; background:#4285F4; color:white; display:flex; align-items:center; justify-content:center; text-decoration:none;">
+      <svg style="width:18px; height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    </a>`;
+  }
+
+  // 4. Botón de Waze
+  if (linkWaze) {
+    html += `
+    <a href="${linkWaze}" target="_blank" class="btn-circular-ui btn-ui-waze" title="Waze" style="width:36px; height:36px; border-radius:50%; background:#33ccff; color:white; display:flex; align-items:center; justify-content:center; text-decoration:none;">
+      <svg style="width:18px; height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M22.043 12.338a2.533 2.533 0 0 0-2.47-1.996h-.565a6.953 6.953 0 0 0-6.1-5.32 6.955 6.955 0 0 0-7.394 6.924c0 .324.025.644.07.96a2.235 2.235 0 0 0-.256 4.316l.228.046a2.23 2.23 0 0 0 4.195-.81h3.454a2.234 2.234 0 0 0 4.2.03l.067-.03a2.232 2.232 0 0 0 4.103-.925 2.53 2.53 0 0 0 .468-3.215zm-15.11 1.637a1.18 1.18 0 1 1 0-2.36 1.18 1.18 0 0 1 0 2.36zm6.208 0a1.18 1.18 0 1 1 0-2.36 1.18 1.18 0 0 1 0 2.36z"/></svg>
+    </a>`;
+  }
+
+  html += `</div></div></div>`; // Cierres finales seguros de los contenedores del popup
+  return html;
 }
 
-function alternarAcordeonSeccion(btn, tipo) {
+function alternarAcordeonSeccion(btn) {
  const item = btn.closest('.acordeon-item');
  const contenido = item.querySelector('.acordeon-contenido');
  const estaAbierto = item.classList.contains('activo');
  
+ // Cerrar todos los demás acordeones del grupo
  btn.closest('.popup-acordeon-grupo').querySelectorAll('.acordeon-item').forEach(i => {
  i.classList.remove('activo');
  i.querySelector('.acordeon-contenido').style.maxHeight = null;
  });
-
+ 
  if (!estaAbierto) {
  item.classList.add('activo');
  contenido.style.maxHeight = contenido.scrollHeight + "px";
  
- // DISPARADOR SEGURO (Fix Calculando): Si abren la sección de horarios, arranca el cronómetro
+ // DISPARADOR AUTOMÁTICO DE HORARIOS
  if (contenido.querySelector('#cronometro-contenedor-modulo')) {
-   setTimeout(iniciarCronometroPopup, 50);
+ setTimeout(iniciarCronometroPopup, 50);
  }
  
- if (tipo === 'multimedia') {
+ // DISPARADOR AUTOMÁTICO DE IMÁGENES Y VIDEO LAZY-LOADING
  contenido.querySelectorAll('.lazy-popup-img').forEach(img => {
  if (img.getAttribute('data-src')) {
  img.src = img.getAttribute('data-src');
  img.removeAttribute('data-src');
  }
  });
+ 
  contenido.querySelectorAll('.lazy-popup-iframe').forEach(iframe => {
  if (iframe.getAttribute('data-src')) {
  iframe.src = iframe.getAttribute('data-src');
  iframe.removeAttribute('data-src');
  }
  });
- }
- }
 }
+}
+
 
 
 function generarDatosEstructuradosSEO(comerciosFiltrados) {

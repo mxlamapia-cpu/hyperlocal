@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Ofertas - Negosistema</title>
+    <!-- Estilos del Ecosistema -->
+    <link rel="stylesheet" href="css/leaflet.css"> <!-- 🚨 Inyección Requerida para soporte GIS -->
+    <link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="pagina-scroll-ventas" style="background-color: #f8fafc; overflow-y: auto !important; height: auto !important;">
+
+    <!-- MENÚ DE NAVEGACIÓN PREMIUM UNIFORME -->
+    <nav class="menu-navegacion-sistema" style="background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 14px 24px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0;">
+        <div class="menu-enlaces" style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <a href="index.html" style="text-decoration: none; color: inherit; display: inline-block;">
+                <div class="brand">
+                    <i class="fa-solid fa-map-location-dot brand-icon"></i>
+                    <div class="brand-text">
+                        <h1>Negosistema</h1>
+                        <p class="subtitle">Buscador Macro de Alcaldías CDMX</p>
+                    </div>
+                </div>
+            </a>
+            <div style="display: flex; gap: 24px; align-items: center;">
+                <a href="index.html" class="enlace-nav" style="text-decoration: none; color: #64748b; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+                    <span class="icono-nav">🗺️</span> Mapa CDMX
+                </a>
+                <a href="#" class="enlace-nav activo" style="text-decoration: none; color: #2563eb; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; border-bottom: 2px solid #2563eb; padding-bottom: 4px;">
+                    <span class="icono-nav">🛍️</span> Escaparate
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="catalog-header" style="max-width: 1400px; margin: 30px auto 0 auto; padding: 0 32px; text-align: left;">
+        <h1 style="font-family: 'Montserrat', sans-serif !important; font-weight: 900; color: #0f172a; font-size: 2.2rem; margin-bottom: 4px;">Ofertas Activas en la Zona</h1>
+        <p style="font-family: 'Inter', sans-serif !important; color: #64748b; font-size: 14px;">Explora las promociones del barrio en tiempo real</p>
+    </header>
+
+    <!-- 🚨 CONTENEDOR CORE DEL ESCAPARATE RESPONSIVO EN RED (MÁXIMO ANCHO) -->
+    <div class="catalog-container">
+        <div class="catalog-section">
+            <h4 class="section-title"><i class="fa-solid fa-fire icon-active"></i> Promociones de Hoy</h4>
+            <!-- Aquí el JS inyectará las tarjetas una por una de forma continua -->
+            <div id="contenedor-escaparate-grid" class="offers-grid"></div> 
+        </div>
+    </div>
+
+    <!-- 🚨 PLACEHOLDERS TÉCNICOS OCULTOS (Evitan que el JS muera por llamadas al mapa) -->
+    <div style="display: none !important; visibility: hidden !important;">
+        <div id="mapa-comercial-contenedor"></div>
+        <div id="ofertasSliderTrack"></div>
+        <input id="input-buscador-predictivo">
+        <div id="resultados-autocompletado"></div>
+        <div id="capas-inferiores-contenedor"></div>
+        <button id="btn-switch-entorno"></button>
+    </div>
+
+    <!-- Scripts en orden de dependencia -->
+    <script src="js/leaflet.js"></script> <!-- 🚨 Fix Core GIS -->
+    <script src="js/papaparse.min.js"></script>
+    <script src="js/motor-mapas.js"></script>
+
+    <!-- Disparador exclusivo para la vista de Catálogo -->
+    <script>
+        window.addEventListener("load", () => {
+            console.log("Escaparate Negosistema detectado. Conectando bases de datos...");
+            const params = new URLSearchParams(window.location.search);
+            const coloniaInicial = params.get("colonia") || localStorage.getItem("ultima_colonia_explorada") || "xalpa ii";
+
+            // Coordenadas de respaldo para el Geofencing Haversine de 2KM
+            window.latCentroColonia = 19.373;
+            window.lngCentroColonia = -99.018;
+
+            if (typeof cargarDatosComerciosHiperlocales === "function") {
+                cargarDatosComerciosHiperlocales(coloniaInicial);
+            }
+        });
+    </script>
+</body>
+</html>
