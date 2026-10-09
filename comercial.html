@@ -4,97 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Negosistema - Mapa Comercial Hiperlocal</title>
-    
+
     <!-- Hojas de Estilo Locales -->
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/MarkerCluster.css" />
     <link rel="stylesheet" href="css/all.min.css" />
     <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="pagina-scroll-ventas" style="background-color: #f8fafc; overflow-y: auto !important; height: auto !important;">
+<body class="entorno-mapa-comercial">
 
-    <!-- MENÚ DE NAVEGACIÓN PREMIUM UNIFORME CON LOGO INTERACTIVO IDÉNTICO AL INDEX -->
-    <nav class="menu-navegacion-sistema" style="background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 14px 24px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0;">
-        <div class="menu-enlaces" style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-            
-            <!-- LOGO BOTÓN: Enlace interactivo con la estructura exacta de clases de tu index.html -->
-            <a href="index.html" style="text-decoration: none; color: inherit; display: inline-block;">
-                <div class="brand">
-                    <i class="fa-solid fa-map-location-dot brand-icon"></i>
-                    <div class="brand-text">
-                        <h1>Negosistema</h1>
-                        <p class="subtitle">Buscador Macro de Alcaldías CDMX</p>
-                    </div>
+
+    <!-- MENÚ DE NAVEGACIÓN PREMIUM UNIFORME -->
+<nav class="menu-navegacion-sistema">
+    <div class="menu-enlaces-contenedor">
+        <a href="index.html" style="text-decoration: none; color: inherit; display: inline-block;">
+            <div class="brand">
+                <i class="fa-solid fa-map-location-dot brand-icon"></i>
+                <div class="brand-text">
+                    <h1>Negosistema</h1>
+                    <p class="subtitle">Buscador Macro de Alcaldías CDMX</p>
                 </div>
-            </a>
-
-            <!-- PESTAÑAS DE NAVEGACIÓN -->
-            <div style="display: flex; gap: 24px; align-items: center;">
-                <a href="index.html" class="enlace-nav activo" style="text-decoration: none; color: #2563eb; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; border-bottom: 2px solid #2563eb; padding-bottom: 4px;">
-                    <span class="icono-nav">🗺️</span> Mapa CDMX
-                </a>
-                <a href="anunciate.html" class="enlace-nav" style="text-decoration: none; color: #64748b; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
-                    <span class="icono-nav">📢</span> Anúnciate
-                </a>
             </div>
+        </a>
+        <div class="nav-tabs-container">
+            <a href="index.html" class="enlace-nav activo">
+                <span class="icono-nav">🗺️</span> Mapa CDMX
+            </a>
+            <a href="anunciate.html" class="btn-anunciate-header">
+           <span class="icono-nav">📢</span> Anúnciate Aquí
+            </a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- 🛠️ CORRECCIÓN: UN SOLO CONTENEDOR CORE GENERAL EN FORMATO ANCHO (1400PX) -->
+
+    <!-- CONTENEDOR CORE GENERAL -->
     <div class="contenedor-servicios-ventas" style="padding: 20px; max-width: 1400px; margin: 0 auto;">
-        
-        <!-- 1 & 2. CABECERA HIPERLOCAL DE CONTEXTO & NAV -->
-        <header style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
-            <a href="index.html" class="btn-regresar" style="text-decoration: none; color: #64748b; font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px;">
-                <i class="fa-solid fa-arrow-left"></i> Regresar al Buscador Regional
-            </a>
-            <h1 id="titulo-colonia-actual" style="color: #0f172a; font-size: 2.2rem; font-weight: 800; text-transform: capitalize; margin-bottom: 15px;">Cargando Colonia...</h1>
-            
-            <div style="margin-bottom: 20px; display: flex; justify-content: center;">
-                <button id="btn-switch-entorno" class="btn-switcher-premium" data-entorno="productos" style="width: 100%; max-width: 320px; padding: 12px; background: #0f172a; color: #fff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(15,23,42,0.15);">
-                    Ver Servicios <span id="emoji-switch">🛠️</span>
-                </button>
-            </div>
-        </header>
 
-        <!-- BLOQUE DE COLONIAS ALEDAÑAS (Salto de Rana) -->
-        <section class="panel-card-gis-vertical" style="margin-bottom: 40px;">
-            <h4 class="titulo-seccion-gis"><i class="fa-solid fa-map-signs" style="color: #2563eb;"></i> Colonias Aledañas</h4>
+<!-- CABECERA HIPERLOCAL UNIFICADA -->
+<header style="text-align: center; margin-bottom: 25px; margin-top: 10px;">
+    <a href="index.html" class="btn-regresar-sistema">
+        <i class="fa-solid fa-arrow-left"></i> Regresar al Buscador Regional
+    </a>
+    <h1 id="titulo-colonia-actual" class="titulo-pagina-sistema" style="font-size: 2.2rem; text-transform: capitalize;">Cargando Colonia...</h1>
+</header>
+
+
+        <!-- BLOQUE DE COLONIAS ALEDAÑAS -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px;">
+            <h4 class="titulo-seccion-gis"><i class="fa-solid fa-map-signs" style="color: var(--primary-color);"></i> Colonias Aledañas</h4>
             <div id="contenedor-colonias-aledanas" class="aledanas-grid-auto">
                 <!-- Botones de navegación rápida inyectados aquí por JS -->
             </div>
         </section>
 
-        <!-- 4. SLIDER DE OFERTAS PANORÁMICO (MONTSERRAT + INTER COMPATIBLE) -->
-        <section class="ofertas-slider-container" style="width: 100%; overflow: hidden; margin-bottom: 25px;">
-            <div class="ofertas-slider-viewport" style="width: 100%; overflow: hidden; border-radius: 12px;">
-                <div class="ofertas-slider-track" id="ofertasSliderTrack" style="display: flex; gap: 16px; scroll-behavior: smooth;">
-                    <!-- El motor lógico GIS inyectará las tarjetas 16:9 de forma automatizada aquí -->
+        <!-- SLIDER DE OFERTAS PANORÁMICO -->
+        <section class="ofertas-slider-container" style="margin-bottom: 25px;">
+            <div class="ofertas-slider-viewport">
+                <div class="ofertas-slider-track" id="ofertasSliderTrack">
+                    <!-- El motor lógico GIS inyectará las tarjetas aquí -->
                 </div>
             </div>
-            <!-- Puntos de Navegación del Carrusel -->
-            <div class="nav-dots" id="ofertasNavDots" style="display: flex; justify-content: center; gap: 6px; margin-top: 10px;"></div>
+            <div class="nav-dots" id="ofertasNavDots"></div>
         </section>
 
-        <!-- 3. COMPONENTE DE BÚSQUEDA INTELIGENTE -->
-        <section class="buscador-inteligente-container" style="position: relative; margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <!-- COMPONENTE DE BÚSQUEDA INTELIGENTE -->
+        <section class="buscador-inteligente-container" style="position: relative; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
             <div style="position: relative; display: flex; align-items: center;">
-                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; color: #64748b;"></i>
-                <input type="text" id="input-buscador-predictivo" placeholder="¿Qué estás buscando hoy? (Ej. tacos, farmacia)..." style="width: 100%; padding: 14px 16px 14px 45px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 15px; outline: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); font-family: inherit;">
+                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; color: var(--text-muted);"></i>
+                <input type="text" id="input-buscador-predictivo" placeholder="¿Qué estás buscando hoy? (Ej. tacos, farmacia)..." style="width: 100%; padding: 14px 16px 14px 45px; border: 1px solid var(--border-color); border-radius: var(--radius-premium); font-size: 15px; outline: none; box-shadow: var(--shadow-subtle);">
             </div>
-            <!-- Menú Desplegable Predictivo -->
-            <div id="resultados-autocompletado" style="position: absolute; top: 100%; left: 0; right: 0; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; max-height: 250px; overflow-y: auto; z-index: 9999; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: none;"></div>
+            <div id="resultados-autocompletado"></div>
         </section>
 
-        <!-- 5. NÚCLEO INTERACTIVO: FLUJO VERTICAL APILADO (Mapa Amplio -> Parrilla de Filtros) -->
+        <!-- NÚCLEO INTERACTIVO: FLUJO VERTICAL APILADO -->
         <div class="nucleo-interactivo-vertical">
-            
-            <!-- LIENZO GENERAL DEL MAPA (Ancho Completo de Lectura) -->
+
+            <!-- 🛠️ UBICACIÓN DEL BOTÓN DE CAMBIO: ARRIBA DEL MAPA -->
+            <div style="margin-bottom: 15px; display: flex; justify-content: center;">
+                <button id="btn-switch-entorno" class="btn-switcher-premium btn-accesibilidad-macro" data-entorno="productos" style="max-width: 320px; background: var(--text-dark); color: #fff; border-radius: var(--radius-premium); box-shadow: 0 4px 12px rgba(15,23,42,0.15);">
+                    Ver Servicios <span id="emoji-switch">🛠️</span>
+                </button>
+            </div>
+
+            <!-- LIENZO GENERAL DEL MAPA -->
             <section class="seccion-mapa-completo" style="margin-bottom: 25px;">
-                <div id="mapa-comercial-contenedor" class="map-canvas" style="width: 100%; height: 520px; min-height: 520px; border: 1px solid #cbd5e1; border-radius: 15px; overflow: hidden; background: #fff; z-index: 1; position: relative !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);"></div>
+                <div id="mapa-comercial-contenedor" class="map-canvas" style="width: 100%; height: 520px; min-height: 520px; border: 1px solid var(--border-color); border-radius: 15px; overflow: hidden; background: #fff; z-index: 1; position: relative !important; box-shadow: var(--shadow-subtle);"></div>
             </section>
 
-            <!-- PARRILLA DE BOTONES DE LAS CAPAS (Debajo del mapa) -->
+            <!-- PARRILLA DE BOTONES DE LAS CAPAS -->
             <section class="panel-card-gis-vertical" style="margin-bottom: 25px;">
                 <h4 class="titulo-seccion-gis"><i class="fa-solid fa-filter" style="color: #2563eb;"></i> Capas Comerciales de la Zona</h4>
                 <div id="capas-inferiores-contenedor" class="capas-lista-parrilla-auto">
@@ -103,37 +101,38 @@
                     </div>
                 </div>
             </section>
-        </div> 
-
-    </div> <!-- Cierre ordenado y balanceado de .contenedor-servicios-ventas -->
-
-    <!-- PIE DE PÁGINA OSCURO CORPORATIVO UNIFORME -->
-    <footer class="main-footer footer-regional" style="background: #0f172a; color: #94a3b8; padding: 20px 24px; border-top: 1px solid #1e293b; z-index: 10;">
-        <div class="footer-content" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; max-width: 1400px; margin: 0 auto; font-size: 13px; font-family: inherit;">
-            <p class="copyright" style="margin: 0;">&copy; 2026 <strong style="color: #ffffff;">Negosistema</strong>. Todos los derechos reservados.</p>
-            <div class="footer-links">
-                <a href="terminos.html" class="enlace-legal-footer" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-scale-balanced"></i> Términos, Condiciones y Aviso de Privacidad
-                </a>
-                <!-- Enlace Escaparate Staging para Slider de Ofertas -->
-                <a href="catalogo.html" class="enlace-legal-footer escaparate-p" id="enlaceEscaparateStaging" title="Ver escaparate de pruebas en Staging">P</a>
-
-                <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                        const enlace = document.getElementById("enlaceEscaparateStaging");
-                        if (enlace) {
-                            const ultimaColonia = localStorage.getItem("ultima_colonia_explorada") || "xalpa ii";
-                            enlace.href = `catalogo.html?colonia=${encodeURIComponent(ultimaColonia)}`;
-                        }
-                    });
-                </script>
-            </div>
         </div>
-    </footer>
+
+    </div>
+
+<!-- PIE DE PÁGINA OSCURO CORPORATIVO UNIFORME -->
+<footer class="footer-maestro-sistema">
+    <div class="footer-maestro-contenido" style="max-width: 1400px;">
+        <p class="copyright" style="margin: 0;">&copy; 2026 <strong>Negosistema</strong>. Todos los derechos reservados.</p>
+        <div class="footer-links">
+            <a href="terminos.html" class="enlace-legal-footer">
+                <i class="fa-solid fa-scale-balanced"></i> Términos, Condiciones y Aviso de Privacidad
+            </a>
+            <!-- El enlace 'P' mantiene su ID intacto para el script -->
+            <a href="catalogo.html" class="enlace-legal-footer escaparate-p" id="enlaceEscaparateStaging" title="Ver escaparate de pruebas en Staging" style="color: #64748b !important; margin-left: 8px;">P</a>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    const enlace = document.getElementById("enlaceEscaparateStaging");
+                    if (enlace) {
+                        const ultimaColonia = localStorage.getItem("ultima_colonia_explorada") || "xalpa ii";
+                        enlace.href = `catalogo.html?colonia=${encodeURIComponent(ultimaColonia)}`;
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</footer>
+
 
     <!-- Scripts Locales e Inicialización Síncrona -->
     <script src="js/leaflet.js"></script>
-    <script src="js/leaflet.markercluster.js"></script> 
+    <script src="js/leaflet.markercluster.js"></script>
     <script src="js/papaparse.min.js"></script>
     <script src="js/motor-mapas.js" defer></script>
 

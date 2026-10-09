@@ -1,27 +1,20 @@
 /* ==========================================================================
-   🔤 REGISTRO DE FUENTES LOCALES: INTER Y MONTSERRAT 🔤
+   CAJA 1: REGISTRO, VARIABLES CORE Y RESETEO UNIVERSAL MULTI-ENTORNO 🚀
    ========================================================================== */
 
+/* --- 🔤 FUENTES LOCALES --- */
 @font-face {
     font-family: 'Inter';
     src: url('webfonts/inter-v20-latin-regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+    font-weight: 400; font-style: normal; font-display: swap;
 }
-
 @font-face {
     font-family: 'Montserrat';
     src: url('webfonts/montserrat-v31-latin-900.woff2') format('woff2');
-    font-weight: 900;
-    font-style: normal;
-    font-display: swap;
+    font-weight: 900; font-style: normal; font-display: swap;
 }
 
-/* ========================================================
-   SECCIÓN 1: RESET UNIVERSAL, TIPOGRAFÍA Y ARQUITECTURA BASE
-   ======================================================== */
-
+/* --- 🎨 VARIABLES DEL SISTEMA --- */
 :root {
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
@@ -30,366 +23,313 @@
     --border-color: #e2e8f0;
     --primary-color: #3498db;
     --radius-premium: 12px;
-    --shadow-subtle: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* --- 🧹 RESETEO UNIVERSAL SANEADO --- */
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0; padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-body, html {
-    height: 100%;
-    width: 100%;
+html, body {
+    height: 100%; width: 100%;
     background-color: var(--bg-main);
     color: var(--text-dark);
-    overflow: hidden;
 }
 
-/* --- LAYOUTS CORE (SISTEMAS REUTILIZABLES) --- */
+/* Control maestro de scroll condicional según la página */
+body.pagina-scroll-ventas {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+}
 
+/* --- 🏢 ESTRUCTURA DE CONTENEDORES Y PANELES (PC) --- */
 .app-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    width: 100vw;
+    height: 100vh; width: 100vw;
+    overflow: hidden;
 }
-
-/* Layout dividido para la vista comercial hiperlocal */
 .app-container.split-layout {
     flex-direction: row;
 }
 
-/* --- CANVAS DEL MAPA LEAFLET --- */
-
-.map-canvas {
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-.map-section, .map-view-section {
-    flex: 1;
-    position: relative;
-    height: 100%;
-}
-
-/* --- COMPONENTES DE ENCABEZADO Y CONTROLES --- */
-
-.main-header {
-    background: var(--bg-card);
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow-subtle);
-    z-index: 10;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.brand-icon {
-    font-size: 28px;
-    color: var(--primary-color);
-}
-
-.brand h1 {
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.brand .subtitle {
-    font-size: 13px;
-    color: var(--text-muted);
-}
-/* ========================================================
-   SECCIÓN 2: INTERFAZ DE BARRA LATERAL Y SWITCHER PREMIUM
-   ======================================================== */
-
-/* --- ESTRUCTURA DE LA BARRA LATERAL --- */
 .sidebar-panel {
-    width: 360px;
-    height: 100%;
+    width: 360px; height: 100%;
     background-color: var(--bg-card);
     border-right: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     z-index: 10;
-    box-shadow: 4px 0 10px rgb(0 0 0 / 0.02);
+    box-shadow: 4px 0 10px rgba(15, 23, 42, 0.02);
 }
+.sidebar-header { padding: 20px; }
 
-.sidebar-header {
-    padding: 20px;
-    border-bottom: 1px solid var(--border-color);
+.map-section, .map-view-section {
+    flex: 1; position: relative; height: 100%;
 }
+.map-canvas { width: 100%; height: 100%; z-index: 1; }
+
+/* --- 🏷️ ENCABEZADOS GENERALES Y REGIONALES --- */
+.main-header, .header-buscador-regional {
+    display: flex !important; align-items: center !important; justify-content: space-between !important;
+    background: #ffffff !important; padding: 14px 24px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+    z-index: 10;
+}
+.brand { display: flex !important; align-items: center !important; gap: 14px !important; }
+.brand-icon { font-size: 28px; color: var(--primary-color); }
+.brand h1 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; }
+.brand .subtitle { font-size: 13px; color: var(--text-muted); }
+
+.btn-anunciate-header {
+    display: inline-flex !important; align-items: center !important; gap: 8px !important;
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important; color: #ffffff !important;
+    text-decoration: none !important; font-size: 13px !important; font-weight: 700 !important;
+    padding: 10px 18px !important; border-radius: 20px !important;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2) !important;
+    transition: all 0.2s ease !important;
+}
+.btn-anunciate-header:hover { transform: translateY(-1px) !important; filter: brightness(1.1) !important; }
 
 .btn-regresar {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 12px;
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--text-muted); text-decoration: none;
+    font-size: 13px; font-weight: 500; margin-bottom: 12px;
     transition: color 0.2s ease;
 }
+.btn-regresar:hover { color: var(--primary-color); }
+.colonia-titulo { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 900; text-transform: capitalize; }
 
-.btn-regresar:hover {
-    color: var(--primary-color);
-}
+/* ==========================================================================
+   CAJA 2: INTERRUPTORES TOGGLE AND PARRILLAS INTERACTIVAS RESPONSIVAS 🚀
+   ========================================================================== */
 
-.colonia-titulo {
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: capitalize;
-}
-
-/* --- CONTROLLER PREMIUM: SWITCHER DE ENTORNO --- */
+/* --- ⚙️ CONTROLLER PREMIUM: SWITCHER DE ENTORNO --- */
 .switch-container-box {
     padding: 16px 20px;
     background-color: #f8fafc;
     border-bottom: 1px solid var(--border-color);
 }
 
-.btn-switcher-premium {
-    width: 100%;
-    padding: 12px;
-    background: #0f172a;
-    color: #ffffff;
-    border: none;
-    border-radius: var(--radius-premium);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 4px 12px rgb(15 23 42 / 0.15);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-switcher-premium:hover {
-    background: #1e293b;
-    transform: translateY(-1px);
-}
-
-.btn-switcher-premium:active {
-    transform: translateY(1px);
-}
-
-/* --- SECCIONES DE FILTROS Y SCROLL --- */
+/* --- 🔍 SECCIONES DE FILTROS Y CONTENEDORES DE SCROLL (BARRA LATERAL) --- */
 .filters-section, .aledanas-section {
     padding: 20px;
     border-bottom: 1px solid var(--border-color);
 }
-
 .filters-section h3, .aledanas-section h3 {
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 16px; letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 8px;
 }
 
 .capas-lista-scroll {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 320px;
-    padding-right: 4px;
+    flex: 1; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 12px;
+    max-height: 320px; padding-right: 4px;
 }
+.capas-lista-scroll::-webkit-scrollbar { width: 6px; }
+.capas-lista-scroll::-webkit-scrollbar-track { background: transparent; }
+.capas-lista-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.capas-lista-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-/* Optimización de la barra de desplazamiento (Scrollbar) */
-.capas-lista-scroll::-webkit-scrollbar {
-    width: 6px;
-}
-
-.capas-lista-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.capas-lista-scroll::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
-}
-
-.capas-lista-scroll::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-/* ========================================================
-   SECCIÓN 3: INTERRUPTORES TOGGLE Y CUADRÍCULAS DE BOTONES
-   ======================================================== */
-
-/* --- INTERRUPTORES GENERALES (TOGGLE SWITCHES) --- */
+/* --- 🎛️ COMPONENTES SWITCH DE CONTROL INTERACTIVO --- */
 .guia-item-filter, .guia-item-filtro {
-    display: flex;
-    align-items: center;
-    background: #ffffff;
-    padding: 10px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    display: flex; align-items: center;
+    background: #ffffff; padding: 10px 12px;
+    border: 1px solid var(--border-color); border-radius: 8px;
     transition: background-color 0.2s ease;
 }
-
-.guia-item-filtro:hover {
-    background: #f8fafc;
-}
+.guia-item-filtro:hover { background: #f8fafc; }
 
 .toggle-switch {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 22px;
-    flex-shrink: 0;
+    position: relative; display: inline-block;
+    width: 40px; height: 22px; flex-shrink: 0;
 }
-
-.toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
 
 .slider-palanca {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    position: absolute; cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
     background-color: #cbd5e1;
     transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 34px;
-    opacity: 0.4;
+    border-radius: 34px; opacity: 0.4;
 }
-
 .slider-palanca:before {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
+    position: absolute; content: "";
+    height: 16px; width: 16px; left: 3px; bottom: 3px;
+    background-color: white; border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
     transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 50%;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+.filtro-capa-chk:checked + .slider-palanca { opacity: 1; }
+.filtro-capa-chk:checked + .slider-palanca:before { transform: translateX(18px); }
+
+.texto-filtro-info { font-size: 13px; line-height: 1.4; }
+.texto-filtro-info strong { color: var(--text-dark); font-weight: 600; }
+.texto-filtro-info span { color: var(--text-muted); }
+
+/* --- 🖥️ PARRILLAS GENERALES DEL CORE (VISTA PC Y MAPA PILOTO) --- */
+.buttons-grid, .aledanas-grid, .aledanas-grid-auto, .capas-lista-parrilla-auto {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 8px !important; margin-top: 12px !important;
 }
 
-/* Estado activo del Switcher */
-.filtro-capa-chk:checked + .slider-palanca {
-    opacity: 1;
+/* ==========================================================================
+   🛠️ CORRECCIÓN DE ESCRITORIO: PARRILLA ANCHA PARA MONITORES (PC)
+   ========================================================================== */
+/* ESTRUCTURA DE FILTROS UNIFICADA: COMPORTAMIENTO BASE DE COMPUTADORA (PC) */
+#capas-inferiores-contenedor {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; /* Columnas anchas ideales para PC */
+    gap: 12px !important;
+    padding: 12px 6px !important;
+    width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
 }
 
-.filtro-capa-chk:checked + .slider-palanca:before {
-    transform: translateX(18px);
+#capas-inferiores-contenedor .guia-item-filtro {
+    display: flex !important;
+    align-items: center !important;
+    background: #ffffff !important;
+    padding: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
 }
 
-.texto-filtro-info {
-    font-size: 13px;
-    line-height: 1.4;
-}
+/* Comportamiento por defecto del texto dentro de las tarjetas en PC */
+#capas-inferiores-contenedor .label-filtro-span { display: inline !important; }
+#capas-inferiores-contenedor .desc-filtro-span { display: block !important; }
+#capas-inferiores-contenedor .texto-filtro-info { margin-left: 10px !important; display: block !important; }
 
-.texto-filtro-info strong {
-    color: var(--text-dark);
-    font-weight: 600;
+/* --- 🏛️ ARQUITECTURA GENERAL E INFRAESTRUCTURA VERTICAL --- */
+.nucleo-interactivo-vertical { width: 100%; display: flex; flex-direction: column; }
+.panel-card-gis-vertical {
+    background: #ffffff; padding: 24px; border-radius: 15px;
+    border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.01);
 }
-
-.texto-filtro-info span {
-    color: var(--text-muted);
-}
-
-/* --- REJILLAS Y BOTONES DE NAVEGACIÓN (GRIDS) --- */
-.buttons-grid, .aledanas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-    margin-top: 12px;
+.titulo-seccion-gis {
+    color: #0f172a; font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
 }
 
 .btn-accesibilidad-macro, .btn-accesibilidad-micro, .btn-accesibilidad-dinamico {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-dark);
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    display: block; width: 100%; padding: 10px; background: #ffffff;
+    border: 1px solid var(--border-color); border-radius: 8px;
+    text-align: center; font-size: 13px; font-weight: 600; color: var(--text-dark);
+    text-decoration: none; cursor: pointer; transition: all 0.2s ease;
 }
-
 .btn-accesibilidad-macro:hover, .btn-accesibilidad-micro:hover, .btn-accesibilidad-dinamico:hover {
-    background: #f1f5f9;
-    border-color: #94a3b8;
-    transform: translateY(-1px);
+    background: #f1f5f9; border-color: #94a3b8; transform: translateY(-1px);
 }
 
-/* Estilo para simular carga */
 .loading-placeholder {
-    grid-column: 1 / -1;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 13px;
-    padding: 24px 0;
+    grid-column: 1 / -1; text-align: center;
+    color: var(--text-muted); font-size: 13px; padding: 24px 0;
 }
-/* ========================================================
-   SECCIÓN 4: PINES PERSONALIZADOS Y JERARQUÍAS DE NIVEL GIS
-   ======================================================== */
 
-/* --- CONTENEDOR MAESTRO DEL PIN DIVICON --- */
+/* --- 📐 OPTIMIZACIONES ESPECÍFICAS DE PANTALLA ADAPTATIVA (TABLETS) --- */
+@media (max-width: 1024px) {
+    body.pagina-scroll-ventas #capas-inferiores-contenedor {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    }
+    .desc-filtro-span { display: none !important; }
+}
+
+/* ==========================================================================
+   CAJA 3: PARCHE VECTORIAL GIS, NIVELES COMERCIALES Y AUTOMATIZACIÓN DE PINES 🚀
+   ========================================================================== */
+
+/* --- 🎯 1. SANAMIENTO Y CONTROL DE COORDENADAS LEAFLET --- */
+/* Sanea el contenedor para que la base inferior toque la coordenada de la calle */
+.leaflet-marker-selectable,
+.leaflet-marker-icon.leaflet-marker-selectable {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+}
+
+/* --- 📍 2. EL CASCARÓN DE TU PIN: ANCLAJE EXACTO 30X42 --- */
 .pin-personalizado {
     position: relative;
     width: 30px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: 42px; /* Altura total que cubre la gota hasta la punta */
+    display: block;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* --- LA GOTA VECTORIAL DINÁMICA --- */
+/* --- 💧 3. LA GOTA VECTORIAL ORIGINAL (SANEADA DE IMPORTANTS) --- */
 .gota-vectorial {
     position: absolute;
     width: 30px;
     height: 30px;
-    background-color: var(--pin-color, #cbd5e1);
-    border-radius: 50% 50% 50% 0;
-    /* Rota el bloque para formar la punta de flecha clásica orientada abajo */
-    transform: rotate(-45deg);
     top: 0;
     left: 0;
-    border: 2px solid #ffffff;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.16);
+    background-color: var(--pin-color, #3498db);
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: -2px 4px 6px rgba(15, 23, 42, 0.2);
     z-index: 1;
+    box-sizing: border-box;
+    border: 2px solid #ffffff;
 }
 
-/* --- EMOJI INTERIOR CENTRAL --- */
+/* --- ⚪ 4. CENTRO BLANCO PROTECTOR (FIX SINTAXIS COMPILADO) --- */
+.pin-personalizado .pin-centro-blanco,
+.pin-centro-blanco {
+    position: absolute;
+    width: 20px;  /* Calza perfectamente dentro de la gota de 30px */
+    height: 20px;
+    background: #ffffff;
+    border-radius: 50%;
+    top: 5px;     /* Centrado óptico milimétrico */
+    left: 5px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* --- 🖼️ 5. BLINDAJE DE IMAGEN LOGO MARCA CONTRA DEFORMACIÓN --- */
+.pin-logo-interior {
+    width: 18px !important;
+    height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    object-fit: contain !important; /* 🛠️ ¡EVITA EL EFECTO ÓVALO/HUEVO APLASTADO EN PC Y MÓVIL! */
+    background: #ffffff !important;
+    border-radius: 50% !important;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+/* --- 😀 6. EMOJI INTERIOR CENTRAL EN CONFIGURACIÓN BASE --- */
 .pin-emoji-interior {
-    position: relative;
-    z-index: 2;
-    font-size: 14px;
-    margin-top: -6px; /* Centrado preciso */
+    font-size: 12px;
+    line-height: 1;
+    display: block;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    z-index: 4;
     pointer-events: none;
 }
 
-/* --- TRATAMIENTO DE CADA NIVEL PREMIUM COMERCIAL --- */
+/* --- 👑 7. TRATAMIENTO PREMIUM POR DERECHO PUBLICITARIO GIS --- */
 
-/* Nivel 5: Plan Oro Premium con Efecto Pulso de Ondas */
+/* Nivel 5: Plan Oro Premium con Efecto Pulso de Ondas y Gota */
 .pin-oro.premium-pulse::after {
     content: "";
     position: absolute;
@@ -407,7 +347,11 @@ body, html {
 
 .pin-oro .gota-vectorial {
     border-color: #f1c40f !important;
-    box-shadow: 0 0 10px rgba(241, 196, 15, 0.6);
+    box-shadow: 0 0 10px rgba(241, 196, 15, 0.6) !important;
+}
+
+.premium-pulse .gota-vectorial {
+    animation: pulsoGisGotaRotada 2s infinite ease-in-out !important;
 }
 
 /* Nivel 4: Plan Plata con Borde Reforzado */
@@ -429,76 +373,130 @@ body, html {
 /* Nivel 1: Incógnito / Directorio Base Gris sin Plan */
 .pin-incognito-gris .gota-vectorial {
     background-color: #94a3b8 !important;
+    --pin-color: #94a3b8 !important;
     border-color: #e2e8f0 !important;
 }
 
-/* --- ANIMACIONES CSS NATIVAS --- */
+/* --- 🍇 8. PARCHE GIS: MICRO-CLUSTERING (DONAS SVG EN EL MAPA) --- */
+.cluster-dona-svg-personalizado {
+    background: transparent !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.cluster-dona-svg-personalizado svg {
+    animation: entradaCluster 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.15));
+}
+
+/* --- 🎬 ANIMACIONES CSS NATIVAS CORREGIDAS --- */
 @keyframes pulsoOndaOro {
-    0% {
-        transform: scale(0.6);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1.4);
-        opacity: 0;
-    }
-}
-/* ========================================================
-   SECCIÓN 5: POPUPS COMERCIALES Y CARRUSEL MULTIMEDIA
-   ======================================================== */
-
-/* --- CONTENEDOR GENERAL DEL POPUP --- */
-.popup-nego-contenedor {
-    width: 280px;
-    padding: 4px;
-    font-family: inherit;
+    0% { transform: scale(0.6); opacity: 1; }
+    100% { transform: scale(1.4); opacity: 0; }
 }
 
-.popup-nego-header {
-    margin-bottom: 12px;
+@keyframes pulsoGisGotaRotada {
+    0% { transform: rotate(-45deg) scale(1); }
+    50% { transform: rotate(-45deg) scale(1.08); }
+    100% { transform: rotate(-45deg) scale(1); }
 }
+
+@keyframes entradaCluster {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   CAJA 4: POPUPS PREMIUM, BOTTOM SHEET MÓVIL, LIGHTBOX Y SLIDER ASOMO 🚀
+   ========================================================================== */
+
+/* ==========================================================================
+   🏪 1. POPUPS PREMIUM EXPANDIDOS (VISTA DE ESCRITORIO / PC) - SANEADO
+   ========================================================================== */
+.leaflet-popup-content-wrapper {
+    /* ⚡ ANCHO ELÁSTICO RESPONSIVO: Ocupará el 88% de la pantalla del celular */
+    width: 88vw !important; 
+    
+    /* 🛑 TOPE MÁXIMO: En pantallas grandes o PC nunca medirá más de 340px */
+    max-width: 340px !important; 
+    
+    border-radius: var(--radius-premium, 12px) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1) !important;
+}
+
+.leaflet-popup-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important; /* 🟢 ELIMINA DESFASE: Quita el espacio muerto que desalineaba el popup del pin */
+    font-family: inherit !important;
+}
+
+/* Control estricto de separaciones para que los acordeones respiren de forma simétrica */
+.popup-acordeon-grupo {
+    padding: 0 16px 12px 16px !important;
+}
+.popup-seccion-enlaces-contenedor {
+    padding: 0 16px 16px 16px !important;
+}
+
 
 .popup-nego-titulo {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-dark);
-    line-height: 1.2;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.025em !important;
 }
 
 .popup-nego-slogan {
-    font-size: 12px;
-    color: var(--text-muted);
+    font-size: 13px !important;
+    color: #64748b !important;
     font-style: italic;
-    margin-top: 2px;
 }
 
-/* --- SECCIONES DE DETALLE (HORARIOS, PRODUCTOS) --- */
 .popup-nego-seccion {
-    margin-bottom: 10px;
-    font-size: 12px;
-    line-height: 1.4;
+    margin-bottom: 12px !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    border-bottom: 1px dashed #f1f5f9;
+    padding-bottom: 8px;
 }
 
 .popup-nego-label {
-    font-weight: 700;
-    color: var(--text-dark);
-    display: block;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 2px !important;
 }
 
 .popup-nego-contenido {
-    color: #334155;
+    color: #334155 !important;
 }
 
-/* --- CARRUSEL MULTIMEDIA UNIFICADO --- */
+/* ==========================================================================
+   ESTRUCTURA DE CABECERA: BLINDAJE VISUAL PARA LA COMPUTADORA (PC)
+   ========================================================================== */
+.popup-nego-header {
+    background: #ffffff !important; /* 🟢 ACOPLE DE COLOR: Cubre el fondo gris residual del borde superior */
+    padding: 16px 16px 8px 16px !important; /* Margen interno controlado para que el título respire */
+    border-bottom: 1px solid #f1f5f9;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+
+/* --- 📸 2. GALERÍA MULTIMEDIA INTERNA DEL POPUP --- */
 .popup-multimedia-carrusel {
-    position: relative;
-    width: 100%;
-    height: 150px;
-    background: #000;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 12px;
-    box-shadow: var(--shadow-subtle);
+    position: relative !important;
+    width: 100% !important;
+    height: 190px !important;
+    background: #000000 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    margin: 12px 0 !important;
 }
 
 .carrusel-viewport {
@@ -525,1797 +523,561 @@ body, html {
 }
 
 .carrusel-media-elemento {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: none;
-}
-
-/* --- BOTONES DE NAVEGACIÓN DEL CARRUSEL --- */
-.carrusel-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(15, 23, 42, 0.6);
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 14px;
-    z-index: 10;
-    border-radius: 0 4px 4px 0;
-    transition: background 0.2s;
-}
-
-.carrusel-nav.next {
-    right: 0;
-    border-radius: 4px 0 0 4px;
-}
-
-.carrusel-nav:hover {
-    background: rgba(15, 23, 42, 0.9);
-}
-
-/* Indicadores circulares (Dots) */
-.carrusel-dots-container {
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 6px;
-    z-index: 10;
-}
-
-.carrusel-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.carrusel-dot.active {
-    background: #ffffff;
-}
-
-/* --- BOTONES DE ACCIÓN (WHATSAPP / GPS) --- */
-.popup-nego-botones {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.popup-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    text-align: center;
-    transition: all 0.2s ease;
-}
-
-.popup-btn-wa {
-    background-color: #25d366;
-    color: #ffffff;
-}
-
-.popup-btn-wa:hover {
-    background-color: #128c7e;
-}
-
-.popup-btn-gps {
-    background-color: #3498db;
-    color: #ffffff;
-}
-
-.popup-btn-gps:hover {
-    background-color: #2980b9;
-}
-
-/* --- SECCIÓN LEGAL --- */
-.legal-page-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 24px;
-    background: var(--bg-card);
-    border-radius: var(--radius-premium);
-    box-shadow: var(--shadow-subtle);
-}
-/* ========================================================
-/* ========================================================
-   PARCHE MAESTRO GIS: LIBERACIÓN DE SCROLL Y MAPA PILOTO
-   ======================================================== */
-
-/* Descongela la app para que tenga scroll normal de arriba a abajo */
-body.pagina-scroll-ventas,
-html {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    height: auto !important;
-}
-
-/* Fuerza el contenedor del mapa para que sea visible y tenga altura rígida */
-body.pagina-scroll-ventas #mapa_general {
-    display: block !important;
-    visibility: visible !important;
-    height: 500px !important;
-    min-height: 500px !important;
-    width: 100% !important;
-    position: relative !important;
-    border: 2px solid #cbd5e1 !important;
-    border-radius: 15px !important;
-    z-index: 100 !important;
-}
-
-/* Da un formato premium tipo cuadrícula a tus botones del simulador */
-body.pagina-scroll-ventas #capas-inferiores-contenedor {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
-    gap: 12px !important;
-    max-height: none !important; /* Elimina el scroll interno */
-    overflow: visible !important;
-}
-
-body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
-    display: flex !important;
-    align-items: center !important;
-    background: #ffffff !important;
-    padding: 12px !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-}
-/* ========================================================
-   SECCIÓN: OPTIMIZACIÓN VISUAL DEL BUSCADOR REGIONAL
-   ======================================================== */
-
-/* Alineación de dos extremos en la barra superior */
-.header-buscador-regional {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important; /* Logotipo a la izquierda, botón a la derecha */
-    background: #ffffff !important;
-    padding: 14px 24px !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-}
-
-.brand {
-    display: flex !important;
-    align-items: center !important;
-    gap: 14px !important;
-}
-
-/* Botón Premium "Anúnciate" estilo Call to Action */
-.btn-anunciate-header {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important;
-    color: #ffffff !important;
-    text-decoration: none !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    padding: 10px 18px !important;
-    border-radius: 20px !important;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2) !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.btn-anunciate-header:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35) !important;
-    filter: brightness(1.1) !important;
-}
-
-/* Pie de Página Estilizado */
-.footer-regional {
-    background: #0f172a !important; /* Gris oscuro profundo corporativo */
-    color: #94a3b8 !important;
-    padding: 14px 24px !important;
-    border-top: 1px solid #1e293b !important;
-    z-index: 10 !important;
-}
-
-.footer-content {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: wrap !important;
-    gap: 12px !important;
-    max-width: 1400px !important;
-    margin: 0 auto !important;
-    font-size: 12px !important;
-}
-
-.footer-regional .copyright strong {
-    color: #ffffff !important;
-}
-
-/* Enlace legal interactivo */
-.enlace-legal-footer {
-    color: #38bdf8 !important; /* Azul cielo brillante para alto contraste */
-    text-decoration: none !important;
-    font-weight: 600 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    transition: color 0.2s ease !important;
-}
-
-.enlace-legal-footer:hover {
-    color: #7dd3fc !important;
-    text-decoration: underline !important;
-}
-
-/* Ajuste de diseño adaptativo para celulares */
-@media (max-width: 480px) {
-    .header-buscador-regional {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 12px !important;
-    }
-    .btn-anunciate-header {
-        width: 100% !important;
-        justify-content: center !important;
-    }
-    .footer-content {
-        flex-direction: column !important;
-        text-align: center !important;
-    }
-}
-/* ========================================================
-   SECCIÓN: POPUPS PREMIUM EXPANDIDOS Y MULTIMEDIA HD
-   ======================================================== */
-
-/* 1. Expande el ancho máximo que Leaflet le permite al globo del popup */
-.leaflet-popup-content-wrapper {
-    width: 360px !important;
-    max-width: 360px !important;
-    border-radius: 12px !important;
-    padding: 6px !important;
-    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.15) !important;
-}
-
-/* 2. Ajusta el contenedor interno del texto y quita márgenes excesivos */
-.leaflet-popup-content {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 8px !important;
-    font-family: inherit !important;
-}
-
-/* 3. Redimensiona la caja del negocio para el nuevo ancho de 344px reales */
-.popup-nego-contenedor {
-    width: 100% !important;
-    max-width: 100% !important;
-}
-
-.popup-nego-titulo {
-    font-size: 18px !important; /* Más grande y legible */
-    font-weight: 800 !important;
-    color: #0f172a !important;
-    letter-spacing: -0.025em !important;
-}
-
-.popup-nego-slogan {
-    font-size: 13px !important;
-    color: #64748b !important;
-}
-
-/* 4. Optimiza el Carrusel para que las fotos NO se corten */
-.popup-multimedia-carrusel {
-    position: relative !important;
-    width: 100% !important;
-    height: 190px !important; /* Elevado de 150px a 190px para un aspecto 16:9 profesional */
-    background: #000000 !important;
-    border-radius: 8px !important;
-    overflow: hidden !important;
-    margin: 12px 0 !important;
-}
-
-/* Fuerza a las imágenes a cubrir el espacio sin deformarse ni recortarse bruscamente */
-.carrusel-media-elemento {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important; /* Muestra la foto COMPLETA. Si prefieres que llene la caja usa 'cover' */
-    background-color: #0f172a !important; /* Fondo elegante para fotos verticales o de proporciones distintas */
+    object-fit: contain !important;
+    background-color: #0f172a !important;
 }
 
-/* 5. Estiliza las secciones de texto internas (Horarios, Productos, Enlaces) */
-.popup-nego-seccion {
-    margin-bottom: 12px !important;
-    font-size: 13px !important; /* Incrementado para facilitar la lectura rápida */
-    line-height: 1.5 !important;
-    border-bottom: 1px dashed #f1f5f9;
-    padding-bottom: 8px;
-}
-
-.popup-nego-label {
-    font-weight: 700 !important;
-    color: #0f172a !important;
-    margin-bottom: 2px !important;
-}
-
-.popup-nego-contenido {
-    color: #334155 !important;
-}
-
-/* 6. Botones Premium de Acción más Grandes e Interactivos */
-.popup-nego-botones {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
-    margin-top: 14px !important;
-}
-
-.popup-btn {
-    padding: 10px !important; /* Más cómodos para el dedo en pantallas táctiles */
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-    transition: transform 0.2s ease, filter 0.2s ease !important;
-}
-
-.popup-btn:hover {
-    transform: translateY(-1px) !important;
-    filter: brightness(1.08) !important;
-}
-
-/* ========================================================
-   ARQUITECTURA CORE: FLUJO VERTICAL EN PARRILLA CONTINUA
-   ======================================================== */
-.nucleo-interactivo-vertical {
-    width: 100%;
+/* --- 📋 3. CONTENEDOR DE ACORDEONES DENTRO DEL POPUP --- */
+.popup-acordeon-grupo {
+    margin: 10px 0;
     display: flex;
     flex-direction: column;
+    gap: 6px;
 }
 
-/* Tarjetas contenedoras de controles GIS debajo del mapa */
-.panel-card-gis-vertical {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 15px;
+.acordeon-item {
     border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.01);
-    text-align: left;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #ffffff;
 }
 
-.titulo-seccion-gis {
-    color: #0f172a;
-    font-size: 1.1rem;
+.acordeon-disparador {
+    width: 100%;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: none;
+    font-size: 13px;
     font-weight: 700;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Parrilla auto-adaptable para las Capas Comerciales */
-.capas-lista-parrilla-auto {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-}
-
-/* Parrilla auto-adaptable para Colonias Aledañas */
-.aledanas-grid-auto {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 8px;
-}
-
-
-/* ========================================================
-   PARCHE GIS: MICRO-CLUSTERING (DONAS SVG)
-   ======================================================== */
-/* Evita que los clusters SVG nativos de Leaflet hereden fondos raros */
-.cluster-dona-svg-personalizado {
-    background: transparent !important;
-    border: none !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Animación sutil de entrada para cuando aparecen las donas en el mapa */
-.cluster-dona-svg-personalizado svg {
-    animation: entradaCluster 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.15));
-}
-
-@keyframes entradaCluster {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-
-/* ========================================================
-   INTERFAZ COMPLEMENTARIA (BUSCADOR Y POPUPS)
-   ======================================================= */
-/* Menú del buscador inteligente predictivo */
-.item-predictivo-buscar {
-    padding: 12px 16px;
+    color: #1e293b;
+    text-align: left;
     cursor: pointer;
-    font-size: 14px;
-    border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: background 0.2s ease;
 }
-.item-predictivo-buscar:hover {
-    background: #f8fafc;
-}
-.badge-categoria-buscar {
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 20px;
-    color: #fff;
-    font-weight: 600;
-}
-
-/* Ubicación sutil absoluta del ID único en el popup */
-.popup-badge-id-tech {
-    position: absolute;
-    top: 8px;
-    right: 32px;
-    font-family: monospace;
-    font-size: 10px;
-    background: #f1f5f9;
-    color: #64748b;
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid #e2e8f0;
-    z-index: 10;
-}
-
-
-/* ========================================================
-   OPTIMIZACIÓN RESPONSIVA SMARTPHONES (MOBILE)
-   ======================================================== */
-@media (max-width: 480px) {
-    #mapa-comercial-contenedor {
-        height: 420px !important; /* Altura ideal en celulares para manipular el mapa */
-        min-height: 420px !important;
-    }
-    .panel-card-gis-vertical {
-        padding: 16px; /* Reducción de márgenes muertos en pantallas chicas */
-    }
-    .capas-lista-parrilla-auto {
-        grid-template-columns: 1fr; /* Una capa por fila para facilidad táctil */
-    }
-    .aledanas-grid-auto {
-        grid-template-columns: 1fr 1fr; /* Dos botones por fila para ahorrar espacio vertical */
-    }
-}
-/* ========================================================
-   DISEÑO DE ACORDEONES, CRONÓMETRO Y BOTONES (AJUSTES 2, 3 Y 4)
-   ======================================================== */
-
-/* --- Ajustes del Popup y Contenedor de Acordeones --- */
-.popup-movil-optimizado .leaflet-popup-content-wrapper {
-  max-height: 440px !important;
-  overflow-y: auto !important;
-}
-
-.popup-acordeon-grupo {
-  margin: 10px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.acordeon-item {
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #ffffff;
-}
-
-/* --- Botón Disparador del Acordeón --- */
-.acordeon-disparador {
-  width: 100%;
-  padding: 10px 12px;
-  background: #f8fafc;
-  border: none;
-  font-size: 13px;
-  font-weight: 700;
-  color: #1e293b;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background 0.2s ease;
-}
 
 .acordeon-disparador:hover {
-  background: #f1f5f9;
+    background: #f1f5f9;
 }
 
 .acordeon-disparador .flecha-icono {
-  font-size: 10px;
-  color: #64748b;
-  transition: transform 0.2s ease;
-  font-style: normal;
+    font-size: 10px;
+    color: #64748b;
+    transition: transform 0.2s ease;
+    font-style: normal;
 }
 
-/* Estado Expandido */
 .acordeon-item.activo .acordeon-disparador {
-  background: #f1f5f9;
-  border-bottom: 1px solid #e2e8f0;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .acordeon-item.activo .flecha-icono {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
-/* --- Contenido Colapsable --- */
 .acordeon-contenido {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #ffffff;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff;
 }
 
 .acordeon-contenido > .popup-nego-seccion {
-  padding: 12px;
-  margin: 0;
+    padding: 12px;
+    margin: 0;
 }
 
-/* Ajuste específico para que el carrusel quepa bien dentro de su pestaña */
-.cont-multimedia {
-  background: #000000;
-}
-.cont-multimedia .popup-multimedia-carrusel {
-  margin: 0 !important;
-  border-radius: 0;
-}
-
-/* --- Módulo del Cronómetro Dinámico (Ajuste 3) --- */
+/* --- ⏰ 4. MÓDULO DEL CRONÓMETRO DINÁMICO --- */
 .cronometro-flex-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f8fafc;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-}
-
-.reloj-badge {
-  font-size: 10px;
-  font-weight: 800;
-  padding: 3px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-  flex-shrink: 0;
-}
-
-.reloj-badge.abierto-now {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.reloj-badge.cerrado-now {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.cuenta-regresiva-reloj {
-  font-size: 12px;
-  color: #334155;
-}
-
-.cuenta-regresiva-reloj b {
-  color: #0f172a;
-  font-family: monospace;
-  font-size: 13px;
-}
-
-.cuenta-regresiva-reloj.cerrado b {
-  color: #b91c1c;
-}
-
-/* Enlace Web Profesional */
-.enlace-web-profesional {
-  display: block;
-  text-align: center;
-  padding: 8px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  text-decoration: none;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 6px;
-  border: 1px solid #bfdbfe;
-}
-
-/* --- Botones de Acción Profesional (Ajuste 4) --- */
-.popup-btn-gmaps {
-  background-color: #ffffff !important;
-  color: #3c4043 !important;
-  border: 1px solid #dadce0 !important;
-}
-.popup-btn-gmaps:hover {
-  background-color: #f8f9fa !important;
-}
-
-.popup-btn-waze {
-  background-color: #33ccff !important;
-  color: #ffffff !important;
-}
-.popup-btn-waze:hover {
-  background-color: #2699cc !important;
-}
-
-.icono-btn-svg {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-}
-/* --- NUEVA INTERFAZ DE BOTONES CIRCULARES CORPORATIVOS --- */
-.popup-nego-botones-circulares {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 16px !important; /* Espaciado premium */
-  margin-top: 14px !important;
-  width: 100% !important;
-}
-
-.btn-circular-ui {
-  width: 44px !important; /* Tamaño perfecto para interacción táctil ("Finger-Friendly") */
-  height: 44px !important;
-  border-radius: 50% !important; /* Círculo perfecto */
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-decoration: none !important;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08) !important;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease !important;
-}
-
-.btn-circular-ui:hover {
-  transform: scale(1.1) !important; /* Efecto sutil de flotado */
-}
-
-.btn-circular-ui:active {
-  transform: scale(0.95) !important;
-}
-
-/* Iconografía Vectorial Escalable */
-.icono-svg-puro {
-  width: 22px !important;
-  height: 22px !important;
-  flex-shrink: 0;
-}
-
-/* Identidades Cromáticas Oficiales de Marca */
-.btn-ui-wa {
-  background-color: #25D366 !important;
-  color: #ffffff !important;
-}
-.btn-ui-wa:hover {
-  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4) !important;
-}
-
-.btn-ui-gmaps {
-  background-color: #ffffff !important;
-  color: #ea4335 !important; /* Rojo corporativo Google Pin */
-  border: 1px solid #e2e8f0 !important;
-}
-.btn-ui-gmaps:hover {
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1) !important;
-}
-
-.btn-ui-waze {
-  background-color: #33ccff !important;
-  color: #ffffff !important;
-}
-.btn-ui-waze:hover {
-  box-shadow: 0 4px 14px rgba(51, 204, 255, 0.4) !important;
-}
-/* ========================================================
-   PARCHE DE CONTROL VECTORIAL: FIX DE ICONOS GIGANTES
-   ======================================================== */
-
-/* Forzamos el aislamiento para que los SVGs de los botones no hereden el tamaño del carrusel */
-.popup-nego-botones-circulares .btn-circular-ui .icono-svg-puro {
-  width: 22px !important;
-  height: 22px !important;
-  max-width: 22px !important;
-  max-height: 22px !important;
-  display: block !important;
-  margin: 0 auto !important;
-  transform: none !important;
-}
-
-/* Ajuste adicional para asegurar que el círculo contenga el vector perfectamente centrado */
-.btn-circular-ui {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-  padding: 0 !important;
-}
-
-/* Evitamos que el SVG herede opacidades o distorsiones de transiciones externas */
-.btn-circular-ui svg {
-  flex-shrink: 0 !important;
-}
-.popup-seccion-enlaces-contenedor {
-  width: 100% !important;
-  text-align: center !important;
-  margin-top: 14px !important;
-}
-
-.popup-enlaces-subtitulo-ui {
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  color: #64748b !important; /* Gris elegante atenuado */
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  display: block !important;
-  margin-bottom: 8px !important;
-}
-.reloj-badge.cerrado-now:contains("PAUSA"), 
-.reloj-badge[class*="cerrado-now"] {
-  /* Si dice PAUSA usará un tono naranja/amarillo UI */
-  background: #fef3c7;
-  color: #d97706;
-}
-/* Forzamos el color rojo solo si dice explícitamente CERRADO */
-.reloj-badge.cerrado-now {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-/* --- NUEVA PARRILLA DE FILTROS COMPACTA DE ALTA DENSIDAD VISUAL --- */
-#capas-inferiores-contenedor {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  justify-content: center !important;
-  gap: 10px !important;
-  padding: 12px 6px !important;
-  max-height: none !important;
-}
-
-.guia-burbuja-filtro-ui {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 30px !important; /* Bordes circulares perfectos */
-  padding: 6px 12px !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.02) !important;
-  transition: transform 0.2s, border-color 0.2s !important;
-}
-
-.guia-burbuja-filtro-ui:hover {
-  transform: translateY(-1px) !important;
-  border-color: #cbd5e1 !important;
-}
-
-.burbuja-interactiva-wrapper {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  position: relative !important;
-  cursor: pointer !important;
-}
-
-.burbuja-emoji-visual {
-  font-size: 16px !important;
-}
-
-/* --- Switchers circulares compactos --- */
-.toggle-switch-compacto {
-  position: relative !important;
-  display: inline-block !important;
-  width: 28px !important;
-  height: 16px !important;
-  flex-shrink: 0 !important;
-}
-
-.toggle-switch-compacto input {
-  opacity: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-.slider-palanca-circular {
-  position: absolute !important;
-  cursor: pointer !important;
-  top: 0; left: 0; right: 0; bottom: 0 !important;
-  background-color: #cbd5e1 !important;
-  transition: .2s ease-in-out !important;
-  border-radius: 20px !important;
-  opacity: 0.3 !important;
-}
-
-.slider-palanca-circular:before {
-  position: absolute !important;
-  content: "" !important;
-  height: 12px !important;
-  width: 12px !important;
-  left: 2px !important;
-  bottom: 2px !important;
-  background-color: white !important;
-  transition: .2s ease-in-out !important;
-  border-radius: 50% !important;
-}
-
-.filtro-capa-chk:checked + .slider-palanca-circular {
-  opacity: 1 !important;
-}
-
-.filtro-capa-chk:checked + .slider-palanca-circular:before {
-  transform: translateX(12px) !important;
-}
-
-/* --- Menú Flotante Informativo (Tooltip Inteligente) --- */
-.burbuja-interactiva-wrapper:after {
-  content: attr(data-descripcion-flotante) !important;
-  position: absolute !important;
-  bottom: 130% !important;
-  left: 50% !important;
-  transform: translateX(-50%) scale(0.9) !important;
-  background: #0f172a !important;
-  color: #ffffff !important;
-  font-size: 11px !important;
-  font-weight: 500 !important;
-  padding: 6px 12px !important;
-  border-radius: 6px !important;
-  white-space: nowrap !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  z-index: 9999 !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-}
-
-/* Mostrar la etiqueta de información al pasar el mouse por encima */
-.burbuja-interactiva-wrapper:hover:after {
-  opacity: 1 !important;
-  transform: translateX(-50%) scale(1) !important;
-}
-/* ========================================================
-   ARQUITECTURA DE FILTROS RESPONSIVOS (PC -> MEDIA -> MOVIL)
-   ======================================================== */
-
-/* --- 🖥️ ESTADO 1: VISTA PC COMPLETA --- */
-body.pagina-scroll-ventas #capas-inferiores-contenedor {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
-  gap: 12px !important; /* */
-}
-
-body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
-  display: flex !important;
-  align-items: center !important;
-  background: #ffffff !important;
-  padding: 12px !important; /* */
-  border: 1px solid #e2e8f0 !important; /* */
-  border-radius: 8px !important; /* */
-}
-
-/* --- 📐 ESTADO 2: PC EN PANTALLA RECORTADA --- */
-@media (max-width: 1024px) {
-  body.pagina-scroll-ventas #capas-inferiores-contenedor {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
-  }
-  
-  /* Ocultamos de forma automática el texto descriptivo (...) */
-  .desc-filtro-span {
-    display: none !important;
-  }
-  
-  .texto-filtro-info {
-    font-size: 13px !important;
-  }
-}
-
-/* --- 📱 ESTADO 3: CELULARES Y SMARTPHONES --- */
-@media (max-width: 480px) {
-  /* 1. Transformamos el contenedor en una parrilla compacta real */
-  body.pagina-scroll-ventas #capas-inferiores-contenedor {
-    display: grid !important; /* Cambiado de flex a grid para armar la parrilla */
-    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)) !important; /* Fuerza columnas pequeñas de 65px */
-    gap: 8px !important;
-    padding: 8px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* 2. Convertimos el botón en un contenedor cuadrado/vertical compacto */
-  body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
-    display: flex !important; /* Cambiado de inline-flex a flex estándar */
-    flex-direction: column-reverse !important; /* Emoji ARRIBA, Switch ABAJO */
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 8px 4px !important; /* Reducimos padding horizontal para que no se estire */
-    border-radius: 10px !important; /* Cambiado de 30px (píldora) a 10px (tarjeta/botón cuadrado) */
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    box-sizing: border-box !important;
-    height: auto !important;
-  }
-
-  /* 3. Ocultamos el texto base de la capa para que solo quede el Switch + Emoji */
-  .label-filtro-span {
-    display: none !important;
-  }
-  
-  /* Centramos el emoji dentro del espacio del botón */
-  .texto-filtro-info {
-    margin-left: 0 !important; /* Eliminamos el margen horizontal de PC */
-    margin-bottom: 6px !important; /* Añadimos espacio inferior para separarlo del switch */
-    text-align: center !important;
-    cursor: pointer !important;
-  }
-
-  /* Hacemos que el emoji tenga buena presencia táctil */
-  .emoji-filtro-span {
-    font-size: 18px !important;
-    display: block !important;
-  }
-
-  /* --- 🔍 INTERACCIÓN MÓVIL: TARJETA FLOTANTE AL DAR CLIC --- */
-  /* Corrección de typo en tu CSS de .texto-filter-info a .texto-filtro-info */
-  .texto-filtro-info.expandido-movil {
-    position: fixed !important;
-    bottom: 24px !important;
-    left: 5% !important;
-    width: 90% !important;
-    background: #0f172a !important; /* Fondo gris oscuro premium corporativo */
-    color: #ffffff !important;
-    padding: 16px !important;
-    border-radius: 12px !important;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3) !important;
-    z-index: 99999 !important; /* Capa sobre el mapa */
-    display: block !important;
-    margin-bottom: 0 !important; /* Resetea el margen de la parrilla cuando flota */
-    animation: entradaFlotantePop 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  }
-
-  /* Forzamos a que aparezcan los textos ocultos dentro de la tarjeta flotante */
-  .texto-filtro-info.expandido-movil strong {
-    color: #ffffff !important;
-    display: block !important;
-  }
-  
-  .texto-filtro-info.expandido-movil .label-filtro-span {
-    display: inline-block !important;
-    color: #ffffff !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    margin-right: 4px !important;
-  }
-
-  .texto-filtro-info.expandido-movil .desc-filtro-span {
-    display: block !important; /* Pone la descripción abajo del título */
-    color: #94a3b8 !important; /* Color gris suave nítido */
-    font-size: 12px !important;
-    margin-top: 4px !important;
-    font-weight: 400 !important;
-  }
-}
-
-/* ==========================================================================
- 🎨 FIX MAESTRO CALIBRADO: ARQUITECTURA DE PINES ANTI-DEFORMACIÓN MULTIPANTALLA
- ========================================================================== */
-
-.leaflet-marker-selectable,
-.leaflet-marker-icon.leaflet-marker-selectable {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 30px !important;
-    height: 42px !important;
-    overflow: visible !important;
-    box-sizing: border-box !important;
-}
-
-/* El contenedor del pin: AHORA SIN MÁRGENES NEGATIVOS */
-.pin-personalizado {
-    position: relative !important;
-    width: 30px !important;
-    height: 30px !important; 
-    display: block !important;
-    margin: 0 !important;    /* 🛠️ ¡CORREGIDO! 0 márgenes para que use el anclaje del JS */
-    padding: 0 !important;
-    box-sizing: border-box !important;
-}
-
-.gota-vectorial {
-    position: absolute !important;
-    width: 30px !important;
-    height: 30px !important;
-    top: 0 !important;
-    left: 0 !important;
-    background-color: var(--pin-color, #3498db) !important;
-    border-radius: 50% 50% 50% 0 !important; 
-    transform: rotate(-45deg) !important; 
-    box-shadow: -2px 4px 8px rgba(0, 0, 0, 0.25) !important;
-    z-index: 1 !important;
-    box-sizing: border-box !important;
-}
-
-.pin-personalizado .pin-centro-blanco,
-.pin-centro-blanco {
-    position: absolute !important;
-    width: 22px !important;       
-    height: 22px !important;
-    background: #ffffff !important;
-    border-radius: 50% !important;
-    top: 4px !important;          
-    left: 4px !important;
-    z-index: 3 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.15) !important;
-}
-
-.pin-emoji-interior {
-    font-size: 13px !important;
-    line-height: 22px !important; 
-    display: block !important;
-    text-align: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    z-index: 4 !important;
-    pointer-events: none !important;
-}
-
-.pin-logo-interior {
-    width: 18px !important;       
-    height: 18px !important;
-    max-width: 18px !important;
-    max-height: 18px !important;
-    object-fit: contain !important; /* 🛠️ Protege el logo contra deformaciones en PC */
-    background: #ffffff !important;
-    border-radius: 50% !important;
-    display: block !important;
-    margin: 0 auto !important;
-}
-
-
-/* Logo de marcas (Bimbo) perfectamente contenido y protegido contra deformaciones en monitores anchos */
-.pin-logo-interior {
-    width: 18px !important;       
-    height: 18px !important;
-    max-width: 18px !important;
-    max-height: 18px !important;
-    object-fit: contain !important; /* 🛠️ ¡EVITA EL EFECTO ÓVALO/HUEVO APLASTADO EN PC! */
-    background: #ffffff !important;
-    border-radius: 50% !important;
-    display: block !important;
-    margin: 0 auto !important;
-}
-
-/* Animación Premium Nivel 5 (Oro) */
-.premium-pulse .gota-vectorial {
-    animation: pulsoGisGotaRotada 2s infinite ease-in-out !important;
-}
-
-@keyframes pulsoGisGotaRotada {
-    0% { transform: rotate(-45deg) scale(1); }
-    50% { transform: rotate(-45deg) scale(1.08); }
-    100% { transform: rotate(-45deg) scale(1); }
-}
-
-.pin-incognito-gris .gota-vectorial {
-    --pin-color: #94a3b8 !important;
-}
-
-/* ==========================================================================
-   MÓDULO: INTERFAZ DE CATÁLOGO Y STAGING CRONOLÓGICO (NEGOSISTEMA)
-   ========================================================================== */
-.catalog-header {
-    background: var(--bg-card);
-    padding: 20px 32px;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow-subtle);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-.catalog-brand h1 {
-    font-size: 24px;
-    font-weight: 800;
-    color: #0a2540; /* Azul Marino de Negosistema */
-    letter-spacing: -0.03em;
-}
-.catalog-brand h1 span {
-    color: #0070f3; /* Azul Insignia de Negosistema */
-}
-.catalog-brand p {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 2px;
-}
-.catalog-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-grow: 1;
-    max-width: 480px;
-}
-.search-wrapper {
-    position: relative;
-    width: 100%;
-}
-.search-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-}
-.search-input {
-    width: 100%;
-    padding: 12px 16px 12px 44px;
-    border: 1px solid var(--border-color);
-    border-radius: 30px;
-    font-size: 14px;
-    background-color: var(--bg-main);
-    outline: none;
-    transition: all 0.2s ease;
-}
-.search-input:focus {
-    border-color: #0070f3;
-    background-color: var(--bg-card);
-    box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.15);
-}
-.catalog-container {
-    max-width: 1400px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 32px;
-    flex-grow: 1;
-}
-.catalog-section {
-    margin-bottom: 40px;
-}
-.section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #0a2540;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     display: flex;
     align-items: center;
     gap: 8px;
-}
-.icon-active { color: #f1c40f; }
-.icon-scheduled { color: #0070f3; }
-
-/* --- DISEÑO DE PARRILLA Y TARJETAS DUALES --- */
-.offers-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-}
-.offers-grid.scheduled-section .feature-card {
-    opacity: 0.82;
-    border-style: dashed;
-}
-.offers-grid.scheduled-section .feature-card:hover {
-    opacity: 1;
-}
-
-.feature-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
-}
-
-.card-logo-container {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 44px;
-    height: 44px;
-    background: #ffffff;
-    border-radius: 50%;
-    padding: 3px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.card-logo-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-/* ==========================================================================
-   REDISEÑO CORE: TARJETA PANORÁMICA 16:9 FLUIDA (REEMPLAZO) 🚀
-   ========================================================================== */
-
-.feature-card {
-    background: var(--bg-card);
-    border-radius: var(--radius-premium);
-    box-shadow: var(--shadow-subtle);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; /* Empuja el texto hacia la base */
-    position: relative;
-    width: 320px;       /* Ancho responsivo del slide */
-    height: 180px;      /* 🚨 RATIO 16:9 PERFECTO: Proporción exacta de la imagen */
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-}
-
-.feature-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-}
-
-/* Encabezado absoluto: Ahora la imagen es el fondo total de la tarjeta */
-.card-promo-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    padding: 0; /* Limpiamos padding viejo */
-}
-
-/* Tratamiento responsivo de la imagen */
-.card-bg-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ajusta e infla la imagen sin deformarla */
-    object-position: center;
-    z-index: 1;
-}
-
-/* 🚨 CAPA DE MARKETING: Degradado oscuro para que el texto blanco sea 100% legible */
-.card-body-wrapper {
-    position: relative;
-    z-index: 2; /* Flota sobre la imagen */
-    padding: 14px;
-    width: 100%;
-    background: linear-gradient(to top, rgba(10, 37, 64, 0.95) 0%, rgba(10, 37, 64, 0.6) 60%, transparent 100%);
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-/* Ajustes de tipografía para contraste sobre imagen oscura */
-.biz-identity-box h3 {
-    font-size: 15px !important;
-    font-weight: 800 !important;
-    color: #ffffff !important; /* Letras blancas */
-    margin-bottom: 2px !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-.promo-description {
-    color: #e2e8f0 !important; /* Blanco suavizado nítido */
-    font-size: 11px !important;
-    line-height: 1.3 !important;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Máximo dos líneas para que no tape toda la tarjeta */
-    -webkit-box-orient: vertical;
-}
-
-/* Badge del descuento flotando elegantemente */
-.promo-hero-title {
-    position: absolute;
-    bottom: 12px;
-    right: 12px;
-    z-index: 3;
-    font-size: 1.2rem !important; /* Escala tipográfica controlada */
-    font-weight: 900;
-    color: #ffffff;
-    background: #ef4444; /* Rojo conversión */
-    padding: 2px 8px;
+    background: #f8fafc;
+    padding: 8px 10px;
     border-radius: 6px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    border: 1px solid #e2e8f0;
 }
 
-/* Footer de metadatos absoluto en la esquina superior */
-.card-meta-footer {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 3;
-    display: flex;
-    gap: 6px;
-    border-top: none !important; /* Eliminamos la línea divisoria vieja */
-    padding-top: 0 !important;
-    width: auto !important;
-}
-
-.meta-colonia, .meta-vigencia {
-    font-size: 9px !important;
-    background: rgba(10, 37, 64, 0.8);
-    backdrop-filter: blur(4px);
-    color: #ffffff !important;
+.reloj-badge {
+    font-size: 10px;
+    font-weight: 800;
     padding: 3px 6px;
     border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Ajuste del botón flotante de WhatsApp de la promo */
-.btn-wa-order {
-    position: absolute;
-    top: 10px; /* Lo movemos arriba a la derecha para no obstruir el texto inferior */
-    right: 10px;
-    bottom: auto !important;
-    width: 32px !important;
-    height: 32px !important;
-    font-size: 14px !important;
-    box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
-}
-
-.badge-status {
-    align-self: flex-start;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-.badge-status.scheduled {
-    background: rgba(241, 196, 15, 0.2);
-    border-color: rgba(241, 196, 15, 0.4);
-    color: #f1c40f;
-}
-.promo-hero-title {
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    max-width: 80%;
-}
-
-.biz-identity-box h3 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0a2540;
-    margin-bottom: 6px;
-}
-.promo-description {
-    color: var(--text-muted);
-    font-size: 13px;
-    line-height: 1.4;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-}
-.card-meta-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--border-color);
-    padding-top: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-}
-.meta-colonia {
-    color: #0070f3;
-}
-.btn-wa-order {
-    position: absolute;
-    bottom: 60px;
-    right: 20px;
-    width: 44px;
-    height: 44px;
-    background-color: #25D366;
-    color: #ffffff !important;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    text-decoration: none !important;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-    z-index: 10;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-}
-.btn-wa-order:hover {
-    background-color: #128c7e;
-    transform: scale(1.1);
-}
-
-/* --- LÍNEA DIVISORIA CRONOLÓGICA --- */
-.timeline-divider {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 50px 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent);
-}
-.timeline-badge {
-    background: #0a2540;
-    color: #ffffff;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.05em;
-    box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2);
-}
-/* Animación nativa para el desplazamiento del carrusel */
-@keyframes scroll-autoslide {
-    0%, 25% { transform: translateX(0); }
-    33%, 58% { transform: translateX(-33.333%); }
-    66%, 91% { transform: translateX(-66.666%); }
-    100% { transform: translateX(0); }
-}
-.ofertas-slider-container {
-    width: 100%;
-    overflow: hidden;    
-    padding: 20px 0;
-}
-.ofertas-slider-track {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    padding: 10px;
-}
-.slide-group {
-    display: flex;
-    gap: 16px;
     flex-shrink: 0;
 }
-/* ==========================================================================
-   MÓDULO DE INTELIGENCIA VISUAL: ANUNCIOS DINÁMICOS HIPERLOCALES
-   ========================================================================== */
 
-/* 1. Contenedor de Píldoras Superiores (Id, Ubicación y Vencimiento) */
-.badge-container-top {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 3;
-    pointer-events: none;
+.reloj-badge.abierto-now {
+    background: #dcfce7;
+    color: #15803d;
 }
 
-.badge-dinamico-gis {
-    background: rgba(15, 23, 42, 0.85) !important;
-    backdrop-filter: blur(4px);
-    color: #ffffff !important;
-    font-size: 10px !important;
-    font-weight: 700 !important;
-    padding: 4px 8px !important;
-    border-radius: 6px !important;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+.reloj-badge.cerrado-now {
+    background: #fee2e2;
+    color: #b91c1c;
 }
 
-/* 2. Reestructuración del Cuerpo: Distribución Bicameral */
-.card-body-wrapper {
-    background: linear-gradient(to top, rgba(10, 37, 64, 0.98) 0%, rgba(10, 37, 64, 0.75) 65%, transparent 100%) !important;
+.cuenta-regresiva-reloj {
+    font-size: 12px;
+    color: #334155;
+}
+
+.cuenta-regresiva-reloj b {
+    color: #0f172a;
+    font-family: monospace;
+    font-size: 13px;
+}
+
+/* --- 🛠️ 5. INTERFAZ TÁCTIL DE BOTONES CIRCULARES CORPORATIVOS --- */
+.popup-nego-botones-circulares {
     display: flex !important;
-    flex-direction: row !important; /* Alineación horizontal: Textos a la Izq, Gancho a la Der */
-    justify-content: space-between !important;
-    align-items: flex-end !important;
-    gap: 12px !important;
-    padding: 12px 14px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 16px !important;
+    margin-top: 14px !important;
+    width: 100% !important;
 }
 
-/* Columna de Contenido Escrito */
-.biz-identity-box {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 1px !important;
-    max-width: 70% !important;
-}
-
-/* 3. Estilos del Gancho Comercial (El Botón Impactante de Descuento) */
-.gancho-marketing-container {
-    flex: 0 0 30% !important;
-    display: flex !important;
-    flex-direction: column !important;
+.btn-circular-ui {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-}
-
-.btn-gancho-premium {
-    background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%) !important; /* Oro Vibrante */
-    color: #0f172a !important; /* Texto Oscuro para Contraste Puro */
-    font-size: 14px !important;
-    font-weight: 900 !important;
-    padding: 8px 12px !important;
-    border-radius: 8px !important;
-    text-align: center !important;
-    width: 100% !important;
-    box-shadow: 0 4px 10px rgba(255, 153, 0, 0.4) !important;
-    text-transform: uppercase;
-    letter-spacing: -0.01em;
-    border: none !important;
-    animation: sutilBrillo 3s infinite ease-in-out;
-}
-
-.subtexto-gancho {
-    color: #94a3b8 !important;
-    font-size: 8px !important;
-    text-transform: uppercase;
-    font-weight: 700;
-    margin-top: 4px;
-    letter-spacing: 0.05em;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-}
-
-@keyframes sutilBrillo {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(1.15); }
-}
-
-/* --- BOTÓN MINIMALISTA ESCAPARATE STAGING --- */
-.escaparate-p {
-    font-family: monospace !important;
-    background: #1e293b !important; /* Gris un poco más claro que el fondo del footer */
-    color: #64748b !important; /* Texto atenuado */
-    padding: 2px 8px !important;
-    border-radius: 4px !important;
-    border: 1px solid #334155 !important;
-    font-size: 11px !important;
-    font-weight: bold !important;
     text-decoration: none !important;
-    display: inline-flex !important;
-    align-items: center;
-    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08) !important;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
 }
 
-.escaparate-p:hover {
-    background: #0070f3 !important; /* Azul insignia al pasar el mouse */
-    color: #ffffff !important;
-    border-color: #0070f3 !important;
-    box-shadow: 0 0 8px rgba(0, 112, 243, 0.4);
+.btn-circular-ui:hover { transform: scale(1.1) !important; }
+.btn-circular-ui:active { transform: scale(0.95) !important; }
+
+.icono-svg-puro, .btn-circular-ui svg {
+    width: 22px !important;
+    height: 22px !important;
+    max-width: 22px !important;
+    max-height: 22px !important;
+    flex-shrink: 0 !important;
+    display: block !important;
+    margin: 0 auto !important;
 }
 
-
-/* ========================================================
-   DISEÑO DE ACORDEONES, CRONÓMETRO Y BOTONES (AJUSTES 2, 3 Y 4)
-   ======================================================== */
-/* ... (Aquí dejas todo el código tal cual me lo enviaste) ... */
-.btn-ui-waze:hover {
-  box-shadow: 0 4px 14px rgba(51, 204, 255, 0.4) !important;
-}
-
+.btn-ui-wa { background-color: #25D366 !important; color: #ffffff !important; }
+.btn-ui-gmaps { background-color: #ffffff !important; color: #ea4335 !important; border: 1px solid #e2e8f0 !important; }
+.btn-ui-waze { background-color: #33ccff !important; color: #ffffff !important; }
 
 /* ==========================================================================
-   📱📱 (AQUÍ AL FINAL SÍ) PARCHE PANTALLA COMPLETA PARA SMARTPHONES 📱📱
+ 
+/* ==========================================================================
+   🛠️ CORRECCIÓN RESPONSIVA MAESTRA: MEDIAS PANTALLAS Y SMARTPHONES (A + B + C)
    ========================================================================== */
+
+/* --- 📐 A. COMPORTAMIENTO PARA PANTALLA DIVIDIDA DE PC / TABLETS (MAX 1024PX) --- */
+@media (max-width: 1024px) and (min-width: 481px) {
+    body.pagina-scroll-ventas #capas-inferiores-contenedor {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important; /* Columnas medianas elásticas */
+        gap: 8px !important;
+    }
+
+    body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
+        padding: 8px !important;
+    }
+
+    /* Ocultamos la descripción larga para que no se desborde, pero EL TÍTULO SE QUEDA VISIBLE */
+    body.pagina-scroll-ventas #capas-inferiores-contenedor .desc-filtro-span {
+        display: none !important; 
+    }
+
+    body.pagina-scroll-ventas #capas-inferiores-contenedor .label-filtro-span {
+        display: inline !important;
+        font-size: 13px !important;
+    }
+}
+
+/* --- 📱 B. COMPORTAMIENTO COMPACTO EXCLUSIVO PARA SMARTPHONES (MAX 480PX) --- */
 @media (max-width: 480px) {
-    /* Fuerza al popup flotante a transformarse en un entorno Bottom Sheet fijo */
-    .popup-movil-optimizado {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        top: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        z-index: 99999 !important;
-        transform: none !important;
-        display: flex !important;
-        align-items: flex-end !important;
-    }
 
-    /* El cascarón blanco se estira al 85% de la pantalla con scroll libre */
-    .popup-movil-optimizado .leaflet-popup-content-wrapper {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        height: 85vh !important;
-        max-height: 85vh !important;
-        border-radius: 20px 20px 0 0 !important;
-        margin: 0 !important;
-        padding: 16px 4px 24px 4px !important;
-        box-sizing: border-box !important;
-        overflow-y: auto !important; 
-        background: #ffffff !important;
-        box-shadow: 0 -10px 25px rgba(15, 23, 42, 0.25) !important;
-    }
-
-    .popup-movil-optimizado .leaflet-popup-content {
+    /* El mosaico inferior se adapta elásticamente al ancho de cualquier teléfono */
+    html body.pagina-scroll-ventas #capas-inferiores-contenedor {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important; 
+        gap: 6px !important;
+        padding: 8px 4px !important;
+        max-height: none !important;
+        overflow: visible !important;
         width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 12px !important;
         box-sizing: border-box !important;
     }
 
-    /* Botón circular táctil para cerrar el panel */
-    .popup-movil-optimizado .leaflet-popup-close-button {
-        position: fixed !important;
-        top: calc(15vh + 12px) !important;
-        right: 16px !important;
-        background: #0f172a !important;
-        color: #ffffff !important;
-        width: 36px !important;
-        height: 36px !important;
-        border-radius: 50% !important;
+    /* Transformamos el botón en una tarjeta de cuadrante vertical simétrica y amigable */
+    html body.pagina-scroll-ventas #capas-inferiores-contenedor .guia-item-filtro {
         display: flex !important;
+        flex-direction: column-reverse !important; /* Switch abajo, información arriba */
         align-items: center !important;
         justify-content: center !important;
-        font-size: 22px !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-        z-index: 100000 !important;
-        padding: 0 !important;
+        padding: 10px 4px !important;
+        border-radius: 10px !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        box-sizing: border-box !important;
+        height: auto !important; /* Permite crecimiento orgánico basado en el texto */
+        min-height: 90px !important;
     }
 
-    .popup-movil-optimizado .leaflet-popup-tip-container {
+    /* Ocultamos las descripciones de texto largo únicamente en la cuadrícula de botones */
+    html body.pagina-scroll-ventas #capas-inferiores-contenedor .desc-filtro-span,
+    .desc-filtro-span {
         display: none !important;
     }
 
-    .popup-movil-optimizado .popup-multimedia-carrusel {
-        height: 210px !important;
+    /* Forzamos a que el nombre comercial corto SE QUEDE VISIBLE en el mosaico móvil */
+    html body.pagina-scroll-ventas #capas-inferiores-contenedor .label-filtro-span,
+    .label-filtro-span {
+        display: block !important;
+        font-size: 11px !important;
+        line-height: 1.2 !important;
+        margin-top: 2px !important;
     }
+
+    /* Centrado de los elementos tipográficos dentro del cuadrante cuadrado */
+    .texto-filtro-info {
+        margin-left: 0 !important;
+        margin-bottom: 4px !important;
+        text-align: center !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .emoji-filtro-span {
+        font-size: 20px !important;
+        display: block !important;
+        line-height: 1 !important;
+    }
+
+    .toggle-switch {
+        transform: scale(0.85) !important; /* Reducción milimétrica del interruptor para el celular */
+    }
+    }
+
+
+
+
+
+
+
+/* --- 🖥️ 7. MÓDULO INTERACTIVO DE ESCAPARATE / CATÁLOGO EN PC --- */
+.offers-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+    gap: 24px !important;
 }
 
-/* ==========================================================================
-   ESTILOS PARA EL VISOR LIGHTBOX HD Y TARJETAS 100% VISUALES (16:9)
-   ========================================================================== */
-
-/* Contenedor principal del Lightbox (Cubre toda la pantalla) */
-#negosistema-lightbox-visor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(15, 23, 42, 0.95); /* Fondo oscuro premium */
-  backdrop-filter: blur(10px); /* Difuminado moderno de fondo */
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 99999; /* Por encima de mapas, popups y menús */
-  display: none; /* Controlado dinámicamente por JS (flex) */
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-/* Estado activo para la animación de entrada suave */
-#negosistema-lightbox-visor.activo {
-  opacity: 1;
-}
-
-/* Cascarón interno que protege la proporción de la imagen ampliada */
-.lightbox-contenido {
-  position: relative;
-  max-width: 90%;
-  max-height: 85vh;
-  aspect-ratio: 16 / 9; /* Mantiene la proporción horizontal perfecta */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#lightbox-imagen-hd {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Evita que la foto se deforme o se corte en las esquinas */
-  border-radius: 12px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-/* Botón cerrar flotante optimizado para dedos (Celulares) */
-#lightbox-btn-cerrar {
-  position: absolute;
-  top: -60px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: #ffffff;
-  font-size: 32px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.2s ease;
-  z-index: 100000;
-}
-
-#lightbox-btn-cerrar:hover {
-  background: rgba(255, 255, 255, 0.4);
-  transform: scale(1.05);
-}
-/* ==========================================================================
-   NUEVO SISTEMA DE DESPLAZAMIENTO FLUIDO Y COMPORTAMIENTO RESPONSIVO SLIDER
-   ========================================================================== */
-
+/* --- 🛵 8. SISTEMA SLIDER DE OFERTAS COMPLETO CON EFECTO ASOMO 16:9 --- */
 .ofertas-slider-container {
-    width: 100%;
-    overflow: hidden;
-    padding: 16px 0;
-    position: relative;
+    width: 100% !important;
+    overflow: hidden !important;
+    padding: 12px 0 !important;
+    position: relative !important;
 }
+
+.ofertas-slider-viewport {
+    width: 100% !important;
+    overflow-x: auto !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch;
+}
+.ofertas-slider-viewport::-webkit-scrollbar { display: none !important; }
 
 #ofertasSliderTrack, .ofertas-slider-track {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
-    gap: 16px !important; /* Espaciado premium uniforme entre promociones */
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Transición ultra suave */
-    width: 100%;
+    gap: 14px !important;
+    padding: 4px 16px !important;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Forzamos a la tarjeta para que mantenga su estructura rígida sin deformar la imagen */
-.tarjeta-promo-slide {
+/* ==========================================================================
+   CAJA 4-A: BLINDAJE ESTRUCTURAL DE LA TARJETA PUBLICITARIA (CORREGIDO) 🚀
+   ========================================================================== */
+.feature-card, .tarjeta-promo-slide {
     position: relative !important;
-    height: 180px !important; /* Proporción horizontal exacta de la tarjeta */
-    flex-shrink: 0 !important; /* Evita que el navegador colapse las tarjetas */
-    background: #0f172a !important;
+    width: 100%  !important;       /* 🛠️ QUIRÚRGICO 1: Bloquea el ancho estético ideal en PC */
+    max-width: 320px !important;   /* 🛠️ QUIRÚRGICO 2: Evita el estiramiento desproporcionado */
+    height: auto !important;
+    flex-shrink: 0 !important;
     border-radius: 12px !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-end !important;
+    justify-content: flex-start !important;
     box-sizing: border-box !important;
+    background: var(--bg-card, #ffffff) !important;
+    border: 1px solid var(--border-color, #e2e8f0) !important;
+    box-shadow: var(--shadow-subtle, 0 4px 6px -1px rgba(0, 0, 0, 0.1)) !important;
+    transition: transform 0.25s ease-out, box-shadow 0.25s ease-out !important;
+    will-change: transform !important;
 }
 
-/* Ajustes de proporción responsiva mediante CSS nativo puro */
+/* Efecto táctil de hundimiento al presionar en smartphones */
+.feature-card:active, .tarjeta-promo-slide:active {
+    transform: scale(0.98) !important;
+}
+
+/* ==========================================================================
+   CAJA 4-B: IMAGEN PANORÁMICA 16:9 Y BARRA DE ACCIONES DEL SLIDER 🚀
+   ========================================================================== */
+
+/* Imagen Panorámica Blindada: Aquí se asienta el 16:9 elástico en el canvas */
+.card-bg-img, .img-promo-dinamica {
+    position: relative !important; 
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9 !important; /* Megáfono y banners perfectos */
+    object-fit: cover !important;
+    object-position: center !important;
+    z-index: 1 !important;
+    display: block !important;
+}
+
+/* Barra de acciones inferior: Rescatada y 100% visible */
+.tarjeta-promo-acciones {
+    position: relative !important;
+    display: flex !important;
+    width: 100% !important;
+    background: #0f172a !important;
+    padding: 10px 12px !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+    z-index: 10 !important;
+}
+
+.btn-promo-accion {
+    flex: 1 !important;
+    padding: 8px 4px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+}
+
+/* --- 📐 MEDIDAS RESPONSIVAS DEL SLIDER --- */
 @media (max-width: 480px) {
-    .tarjeta-promo-slide {
-        width: 100%;
-        flex: 1 0 100%;
+    /* 🚨 PEEK EFFECT: El 82vw obliga a que se asome la orilla de la siguiente oferta en smartphones */
+    .feature-card, .tarjeta-promo-slide {
+        width: 82vw !important;
     }
 }
-
 @media (min-width: 481px) and (max-width: 1024px) {
-    .tarjeta-promo-slide {
-        width: calc(50% - 8px);
-        flex: 1 0 calc(50% - 8px);
+    .feature-card, .tarjeta-promo-slide { width: calc(50vw - 22px) !important; }
+}
+@media (min-width: 1025px) {
+    /* 🔴 CAMBIO AQUÍ: Quita el 'auto' y usa 'unset' para que el script de JS maneje las 3 columnas en PC */
+    .feature-card, .tarjeta-promo-slide { width: unset !important; } 
+}
+
+
+/* ==========================================================================
+   CAJA 4-C: VISOR INTERACTIVO LIGHTBOX HD (CIERRE DE ARCHIVO) 🚀
+   ========================================================================== */
+
+/* Contenedor principal del Lightbox (Cubre toda la pantalla) */
+#negosistema-lightbox-visor {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100vw !important; height: 100vh !important;
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    z-index: 99999 !important;
+    display: none; /* Controlado dinámicamente por JavaScript */
+    justify-content: center !important;
+    align-items: center !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+}
+
+/* Estado activo para la animación de entrada suave */
+#negosistema-lightbox-visor.activo {
+    opacity: 1 !important;
+}
+
+/* Cascarón interno que protege la proporción de la imagen ampliada */
+.lightbox-contenido {
+    position: relative !important;
+    max-width: 90% !important;
+    max-height: 85vh !important;
+    aspect-ratio: 16 / 9 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+#lightbox-imagen-hd {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 12px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Botón cerrar flotante optimizado para dedos (Celulares) */
+#lightbox-btn-cerrar {
+    position: absolute !important;
+    top: -60px !important;
+    right: 0 !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+    font-size: 32px !important;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 100000 !important;
+    transition: all 0.2s ease !important;
+}
+
+#lightbox-btn-cerrar:hover {
+    background: rgba(255, 255, 255, 0.4) !important;
+    transform: scale(1.05) !important;
+}
+
+/* ==========================================================================
+   AGREGADO DE USABILIDAD: UNIFICACIÓN E INTERRUPTORES PREMIUM
+   ========================================================================== */
+
+/* Suavizado del reloj dinámico eliminando la tipografía monoespaciada chocante */
+.cuenta-regresiva-reloj b {
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    font-weight: 800;
+}
+
+/* Enfoque de conversión: Resalte sutil para el botón de reparto a domicilio */
+.btn-ui-delivery {
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(19, 115, 51, 0.2) !important;
+}
+
+/* ==========================================================================
+   🔲 ARQUITECTURA CORE: POPUPS RESPONSIVOS ADAPTATIVOS MÓVIL-FIRST
+   ========================================================================== */
+
+/* Limpieza absoluta de layouts heredados de PC */
+.leaflet-popup-content-wrapper {
+    border-radius: var(--radius-premium, 12px) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1) !important;
+}
+
+.leaflet-popup-content {
+    margin: 0 !important;
+    width: 100% !important;
+    font-family: inherit !important;
+}
+
+/* ==========================================================================
+   INTERRUPTOR RESPONSIVO MAESTRO BLINDADO CORREGIDO (A, B y C)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* 1. Forzar rejilla estricta de 3 columnas simétricas en celular */
+    #capas-inferiores-contenedor {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+        padding: 8px 4px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 2. Formatear cada botón como un cuadrante vertical limpio */
+    #capas-inferiores-contenedor .guia-item-filtro {
+        display: flex !important;
+        flex-direction: column !important; /* Icono arriba, switch abajo */
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 10px 4px !important;
+        border-radius: 12px !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        height: 95px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 3. Ocultar los textos nativos dentro del mosaico para que no rompan el espacio */
+    #capas-inferiores-contenedor .desc-filtro-span,
+    #capas-inferiores-contenedor .label-filtro-span {
+        display: none !important;
+    }
+
+    /* 4. Alinear y centrar el contenedor del icono/emoji */
+    #capas-inferiores-contenedor .texto-filtro-info {
+        margin: 0 0 6px 0 !important;
+        padding: 0 !important;
+        text-align: center !important;
+        display: block !important;
+    }
+
+    #capas-inferiores-contenedor .emoji-filtro-span {
+        font-size: 24px !important;
+        display: block !important;
+        line-height: 1 !important;
+    }
+
+    /* 5. Centrar la palanca del switch en la base del cuadrante */
+    #capas-inferiores-contenedor .toggle-switch {
+        transform: scale(0.9) !important;
+        margin: 0 auto !important;
+        display: block !important;
+    }
+
+    /* 6. ESTILO DE LA TARJETA FLOTANTE OSCURA DINÁMICA (PANTALLA C) */
+    .tarjeta-informativa-movil-oscura {
+        position: fixed !important;
+        bottom: 16px !important;
+        left: 5% !important;
+        width: 90% !important;
+        background: #0f172a !important; /* Fondo corporativo idéntico a tu captura */
+        color: #ffffff !important;
+        padding: 14px 18px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
+        z-index: 999999 !important; /* Por encima de mapas y popups */
+        box-sizing: border-box !important;
+        font-family: 'Inter', sans-serif !important;
+        animation: entradaDetalleSubida 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .tarjeta-informativa-movil-oscura strong {
+        color: #ffffff !important;
+        display: block !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        margin-bottom: 4px !important;
+    }
+
+    .tarjeta-informativa-movil-oscura span {
+        color: #94a3b8 !important; /* Gris suavizado para la descripción */
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        display: block !important;
+        font-weight: 400 !important;
     }
 }
 
-@media (min-width: 1025px) {
-    .tarjeta-promo-slide {
-        /* 🚨 CAMBIO CLAVE: Permite que las tarjetas crezcan simétricamente si son pocas */
-        flex: 1 0 calc(33.333% - 11px); 
-        max-width: calc(33.333% - 11px);
-    }
+@keyframes entradaDetalleSubida {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }

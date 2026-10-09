@@ -124,164 +124,233 @@ function filtrarPinesPorCapasActivas() {
 
 renderizarPinesComerciales(comerciosFiltradosYVisibles);
 }
+
+// ==========================================================================
+// SECCIÓN 2: MOTOR DE FILTRADO, RENDERIZADO Y BOTONES (GIS MÓVIL OPTIMIZADO)
+// ==========================================================================
+
 function renderizarPinesComerciales(arregloComercios) {
- if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.clearLayers === 'function') {
- window.contenedorPinesGlobal.clearLayers();
- }
- marcaroresGIS = []; 
- 
- const esSimulador = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
- 
- arregloComercios.forEach(comercio => {
- const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
- if (!coordRaw || !coordRaw.includes(",")) return;
- 
- const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
- if (isNaN(lat) || isNaN(lng)) return;
- if (!esSimulador && (lat < 19.0 || lat > 19.6 || lng > -98.8 || lng < -99.4)) return;
+  if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.clearLayers === 'function') {
+    window.contenedorPinesGlobal.clearLayers();
+  }
+  marcaroresGIS = [];
 
- let capaActivaClave = (entornoActual === "productos") 
- ? String(comercio[COL_COMERCIO.CAPA_PRODUCTO]).trim().toLowerCase()
- : String(comercio[COL_COMERCIO.CAPA_SERVICIO]).trim().toLowerCase();
- if (!capaActivaClave || capaActivaClave === "" || capaActivaClave === "vacio") {
- capaActivaClave = "base";
- }
- const configuracionCapa = PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === capaActivaClave) || 
- PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === "base");
- 
- const emojiCentral = configuracionCapa.emoji;
- const colorHexGota = configuracionCapa.color;
- 
- const nivelComercioRaw = String(comercio[COL_COMERCIO.NIVEL]).trim(); 
- const nivelPuro = parseInt(nivelComercioRaw) || 1; 
- const idComercio = String(comercio[COL_COMERCIO.ID]).trim(); 
- 
- const partesId = idComercio.split("-");
- const codigoColonia = partesId[1] || "306"; // 🛠️ CORRECCIÓN CLAVE: Regresa el índice [1] para que no se trabe el JS
+  const esSimulador = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
 
- // ==========================================================================
- // ⚡ ARQUITECTURA DE CONTENEDORES PARA EL PIN COMERCIAL
- // ==========================================================================
- let contenidoInteriorPin = `<span class="pin-emoji-interior">${emojiCentral}</span>`;
- 
- let campoLogoCSV = (comercio[COL_COMERCIO.LOGO] || "").trim().toLowerCase();
- campoLogoCSV = campoLogoCSV.replace(/\.[^/.]+$/, "");
+  arregloComercios.forEach(comercio => {
+    const coordRaw = String(comercio[COL_COMERCIO.COORDENADAS]).trim();
+    if (!coordRaw || !coordRaw.includes(",")) return;
 
- if (nivelPuro >= 2 && campoLogoCSV !== "" && campoLogoCSV !== "vacio") {
-   const urlFinalLogo = `css/logo/${campoLogoCSV}.png`;
-   contenidoInteriorPin = `
-     <img src="${urlFinalLogo}" class="pin-logo-interior" 
-          onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\\'pin-emoji-interior\\'>${emojiCentral}</span>';">
-   `;
- }
+    const [lat, lng] = coordRaw.split(",").map(num => parseFloat(num.trim()));
+    if (isNaN(lat) || isNaN(lng)) return;
+    if (!esSimulador && (lat < 19.0 || lat > 19.6 || lng > -98.8 || lng < -99.4)) return;
 
- // Determinación de la clase del pin por nivel
- let claseNivelComercial = "pin-incognito-gris";
- if (nivelPuro === 5) claseNivelComercial = "pin-oro premium-pulse";
- else if (nivelPuro === 4) claseNivelComercial = "pin-plata";
- else if (nivelPuro === 3) claseNivelComercial = "pin-bronce";
- else if (nivelPuro === 2) claseNivelComercial = "pin-estandar"; 
+    let capaActivaClave = (entornoActual === "productos")
+      ? String(comercio[COL_COMERCIO.CAPA_PRODUCTO]).trim().toLowerCase()
+      : String(comercio[COL_COMERCIO.CAPA_SERVICIO]).trim().toLowerCase();
 
- const prefijoEntorno = (entornoActual === "productos") ? "btn-p-" : "btn-s-";
- 
- // NUEVO DISEÑO UI/UX: Inyección directa del color y la clase para evitar el "embarrado"
- const htmlIcono = `
- <div class="pin-personalizado ${claseNivelComercial}">
-   <div class="gota-vectorial" style="--pin-color: ${colorHexGota};"></div>
-   <div class="pin-centro-blanco">
-     ${contenidoInteriorPin}
-   </div>
- </div>
- `;
+    if (!capaActivaClave || capaActivaClave === "" || capaActivaClave === "vacio") {
+      capaActivaClave = "base";
+    }
 
- const iconoGota = L.divIcon({
- className: `leaflet-marker-selectable ${prefijoEntorno}${capaActivaClave}`,
- html: htmlIcono,
- iconSize:[30, 42],
- iconAnchor:[15, 42], 
- popupAnchor: [0, -40]
- });
- 
- const marcador = L.marker([lat, lng], { 
- icon: iconoGota,
- datosNegocio: {
- colorCapa: colorHexGota,
- idGiro: capaActivaClave
- }
- });
- 
- const opcionesPopup = {
- autoPan: true,
- autoPanPadding: L.point(15, 15),
- closeOnClick: true,
- className: 'popup-movil-optimizado', 
- maxHeight: 420, 
- tap: !L.Browser.mobile 
- };
- 
- marcador.bindPopup(
- typeof inyectarPopupComercioInteligente === "function" 
- ? inyectarPopupComercioInteligente(comercio, nivelPuro) 
- : `<b>${comercio[COL_COMERCIO.NOMBRE] || "Negocio"}</b>`,
- opcionesPopup 
- );
- 
- if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
- marcaroresGIS.push(marcador);
- });
- 
- if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.getLayers === 'function' && window.contenedorPinesGlobal.getLayers().length > 0 && mapaNegosistema) {
- if (window.esCargaInicialEntorno) {
- mapaNegosistema.fitBounds(window.contenedorPinesGlobal.getBounds(), { 
- maxZoom: 15, 
- padding:[50, 59], 
- animate: true, 
- duration: 0.8
- });
- window.esCargaInicialEntorno = false;
- }
- }
- if (typeof generarDatosEstructuradosSEO === "function") {
- generarDatosEstructuradosSEO(arregloComercios);
- }
+    const configuracionCapa = PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === capaActivaClave) ||
+                              PALETAS_CAPAS_SISTEMA[entornoActual].find(c => c.id === "base");
+
+    const emojiCentral = configuracionCapa.emoji;
+    const colorHexGota = configuracionCapa.color;
+
+    const nivelComercioRaw = String(comercio[COL_COMERCIO.NIVEL]).trim();
+    const nivelPuro = parseInt(nivelComercioRaw) || 1;
+    const idComercio = String(comercio[COL_COMERCIO.ID]).trim();
+
+    let contenidoInteriorPin = `<span class="pin-emoji-interior">${emojiCentral}</span>`;
+    let campoLogoCSV = (comercio[COL_COMERCIO.LOGO] || "").trim().toLowerCase();
+    campoLogoCSV = campoLogoCSV.replace(/\.[^/.]+\$/, "");
+
+    if (nivelPuro >= 2 && campoLogoCSV !== "" && campoLogoCSV !== "vacio") {
+      const urlFinalLogo = `css/logo/${campoLogoCSV}.png`;
+      contenidoInteriorPin = `
+        <img src="${urlFinalLogo}" class="pin-logo-interior"
+             onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\\'pin-emoji-interior\\'>${emojiCentral}</span>';">
+      `;
+    }
+
+    let claseNivelComercial = "pin-incognito-gris";
+    if (nivelPuro === 5) claseNivelComercial = "pin-oro premium-pulse";
+    else if (nivelPuro === 4) claseNivelComercial = "pin-plata";
+    else if (nivelPuro === 3) claseNivelComercial = "pin-bronce";
+    else if (nivelPuro === 2) claseNivelComercial = "pin-estandar";
+
+    const prefijoEntorno = (entornoActual === "productos") ? "btn-p-" : "btn-s-";
+
+    const htmlIcono = `
+    <div class="pin-personalizado ${claseNivelComercial}">
+      <div class="gota-vectorial" style="--pin-color: ${colorHexGota};"></div>
+      <div class="pin-centro-blanco">
+        ${contenidoInteriorPin}
+      </div>
+    </div>
+    `;
+
+    const iconoGota = L.divIcon({
+      className: `leaflet-marker-selectable ${prefijoEntorno}${capaActivaClave}`,
+      html: htmlIcono,
+      iconSize:[30, 42],
+      iconAnchor:[15, 42],
+      popupAnchor: [0, -15]
+    });
+
+    const marcador = L.marker([lat, lng], {
+      icon: iconoGota,
+      datosNegocio: {
+        colorCapa: colorHexGota,
+        idGiro: capaActivaClave
+      }
+    });
+
+    // 📱 CONFIGURACIÓN MÓVIL CRÍTICA: SE ACABA LA PELEA CINEMÁTICA Y LOS BRINCOS
+    const esMovil = window.innerWidth <= 768;
+    const opcionesPopup = {
+      // APAGADO EN MÓVIL: Evita que Leaflet jale la pantalla hacia abajo cuando el acordeón crece
+      autoPan: esMovil ? false : true, 
+      autoPanPaddingTopLeft: L.point(15, esMovil ? 120 : 50),
+      autoPanPaddingBottomRight: L.point(15, esMovil ? 20 : 50),
+      closeOnClick: true,
+      className: esMovil ? 'popup-movil-optimizado' : 'popup-desktop-premium',
+      maxWidth: esMovil ? 290 : 360,
+      minWidth: esMovil ? 280 : 300,
+      // APAGADO EN MÓVIL: Permite que el vecino arrastre y centre el mapa con total libertad
+      keepInView: esMovil ? false : true 
+    };
+
+    marcador.bindPopup(
+      typeof inyectarPopupComercioInteligente === "function"
+        ? inyectarPopupComercioInteligente(comercio, nivelPuro)
+        : `<b>${comercio[COL_COMERCIO.NOMBRE] || "Negocio"}</b>`,
+      opcionesPopup
+    );
+
+    // VUELO INTELIGENTE: Centra el mapa calculando un desfase (aire) arriba del pin
+    marcador.on('popupopen', function() {
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          const coordsPin = marcador.getLatLng();
+          const zoomActual = mapaNegosistema.getZoom();
+          
+          // Fracción geográfica calculada para empujar el mapa y dejar espacio al popup
+          const factorDesfase = zoomActual >= 17 ? 0.0018 : 0.0035; 
+          const latitudConAire = coordsPin.lat + factorDesfase;
+
+          mapaNegosistema.flyTo([latitudConAire, coordsPin.lng], Math.max(zoomActual, 17), {
+            animate: true,
+            duration: 0.4, 
+            easeLinearity: 0.2
+          });
+        }, 200); 
+      }
+    });
+
+    if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
+    marcaroresGIS.push(marcador);
+  }); // <-- Aquí se cierra correctamente el bucle forEach de los comercios
+
+  if (window.contenedorPinesGlobal && typeof window.contenedorPinesGlobal.getLayers === 'function' && window.contenedorPinesGlobal.getLayers().length > 0 && mapaNegosistema) {
+    if (window.esCargaInicialEntorno) {
+      mapaNegosistema.fitBounds(window.contenedorPinesGlobal.getBounds(), {
+        maxZoom: 15,
+        padding:[30, 30],
+        animate: true,
+        duration: 0.6
+      });
+      window.esCargaInicialEntorno = false;
+    }
+  }
+
+  if (typeof generarDatosEstructuradosSEO === "function") {
+    generarDatosEstructuradosSEO(arregloComercios);
+  }
+}
+
+
+// MANIPULADOR DE ACORDEONES CON CÁLCULO DINÁMICO DE INVALIDATESIZE
+function alternarAcordeonSeccion(btn) {
+  const item = btn.closest('.acordeon-item');
+  const contenido = item.querySelector('.acordeon-contenido');
+  const estaAbierto = item.classList.contains('activo');
+
+  btn.closest('.popup-acordeon-grupo').querySelectorAll('.acordeon-item').forEach(i => {
+    i.classList.remove('activo');
+    const c = i.querySelector('.acordeon-contenido');
+    if (c) c.style.maxHeight = null;
+  });
+
+  if (!estaAbierto) {
+    item.classList.add('activo');
+    contenido.style.maxHeight = contenido.scrollHeight + "px";
+
+    if (contenido.querySelector('#cronometro-contenedor-modulo')) {
+      setTimeout(iniciarCronometroPopup, 50);
+    }
+
+    contenido.querySelectorAll('.lazy-popup-img, .lazy-popup-iframe').forEach(el => {
+      if (el.getAttribute('data-src')) {
+        el.src = el.getAttribute('data-src');
+        el.removeAttribute('data-src');
+      }
+    });
+
+    // ⚡ CLAVE FRONTERA GIS: Forzar a Leaflet a recalcular el mapa por la expansión del DOM
+    setTimeout(() => {
+      if (mapaNegosistema) {
+        mapaNegosistema.invalidateSize({ pan: true });
+      }
+    }, 260); 
+  }
 }
 
 function reconstruirBotonesCapasInferiores() {
   const contenedor = document.getElementById("capas-inferiores-contenedor");
   if (!contenedor) return;
   contenedor.innerHTML = ""; // Limpia el placeholder inicial de carga
-  
+
   // RENDERIZADO SIMULTÁNEO EN MEMORIA: Crea ambos entornos de golpe
   ["productos", "servicios"].forEach(entorno => {
     const capasEntorno = PALETAS_CAPAS_SISTEMA[entorno] || [];
-    
+
     capasEntorno.forEach(capa => {
       const itemFiltro = document.createElement("div");
-      itemFiltro.className = "guia-item-filtro guia-item-filter"; //
-
-      // Atributo técnico para alternar visibilidad instantánea con display:none/flex
+      itemFiltro.className = "guia-item-filtro";
       itemFiltro.setAttribute("data-entorno-origen", entorno);
-      
-      // Ajuste estructural: Separamos cada dato en un span con su propia clase de control
+
+      // Inyección limpia: Eliminamos estilos inline para que el CSS responsivo tome el control total
       itemFiltro.innerHTML = `
         <label class="toggle-switch">
           <input type="checkbox" class="filtro-capa-chk" data-tipo="${entorno}" data-capa="${capa.id}" checked>
           <span class="slider-palanca visual-${capa.id}" style="background-color: ${capa.color};"></span>
         </label>
-        <div class="texto-filtro-info" style="margin-left: 10px;" onclick="alternarDetalleFiltroMovil(this)">
-          <strong>
-            <span class="emoji-filtro-span">${capa.emoji}</span> 
-            <span class="label-filtro-span">${capa.label}:</span>
-          </strong>
+        <div class="texto-filtro-info">
+          <span class="emoji-filtro-span">${capa.emoji}</span>
+          <strong class="label-filtro-span">${capa.label}:</strong>
           <span class="desc-filtro-span">(${capa.desc})</span>
         </div>
-      `; //
-      
-      itemFiltro.querySelector(".filtro-capa-chk").addEventListener("change", filtrarPinesPorCapasActivas); //
-      contenedor.appendChild(itemFiltro); //
+      `;
+
+      // ESCUCHADOR INTELIGENTE EN EL CUADRANTE: Separa el clic informativo del comportamiento del checkbox
+      itemFiltro.addEventListener("click", function(e) {
+        // Si el usuario tocó directamente el switch o su palanca, dejamos que actúe el filtro normal
+        if (e.target.closest('.toggle-switch')) return;
+
+        // Si está en celular, disparamos la creación dinámica de la tarjeta flotante oscura
+        if (window.innerWidth <= 768) {
+          mostrarTarjetaInformativaDinamica(capa.label, capa.desc);
+        }
+      });
+
+      itemFiltro.querySelector(".filtro-capa-chk").addEventListener("change", filtrarPinesPorCapasActivas);
+      contenedor.appendChild(itemFiltro);
     });
   });
-  filtrarPinesPorCapasActivas(); //
+  filtrarPinesPorCapasActivas();
 }
 
 // Microfunción JS que abre o cierra la tarjeta flotante al dar clic en celulares
@@ -370,9 +439,17 @@ window.addEventListener("load", () => {
   }
 
   else if (document.getElementById("mapa-comercial-contenedor")) {
-    mapaNegosistema = L.map("mapa-comercial-contenedor").setView([19.373, -99.018], 14);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
-    
+    // 🛠️ MEJORA DE ZOOM OPTIMIZADA POR QA: Desbloqueo de nivel 21 para smartphones
+    mapaNegosistema = L.map("mapa-comercial-contenedor", {
+      maxZoom: 21,
+      closePopupOnClick: false // 🟢 FIJA EL POPUP: El mapa ya no cerrará la ventana al recibir toques externos
+    }).setView([19.373, -99.018], 14);
+
+    // Activamos el estiramiento digital a partir del nivel 19 para evitar pantallas en blanco
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 21,
+      maxNativeZoom: 19
+    }).addTo(mapaNegosistema);
     // Inicialización del Clusterizador para la Vista Comercial
     window.contenedorPinesGlobal = L.markerClusterGroup({
       maxClusterRadius: 20,
@@ -385,9 +462,10 @@ window.addEventListener("load", () => {
     limpiarLienzoMilisegundos();
     inicializarModoHiperlocal(coloniaParam);
   }
-  
-  else if (document.getElementById("mapa_general")) {
-    mapaNegosistema = L.map("mapa_general").setView([19.361, -99.025], 14);
+    else if (document.getElementById("mapa_general")) {
+    mapaNegosistema = L.map("mapa_general", {
+      closePopupOnClick: false // 🟢 FIJA EL POPUP: Protege el simulador piloto contra cierres accidentales
+    }).setView([19.361, -99.025], 14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
     
     // UNIFICACIÓN GIS: Activamos el clusterizador también en el mapa piloto
@@ -1892,7 +1970,7 @@ document.addEventListener("click", function (evento) {
           if (negocioMatch) {
               const entornoAnuncio = String(negocioMatch[COL_COMERCIO.MAPA]).toLowerCase().trim();
               let capaAnuncio = (entornoAnuncio === "servicios")
-                  ? String(negocioMatch[COL_COMERCIO.CAPA_SERVICE] || negocioMatch[COL_COMERCIO.CAPA_SERVICIO]).toLowerCase().trim()
+                  ? String(negocioMatch[COL_COMERCIO.CAPA_SERVICIO] || negocioMatch[COL_COMERCIO.CAPA_SERVICIO]).toLowerCase().trim()
                   : String(negocioMatch[COL_COMERCIO.CAPA_PRODUCTO]).toLowerCase().trim();
 
               if (!capaAnuncio || capaAnuncio === "" || capaAnuncio === "vacio") {
@@ -2018,4 +2096,33 @@ function controlarFalloImagenSliderOfertas(imgElemento, nombreArchivo, extension
             tarjetaCompleta.remove();
         }
     }
+}
+
+// FUNCIÓN MAESTRA: CREACIÓN E INYECCIÓN 100% DINÁMICA DE LA TARJETA OSCURA EN MÓVILES
+function mostrarTarjetaInformativaDinamica(titulo, descripcion) {
+  // Buscamos si ya existe una tarjeta inyectada previamente en el DOM
+  let tarjeta = document.getElementById("negosistema-tooltip-flotante");
+
+  if (!tarjeta) {
+    // Si no existe, la creamos desde cero
+    tarjeta = document.createElement("div");
+    tarjeta.id = "negosistema-tooltip-flotante";
+    tarjeta.className = "tarjeta-informativa-movil-oscura";
+    document.body.appendChild(tarjeta);
+
+    // Destruir la tarjeta automáticamente tras 4.5 segundos para no saturar la interfaz
+    tarjeta.addEventListener("click", () => tarjeta.remove());
+  }
+
+  // Inyectamos el contenido actualizado estructurado de forma limpia
+  tarjeta.innerHTML = `
+    <strong>${titulo}</strong>
+    <span>${descripcion}</span>
+  `;
+
+  // Reiniciar el temporizador de auto-ocultado cada vez que se toque una capa nueva
+  if (window.timerTooltipFlotante) clearTimeout(window.timerTooltipFlotante);
+  window.timerTooltipFlotante = setTimeout(() => {
+    if (tarjeta) tarjeta.remove();
+  }, 4500);
 }
