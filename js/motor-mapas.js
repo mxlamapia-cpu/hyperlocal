@@ -211,17 +211,18 @@ function renderizarPinesComerciales(arregloComercios) {
     // 📱 CONFIGURACIÓN MÓVIL CRÍTICA: SE ACABA LA PELEA CINEMÁTICA Y LOS BRINCOS
     const esMovil = window.innerWidth <= 768;
     const opcionesPopup = {
-      // 🟢 SOLUCIÓN 1: APAGADO EN MÓVIL. Evita que Leaflet jale la pantalla bruscamente al abrir.
+      // 🟢 SOLUCIÓN 1: Mantenemos el autoPan apagado en móvil para heredar el control en el flyTo asíncrono
       autoPan: esMovil ? false : true,
       autoPanPaddingTopLeft: L.point(15, esMovil ? 120 : 50),
       autoPanPaddingBottomRight: L.point(15, esMovil ? 20 : 50),
-      closeOnClick: true,
+      closeOnClick: false, // 🟢 CAMBIO AQUÍ: Evita que tocar el mapa de fondo por error cierre el popup en pantallas chicas
+      autoClose: false,    // 🟢 AGREGADO CRÍTICO: Impide que Leaflet cierre este popup automáticamente cuando la cámara se mueva con flyTo
       className: esMovil ? 'popup-movil-optimizado' : 'popup-desktop-premium',
       maxWidth: esMovil ? 290 : 360,
       minWidth: esMovil ? 280 : 300,
-      // 🟢 SOLUCIÓN 2: APAGADO EN MÓVIL. Permite que el usuario arrastre con total libertad sin cierres.
       keepInView: esMovil ? false : true
     };
+
 
     marcador.bindPopup(
       typeof inyectarPopupComercioInteligente === "function"
@@ -230,10 +231,10 @@ function renderizarPinesComerciales(arregloComercios) {
       opcionesPopup
     );
 
-    // VUELO INTELIGENTE ASÍNCRONO PARA CELULARES
+        // VUELO INTELIGENTE ASÍNCRONO PARA CELULARES
     marcador.on('popupopen', function() {
       if (window.innerWidth <= 768) {
-        // 🟢 SOLUCIÓN 3: Un delay de 300ms separa el render del click del movimiento físico de la cámara
+        // Aumentamos ligeramente a 350ms para permitir que el hardware del teléfono asimile el HTML del acordeón primero
         setTimeout(() => {
           const coordsPin = marcador.getLatLng();
           const zoomActual = mapaNegosistema.getZoom();
@@ -244,12 +245,13 @@ function renderizarPinesComerciales(arregloComercios) {
 
           mapaNegosistema.flyTo([latitudConAire, coordsPin.lng], Math.max(zoomActual, 17), {
             animate: true,
-            duration: 0.5,
+            duration: 0.4, // Un vuelo un poco más rápido disminuye la fricción de hilos en JS
             easeLinearity: 0.2
           });
-        }, 300); 
+        }, 350);
       }
     });
+
 
     if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
     marcaroresGIS.push(marcador);
