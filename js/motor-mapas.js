@@ -211,16 +211,16 @@ function renderizarPinesComerciales(arregloComercios) {
     // 📱 CONFIGURACIÓN MÓVIL CRÍTICA: SE ACABA LA PELEA CINEMÁTICA Y LOS BRINCOS
     const esMovil = window.innerWidth <= 768;
     const opcionesPopup = {
-      // APAGADO EN MÓVIL: Evita que Leaflet jale la pantalla hacia abajo cuando el acordeón crece
-      autoPan: esMovil ? false : true, 
+      // 🟢 SOLUCIÓN 1: APAGADO EN MÓVIL. Evita que Leaflet jale la pantalla bruscamente al abrir.
+      autoPan: esMovil ? false : true,
       autoPanPaddingTopLeft: L.point(15, esMovil ? 120 : 50),
       autoPanPaddingBottomRight: L.point(15, esMovil ? 20 : 50),
       closeOnClick: true,
       className: esMovil ? 'popup-movil-optimizado' : 'popup-desktop-premium',
       maxWidth: esMovil ? 290 : 360,
       minWidth: esMovil ? 280 : 300,
-      // APAGADO EN MÓVIL: Permite que el vecino arrastre y centre el mapa con total libertad
-      keepInView: esMovil ? false : true 
+      // 🟢 SOLUCIÓN 2: APAGADO EN MÓVIL. Permite que el usuario arrastre con total libertad sin cierres.
+      keepInView: esMovil ? false : true
     };
 
     marcador.bindPopup(
@@ -230,23 +230,24 @@ function renderizarPinesComerciales(arregloComercios) {
       opcionesPopup
     );
 
-    // VUELO INTELIGENTE: Centra el mapa calculando un desfase (aire) arriba del pin
+    // VUELO INTELIGENTE ASÍNCRONO PARA CELULARES
     marcador.on('popupopen', function() {
       if (window.innerWidth <= 768) {
+        // 🟢 SOLUCIÓN 3: Un delay de 300ms separa el render del click del movimiento físico de la cámara
         setTimeout(() => {
           const coordsPin = marcador.getLatLng();
           const zoomActual = mapaNegosistema.getZoom();
-          
-          // Fracción geográfica calculada para empujar el mapa y dejar espacio al popup
-          const factorDesfase = zoomActual >= 17 ? 0.0018 : 0.0035; 
+
+          // Fracción geográfica calculada para empujar el mapa hacia abajo y dejar espacio al popup arriba
+          const factorDesfase = zoomActual >= 17 ? 0.0018 : 0.0035;
           const latitudConAire = coordsPin.lat + factorDesfase;
 
           mapaNegosistema.flyTo([latitudConAire, coordsPin.lng], Math.max(zoomActual, 17), {
             animate: true,
-            duration: 0.4, 
+            duration: 0.5,
             easeLinearity: 0.2
           });
-        }, 200); 
+        }, 300); 
       }
     });
 

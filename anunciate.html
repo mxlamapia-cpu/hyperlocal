@@ -17,8 +17,11 @@
 <body class="entorno-marketing-anuncios">
     <!-- MENÚ DE NAVEGACIÓN PREMIUM UNIFORME CON LOGO INTERACTIVO -->
 
-<nav class="menu-navegacion-sistema">
-    <div class="menu-enlaces-contenedor" style="max-width: 1100px;"> <!-- Mantiene su alineación de lectura compacta -->
+<nav class="menu-navegacion-sistema" style="width: 100%;">
+    <!-- 🟢 Cambiamos este contenedor a Flexbox con distribución a los extremos -->
+    <div class="menu-enlaces-contenedor" style="display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; box-sizing: border-box !important;">
+        
+        <!-- EXTREMO IZQUIERDO: Logo y Título -->
         <a href="index.html" style="text-decoration: none; color: inherit; display: inline-block;">
             <div class="brand">
                 <i class="fa-solid fa-map-location-dot brand-icon"></i>
@@ -28,14 +31,17 @@
                 </div>
             </div>
         </a>
-        <div class="nav-tabs-container">
-            <a href="index.html" class="enlace-nav">
-                <span class="icono-nav">🗺️</span> Mapa CDMX
+        
+        <!-- EXTREMO DERECHO: Botón de Anuncios -->
+        <div class="nav-tabs-container" style="display: flex !important; align-items: center !important;">
+            <a href="catalogo.html" class="btn-anunciate-header">
+                <span class="icono-nav"></span> catalogo
             </a>
-
         </div>
+
     </div>
 </nav>
+
 
 
 
