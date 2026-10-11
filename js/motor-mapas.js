@@ -240,6 +240,7 @@ function renderizarPinesComerciales(arregloComercios) {
           const zoomActual = mapaNegosistema.getZoom();
 
           // Fracción geográfica calculada para empujar el mapa hacia abajo y dejar espacio al popup arriba
+          const esMapaPiloto = document.getElementById("mapa_general") !== null;
           const factorDesfase = zoomActual >= 17 ? 0.0018 : 0.0035;
           const latitudConAire = coordsPin.lat + factorDesfase;
 
