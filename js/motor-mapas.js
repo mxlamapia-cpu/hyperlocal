@@ -232,26 +232,29 @@ function renderizarPinesComerciales(arregloComercios) {
     );
 
         // VUELO INTELIGENTE ASÍNCRONO PARA CELULARES
-    marcador.on('popupopen', function() {
-      if (window.innerWidth <= 768) {
-        // Aumentamos ligeramente a 350ms para permitir que el hardware del teléfono asimile el HTML del acordeón primero
-        setTimeout(() => {
-          const coordsPin = marcador.getLatLng();
-          const zoomActual = mapaNegosistema.getZoom();
+marcador.on('popupopen', function() {
+  if (window.innerWidth <= 768) {
+    // Aumentamos ligeramente a 350ms para permitir que el hardware del teléfono asimile el HTML del acordeón primero
+    setTimeout(() => {
+      const coordsPin = marcador.getLatLng();
+      const zoomActual = mapaNegosistema.getZoom();
 
-          // Fracción geográfica calculada para empujar el mapa hacia abajo y dejar espacio al popup arriba
-          const esMapaPiloto = document.getElementById("mapa_general") !== null;
-          const factorDesfase = zoomActual >= 17 ? 0.0018 : 0.0035;
-          const latitudConAire = coordsPin.lat + factorDesfase;
+      // Detectamos si estamos en el simulador piloto
+      const esMapaPiloto = document.getElementById("mapa_general") !== null;
+      
+      // 🟢 CORRECCIÓN AQUÍ: Si es el mapa piloto, aplicamos un desfase mayor (0.0045) para compensar la menor altura del contenedor
+      const factorDesfase = zoomActual >= 17 ? 0.0018 : (esMapaPiloto ? 0.0045 : 0.0035);
+      const latitudConAire = coordsPin.lat + factorDesfase;
 
-          mapaNegosistema.flyTo([latitudConAire, coordsPin.lng], Math.max(zoomActual, 17), {
-            animate: true,
-            duration: 0.4, // Un vuelo un poco más rápido disminuye la fricción de hilos en JS
-            easeLinearity: 0.2
-          });
-        }, 350);
-      }
-    });
+      mapaNegosistema.flyTo([latitudConAire, coordsPin.lng], Math.max(zoomActual, 17), {
+        animate: true,
+        duration: 0.4, // Un vuelo un poco más rápido disminuye la fricción de hilos en JS
+        easeLinearity: 0.2
+      });
+    }, 350);
+  }
+});
+
 
 
     if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
