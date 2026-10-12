@@ -210,18 +210,15 @@ function renderizarPinesComerciales(arregloComercios) {
 
     // 📱 CONFIGURACIÓN MÓVIL CRÍTICA: SE ACABA LA PELEA CINEMÁTICA Y LOS BRINCOS
     const esMovil = window.innerWidth <= 768;
-    const opcionesPopup = {
-      // 🟢 SOLUCIÓN 1: Mantenemos el autoPan apagado en móvil para heredar el control en el flyTo asíncrono
-      autoPan: esMovil ? false : true,
-      autoPanPaddingTopLeft: L.point(15, esMovil ? 120 : 50),
-      autoPanPaddingBottomRight: L.point(15, esMovil ? 20 : 50),
-      closeOnClick: false, // 🟢 CAMBIO AQUÍ: Evita que tocar el mapa de fondo por error cierre el popup en pantallas chicas
-      autoClose: false,    // 🟢 AGREGADO CRÍTICO: Impide que Leaflet cierre este popup automáticamente cuando la cámara se mueva con flyTo
-      className: esMovil ? 'popup-movil-optimizado' : 'popup-desktop-premium',
-      maxWidth: esMovil ? 290 : 360,
-      minWidth: esMovil ? 280 : 300,
-      keepInView: esMovil ? false : true
-    };
+const opcionesPopup = {
+  autoPan: false,        // 🟢 Apagado total: Tu flyTo personalizado se encargará de esto
+  closeOnClick: false,   // Protege el popup si el usuario toca el fondo por error
+  autoClose: false,      // Impide que Leaflet cierre el popup activamente al mover la cámara
+  keepInView: false,     // 🟢 Impide que Leaflet fuerce el reencuadre automático
+  className: esMovil ? 'popup-movil-optimizado' : 'popup-desktop-premium',
+  maxWidth: esMovil ? 290 : 360,
+  minWidth: esMovil ? 280 : 300
+};
 
 
     marcador.bindPopup(
@@ -231,30 +228,45 @@ function renderizarPinesComerciales(arregloComercios) {
       opcionesPopup
     );
 
-        // VUELO INTELIGENTE ASÍNCRONO PARA CELULARES
-marcador.on('popupopen', function() {
+  marcador.on('click', function(e) {
+  // Evitamos que el click afecte a otras capas del mapa de fondo
+  if (e && e.originalEvent) {
+    L.DomEvent.stopPropagation(e.originalEvent);
+  }
+
   if (window.innerWidth <= 768) {
-    // Aumentamos ligeramente a 350ms para permitir que el hardware del teléfono asimile el HTML del acordeón primero
+    // 1. Limpiamos cualquier popup abierto previamente para evitar parpadeos
+    marcador.closePopup();
+
+    // 2. OBTENEMOS LA POSICIÓN EXACTA EN PÍXELES
+    // Convertimos la coordenada geográfica del pin a un punto de píxeles en la pantalla actual
+    const puntoActual = mapaNegosistema.latLngToContainerPoint(marcador.getLatLng());
+
+    // 🟢 EL TRUCO MAESTRO: Restamos píxeles en el eje Y para "empujar" el centro visual hacia abajo.
+    // Esto hace espacio para el acordeón inferior del celular de forma idéntica en cualquier marca/modelo.
+    // Ajusta el '220' si quieres que el popup suba más o baje más en las pantallas B y D.
+    const puntoCompensado = L.point(puntoActual.x, puntoActual.y - 220); 
+
+    // Convertimos el punto de píxeles corregido de vuelta a coordenadas del mapa
+    const coordCompensada = mapaNegosistema.containerPointToLatLng(puntoCompensado);
+    const zoomActual = mapaNegosistema.getZoom();
+
+    // 3. Volamos suavemente a la coordenada calculada matemáticamente en píxeles
+    mapaNegosistema.flyTo(coordCompensada, Math.max(zoomActual, 17), {
+      animate: true,
+      duration: 0.45,
+      easeLinearity: 0.25
+    });
+
+    // 4. SEÑAL DE CONTROL APERTURA DE POPUP
+    // Usamos 'zoomend' o un temporizador limpio en lugar de un 'moveend' global inestable
+    // para asegurar que abra exactamente centrado y anclado al marcador físico.
     setTimeout(() => {
-      const coordsPin = marcador.getLatLng();
-      const zoomActual = mapaNegosistema.getZoom();
-
-      // Detectamos si estamos en el simulador piloto
-      const esMapaPiloto = document.getElementById("mapa_general") !== null;
-      
-      // 🟢 CORRECCIÓN AQUÍ: Si es el mapa piloto, aplicamos un desfase mayor (0.0045) para compensar la menor altura del contenedor
-      const factorDesfase = zoomActual >= 17 ? 0.0018 : (esMapaPiloto ? 0.0045 : 0.0035);
-      const latitudConAire = coordsPin.lat + factorDesfase;
-
-      mapaNegosistema.flyTo([latitudConAire, coordsPin.lng], Math.max(zoomActual, 17), {
-        animate: true,
-        duration: 0.4, // Un vuelo un poco más rápido disminuye la fricción de hilos en JS
-        easeLinearity: 0.2
-      });
-    }, 350);
+      // Forzamos el anclaje nativo al marcador para que herede la punta del pin
+      marcador.openPopup(); 
+    }, 480); // 480ms es el tiempo ideal (un instante después de que acabe la animación flyTo de 450ms)
   }
 });
-
 
 
     if (window.contenedorPinesGlobal) window.contenedorPinesGlobal.addLayer(marcador);
@@ -447,10 +459,12 @@ window.addEventListener("load", () => {
 
   else if (document.getElementById("mapa-comercial-contenedor")) {
     // 🛠️ MEJORA DE ZOOM OPTIMIZADA POR QA: Desbloqueo de nivel 21 para smartphones
-    mapaNegosistema = L.map("mapa-comercial-contenedor", {
-      maxZoom: 21,
-      closePopupOnClick: false // 🟢 FIJA EL POPUP: El mapa ya no cerrará la ventana al recibir toques externos
-    }).setView([19.373, -99.018], 14);
+mapaNegosistema = L.map("mapa-comercial-contenedor", {
+  maxZoom: 21,
+  closePopupOnClick: false,
+  tap: false, // 🟢 CRÍTICO MÓVIL: Elimina el doble clic táctil fantasma que cierra el popup
+  bounceAtZoomLimits: false
+}).setView([19.373, -99.018], 14);
 
     // Activamos el estiramiento digital a partir del nivel 19 para evitar pantallas en blanco
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -470,9 +484,11 @@ window.addEventListener("load", () => {
     inicializarModoHiperlocal(coloniaParam);
   }
     else if (document.getElementById("mapa_general")) {
-    mapaNegosistema = L.map("mapa_general", {
-      closePopupOnClick: false // 🟢 FIJA EL POPUP: Protege el simulador piloto contra cierres accidentales
-    }).setView([19.361, -99.025], 14);
+mapaNegosistema = L.map("mapa_general", {
+  closePopupOnClick: false,
+  tap: false // 🟢 CRÍTICO MÓVIL: Evita el auto-cierre en el simulador piloto
+}).setView([19.361, -99.025], 14);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapaNegosistema);
     
     // UNIFICACIÓN GIS: Activamos el clusterizador también en el mapa piloto
