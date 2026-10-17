@@ -1081,3 +1081,47 @@ body.pagina-scroll-ventas {
     from { transform: translateY(15px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+/* --- 🎯 FUERZA DE VISIBILIDAD DE CONTROLES MULTIMEDIA --- */
+.popup-multimedia-carrusel .carrusel-nav {
+    display: block !important; /* Despierta las flechas de navegación */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.6);
+    color: #ffffff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10; /* Las coloca por encima de la foto .webp */
+    border-radius: 4px;
+}
+
+.popup-multimedia-carrusel .carrusel-nav.prev { left: 8px; }
+.popup-multimedia-carrusel .carrusel-nav.next { right: 8px; }
+
+.popup-multimedia-carrusel .carrusel-dots-container {
+    display: flex !important; /* Despierta los círculos de paginación inferiores */
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 6px;
+    z-index: 10;
+}
+
+.popup-multimedia-carrusel .carrusel-dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.popup-multimedia-carrusel .carrusel-dot.active {
+    background: #ffffff; /* Ilumina el punto de la foto actual */
+    transform: scale(1.2);
+}

@@ -290,13 +290,15 @@ const opcionesPopup = {
   }
 }
 
-
-// MANIPULADOR DE ACORDEONES CON CÁLCULO DINÁMICO DE INVALIDATESIZE
+// ==========================================================================
+// CONTROLADOR DE ACORDEONES CON ACTIVACIÓN VISUAL DE CARRUSEL (CORREGIDO)
+// ==========================================================================
 function alternarAcordeonSeccion(btn) {
   const item = btn.closest('.acordeon-item');
   const contenido = item.querySelector('.acordeon-contenido');
   const estaAbierto = item.classList.contains('activo');
 
+  // Cerrar todos los demás acordeones del grupo para mantener orden visual
   btn.closest('.popup-acordeon-grupo').querySelectorAll('.acordeon-item').forEach(i => {
     i.classList.remove('activo');
     const c = i.querySelector('.acordeon-contenido');
@@ -307,10 +309,12 @@ function alternarAcordeonSeccion(btn) {
     item.classList.add('activo');
     contenido.style.maxHeight = contenido.scrollHeight + "px";
 
+    // DISPARADOR AUTOMÁTICO DE HORARIOS
     if (contenido.querySelector('#cronometro-contenedor-modulo')) {
       setTimeout(iniciarCronometroPopup, 50);
     }
 
+    // DISPARADOR AUTOMÁTICO DE IMÁGENES Y VIDEO LAZY-LOADING
     contenido.querySelectorAll('.lazy-popup-img, .lazy-popup-iframe').forEach(el => {
       if (el.getAttribute('data-src')) {
         el.src = el.getAttribute('data-src');
@@ -318,12 +322,19 @@ function alternarAcordeonSeccion(btn) {
       }
     });
 
-    // ⚡ CLAVE FRONTERA GIS: Forzar a Leaflet a recalcular el mapa por la expansión del DOM
+    // 🔥 EL CAMBIO MAESTRO: Esperamos a que termine la animación CSS para medir y encender el carrusel
     setTimeout(() => {
+      const carruselDOM = contenido.querySelector('.popup-multimedia-carrusel');
+      if (carruselDOM && typeof reajustarEstructuraCarrusel === 'function') {
+        // Cuenta las imágenes .webp activas y dibuja las flechas ❮ y ❯
+        reajustarEstructuraCarrusel(carruselDOM);
+      }
+
+      // Forzar a Leaflet a recalcular el tamaño del mapa por la expansión física del popup
       if (mapaNegosistema) {
         mapaNegosistema.invalidateSize({ pan: true });
       }
-    }, 260); 
+    }, 260); // 260ms es el tiempo exacto que tarda en desplegarse el acordeón
   }
 }
 
@@ -1195,24 +1206,6 @@ function inicializarModoAnunciatePiloto() {
     }
   });
 }
-function controlarFalloImagenSlide(img, id, secuencia, extensionesRestantes, rutaBase) {
-  const cola = [...extensionesRestantes]; 
-  if (cola.length > 0) { 
-    const sExt = cola.shift(); 
-    img.onerror = function() { controlarFalloImagenSlide(this, id, secuencia, cola, rutaBase); }; 
-    img.src = `${rutaBase}${id}-${secuencia}.${sExt}`; 
-  } else { 
-    const s = img.closest('.carrusel-item'); 
-    const c = img.closest('.popup-multimedia-carrusel'); 
-    if (s && c) { 
-      const idx = s.getAttribute('data-index'); 
-      s.remove(); 
-      const dot = c.querySelector(`.carrusel-dot[data-target="${idx}"]`); 
-      if (dot) dot.remove(); 
-      reajustarEstructuraCarrusel(c); 
-    } 
-  }
-}
 
 function reajustarEstructuraCarrusel(contenedor) {
   const items = Array.from(contenedor.querySelectorAll('.carrusel-item')); 
@@ -1291,21 +1284,36 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
   // ==========================================================================
   // SECCIÓN 1: MULTIMEDIA (GALERÍA Y VIDEO CORREGIDO)
   // ==========================================================================
+  // ==========================================================================
+  // SECCIÓN 1: MULTIMEDIA (GALERÍA Y VIDEO CORREGIDO CON RUTAS EXACTAS)
+  // ==========================================================================
   if (nivel >= 3 && id) {
     const partesIdPopup = String(id).split("-");
     const codigoColoniaPopup = partesIdPopup[1] || "306";
-    
+
     const esSim = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
-    
-    // Segmentación por subcarpeta hiperlocal
-    const rBase = esSim 
-      ? "geo/iztapalapa/img-nego/anunciate/" 
-      : `geo/iztapalapa/img-nego/colonia-${codigoColoniaPopup}/`;
-    
+
+    // 📁 CORRECCIÓN MAESTRA DE RUTA: Ajustada exactamente al nombre real de tus carpetas físicas
+    const rBase = esSim
+      ? "geo/iztapalapa/img-nego/anunciate/"
+      : `geo/iztapalapa/img-nego/${codigoColoniaPopup}/`; // ← Eliminamos "colonia-" para que busque directo la carpeta "306"
+
     let sH = ""; let dH = ""; let sC = 0;
     for (let i = 1; i <= 3; i++) {
-      sH += `<div class="carrusel-item ${sC===0?'active':''}" data-index="${i}"><img data-src="${rBase}${id}-${i}.png" class="carrusel-media-elemento lazy-popup-img" onerror="controlarFalloImagenSlide(this, '${id}', ${i}, ['jpg','jpeg','webp'], '${rBase}')" alt="Imagen ${i}"></div>`;
-      dH += `<span class="carrusel-dot ${sC===0?'active':''}" data-target="${i}" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
+      // Apuntamos directamente al estándar de alto rendimiento .webp
+      const rutaImagenFija = `${rBase}${id}-${i}.webp`;
+
+      sH += `
+      <div class="carrusel-item ${sC===0?'active':''}" data-index="${i}">
+        <img src="${rutaImagenFija}" 
+             class="popup-img-carrusel-fija" 
+             alt="Imagen ${i}" 
+             style="width:100%; height:100%; object-fit:cover;"
+             onerror="this.onerror=null; this.src='/css/logo/default_comercio.png';"
+        >
+      </div>`;
+      
+      dH += `<span class="carrusel-dot ${sC===0?'active':''}" data-target="${i}"></span>`;
       sC++;
     }
 
@@ -1317,16 +1325,15 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
       } else if (youtubeUrl.includes("youtu.be/")) {
         vId = youtubeUrl.split("youtu.be/")[1].split("?")[0];
       } else if (youtubeUrl.includes("shorts/")) {
-        // Corrección de Oro: Limpia el parámetro de rastreo ?si= de los Shorts
         vId = youtubeUrl.split("shorts/")[1].split("?")[0].split("&")[0];
       }
       
-      if (vId && vId.trim() !== "") { 
-        sH += `<div class="carrusel-item" data-index="video"><iframe data-src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento lazy-popup-iframe" allowfullscreen></iframe></div>`; 
-        dH += `<span class="carrusel-dot" data-target="video" onclick="irASlideMultimedia(this, ${sC})"></span>`; 
+      if (vId && vId.trim() !== "") {
+        sH += `<div class="carrusel-item" data-index="video"><iframe data-src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento lazy-popup-iframe" allowfullscreen></iframe></div>`;
+        dH += `<span class="carrusel-dot" data-target="video"></span>`;
       }
     }
-
+    
     // Inyección del Acordeón Multimedia estructurado limpiamente sin romper etiquetas div
     html += `
     <div class="acordeon-item">
@@ -1336,13 +1343,14 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
       <div class="acordeon-contenido">
         <div class="popup-multimedia-carrusel" style="padding-top: 10px;">
           <div class="carrusel-viewport">${sH}</div>
-          <button class="carrusel-nav prev" onclick="moverMultimedia(this, -1)">&#10094;</button>
-          <button class="carrusel-nav next" onclick="moverMultimedia(this, 1)">&#10095;</button>
+          <button class="carrusel-nav prev" onclick="moverMultimedia(this, -1)">❮</button>
+          <button class="carrusel-nav next" onclick="moverMultimedia(this, 1)">❯</button>
           <div class="carrusel-dots-container">${dH}</div>
         </div>
       </div>
     </div>`;
   }
+
 
   // ==========================================================================
   // SECCIÓN 2: LISTA DE PRODUCTOS O SERVICIOS (CON TU LÓGICA DE MOTONETAS)
@@ -1564,19 +1572,29 @@ function generarDatosEstructuradosSEO(comerciosFiltrados) {
   document.head.appendChild(scriptSEO);
 }
 
-// Oyentes globales para activar/desactivar el cronómetro dinámico en segundo plano
+// Oyentes globales para activar/desactivar componentes al abrir o cerrar popups
 if (mapaNegosistema) {
  mapaNegosistema.on('popupopen', function(e) {
- iniciarCronometroPopup();
- // Forzar a Leaflet a reajustar el tamaño si se expande una sección acordeón
- setTimeout(() => { mapaNegosistema.invalidateSize(); }, 300);
+   // 1. Activa el cálculo dinámico del reloj de apertura/cierre
+   iniciarCronometroPopup();
+   
+   // 2. 🔥 ACTIVACIÓN MAESTRA DEL CARRUSEL DE IMÁGENES Y VIDEO (TIPO MYMAPS)
+   const carruselActivo = document.querySelector('.popup-multimedia-carrusel');
+   if (carruselActivo && typeof reajustarEstructuraCarrusel === 'function') {
+       reajustarEstructuraCarrusel(carruselActivo);
+   }
+
+   // Forzar a Leaflet a reajustar el tamaño si se expande una sección acordeón
+   setTimeout(() => { mapaNegosistema.invalidateSize(); }, 300);
  });
+ 
  mapaNegosistema.on('popupclose', function(e) {
- if (window.intervaloCronometro) {
- clearInterval(window.intervaloCronometro);
- }
+   if (window.intervaloCronometro) {
+     clearInterval(window.intervaloCronometro);
+   }
  });
 }
+
 // CONTROLADOR GLOBAL DEL TEMPORIZADOR DE PANTALLA (VERSIÓN ULTRA-SEGURA A PRUEBA DE FALLAS)
 function iniciarCronometroPopup() {
   const modulo = document.getElementById("cronometro-contenedor-modulo");
