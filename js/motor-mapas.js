@@ -1282,61 +1282,54 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
   html += `<div class="popup-acordeon-grupo">`;
 
   // ==========================================================================
-  // SECCIÓN 1: MULTIMEDIA (GALERÍA Y VIDEO CORREGIDO)
-  // ==========================================================================
-  // ==========================================================================
-  // SECCIÓN 1: MULTIMEDIA (GALERÍA Y VIDEO CORREGIDO CON RUTAS EXACTAS)
+  // SECCIÓN 1: MULTIMEDIA CON CONTROL DE FALLO RETRASADO
   // ==========================================================================
   if (nivel >= 3 && id) {
     const partesIdPopup = String(id).split("-");
     const codigoColoniaPopup = partesIdPopup[1] || "306";
-
     const esSim = window.location.pathname.includes("anunciate") || !document.getElementById("mapa-comercial-contenedor");
 
-    // 📁 CORRECCIÓN MAESTRA DE RUTA: Ajustada exactamente al nombre real de tus carpetas físicas
     const rBase = esSim
       ? "geo/iztapalapa/img-nego/anunciate/"
-      : `geo/iztapalapa/img-nego/${codigoColoniaPopup}/`; // ← Eliminamos "colonia-" para que busque directo la carpeta "306"
+      : `geo/iztapalapa/img-nego/${codigoColoniaPopup}/`;
 
     let sH = ""; let dH = ""; let sC = 0;
+    let tieneVideo = (nivel >= 4 && youtubeUrl && youtubeUrl.trim() !== "" && youtubeUrl !== "vacio");
+
     for (let i = 1; i <= 3; i++) {
-      // Apuntamos directamente al estándar de alto rendimiento .webp
       const rutaImagenFija = `${rBase}${id}-${i}.webp`;
 
+      // Eliminamos la ruta del logo por defecto del onerror. 
+      // Ahora, si la imagen falla al abrirse el acordeón, se añade la clase 'img-inexistente'
       sH += `
-      <div class="carrusel-item ${sC===0?'active':''}" data-index="${i}">
-        <img src="${rutaImagenFija}" 
-             class="popup-img-carrusel-fija" 
-             alt="Imagen ${i}" 
+      <div class="carrusel-item ${sC===0?'active':''}" data-slide-index="${i}">
+        <img src="${rutaImagenFija}"
+             class="popup-img-carrusel-fija"
+             alt="Imagen ${i}"
              style="width:100%; height:100%; object-fit:cover;"
-             onerror="this.onerror=null; this.src='/css/logo/default_comercio.png';"
+             onerror="this.classList.add('img-inexistente'); verificarVisibilidadAcordeon(this);"
         >
       </div>`;
-      
-      dH += `<span class="carrusel-dot ${sC===0?'active':''}" data-target="${i}"></span>`;
+
+      dH += `<span class="carrusel-dot ${sC===0?'active':''}" data-dot-index="${i}"></span>`;
       sC++;
     }
 
-    // EXTRACTOR INTELIGENTE DE YOUTUBE SHORTS (BLINDAJE DE PARÁMETROS)
-    if (nivel >= 4 && youtubeUrl) {
+    if (tieneVideo) {
       let vId = "";
-      if (youtubeUrl.includes("v=")) {
-        vId = youtubeUrl.split("v=")[1].split("&")[0];
-      } else if (youtubeUrl.includes("youtu.be/")) {
-        vId = youtubeUrl.split("youtu.be/")[1].split("?")[0];
-      } else if (youtubeUrl.includes("shorts/")) {
-        vId = youtubeUrl.split("shorts/")[1].split("?")[0].split("&")[0];
-      }
-      
+      if (youtubeUrl.includes("v=")) vId = youtubeUrl.split("v=")[1].split("&")[0];
+      else if (youtubeUrl.includes("youtu.be/")) vId = youtubeUrl.split("youtu.be/")[1].split("?")[0];
+      else if (youtubeUrl.includes("shorts/")) vId = youtubeUrl.split("shorts/")[1].split("?")[0].split("&")[0];
+
       if (vId && vId.trim() !== "") {
-        sH += `<div class="carrusel-item" data-index="video"><iframe data-src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento lazy-popup-iframe" allowfullscreen></iframe></div>`;
-        dH += `<span class="carrusel-dot" data-target="video"></span>`;
+        sH += `<div class="carrusel-item" data-slide-index="video"><iframe data-src="https://youtube.com/embed/${vId.trim()}" class="carrusel-media-elemento lazy-popup-iframe" allowfullscreen style="width:100%; height:100%; border:none;"></iframe></div>`;
+        dH += `<span class="carrusel-dot" data-dot-index="video"></span>`;
       }
     }
-    
-    // Inyección del Acordeón Multimedia estructurado limpiamente sin romper etiquetas div
+
+    // Le añadimos la clase fija 'bloque-multimedia-contenedor' para poder rastrearlo con CSS/JS
     html += `
-    <div class="acordeon-item">
+    <div class="acordeon-item bloque-multimedia-contenedor" data-has-video="${tieneVideo}">
       <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
         <span>📸 Galería Multimedia y Video</span> <i class="flecha-icono">▼</i>
       </button>
@@ -1350,7 +1343,6 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
       </div>
     </div>`;
   }
-
 
   // ==========================================================================
   // SECCIÓN 2: LISTA DE PRODUCTOS O SERVICIOS (CON TU LÓGICA DE MOTONETAS)
@@ -2166,4 +2158,46 @@ function mostrarTarjetaInformativaDinamica(titulo, descripcion) {
   window.timerTooltipFlotante = setTimeout(() => {
     if (tarjeta) tarjeta.remove();
   }, 4500);
+}
+
+function verificarVisibilidadAcordeon(imgElemento) {
+  const carrusel = imgElemento.closest('.popup-multimedia-carrusel');
+  const acordeonPadre = imgElemento.closest('.bloque-multimedia-contenedor');
+  if (!carrusel || !acordeonPadre) return;
+
+  const slideContenedor = imgElemento.closest('.carrusel-item');
+  const indexOrigen = slideContenedor ? slideContenedor.getAttribute('data-slide-index') : null;
+
+  // 1. Eliminamos el slide roto y su dot correspondiente en caliente
+  if (slideContenedor) slideContenedor.remove();
+  if (indexOrigen) {
+    const dotEquivalente = carrusel.querySelector(`.carrusel-dot[data-dot-index="${indexOrigen}"]`);
+    if (dotEquivalente) dotEquivalente.remove();
+  }
+
+  // 2. Evaluamos si el carrusel se quedó completamente vacío
+  const imagenesTotales = carrusel.querySelectorAll('.popup-img-carrusel-fija').length;
+  const imagenesConError = carrusel.querySelectorAll('.popup-img-carrusel-fija.img-inexistente').length;
+  const tieneVideoRegistrado = acordeonPadre.getAttribute('data-has-video') === 'true';
+
+  // Si todas las imágenes fallaron y la base de datos no tiene video, eliminamos el acordeón entero
+  if (imagenesConError >= imagenesTotales && !tieneVideoRegistrado) {
+    acordeonPadre.remove();
+  } else {
+    // Si sobrevivió alguna foto o el video, reajustamos el primer elemento activo para que no se quede en blanco
+    const slidesRestantes = carrusel.querySelectorAll('.carrusel-item');
+    const dotsRestantes = carrusel.querySelectorAll('.carrusel-dot');
+    
+    if (slidesRestantes.length > 0 && !carrusel.querySelector('.carrusel-item.active')) {
+      slidesRestantes[0].classList.add('active');
+      if (dotsRestantes[0]) dotsRestantes[0].classList.add('active');
+    }
+
+    // Ocultamos las flechas si solo quedó un elemento multimedia vivo (1 foto o solo el video)
+    if (slidesRestantes.length <= 1) {
+      carrusel.querySelectorAll('.carrusel-nav').forEach(btn => btn.style.display = 'none');
+      const contenedorDots = carrusel.querySelector('.carrusel-dots-container');
+      if (contenedorDots) contenedorDots.style.display = 'none';
+    }
+  }
 }

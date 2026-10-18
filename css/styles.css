@@ -1125,3 +1125,8 @@ body.pagina-scroll-ventas {
     background: #ffffff; /* Ilumina el punto de la foto actual */
     transform: scale(1.2);
 }
+
+/* Oculta la imagen rota de forma inmediata antes de ser removida del DOM */
+.img-inexistente {
+  display: none !important;
+}
