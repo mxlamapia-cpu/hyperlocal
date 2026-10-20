@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anúnciate - Negosistema</title>
+    
+    <!-- Dependencias Locales Unificadas del Proyecto -->
+  <link rel="stylesheet" href="css/leaflet.css">
+  <link rel="stylesheet" href="css/MarkerCluster.css">
+  <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/all.min.css">
+
+</head>
+
+<body class="entorno-marketing-anuncios">
+    <!-- MENÚ DE NAVEGACIÓN PREMIUM UNIFORME CON LOGO INTERACTIVO -->
+
+<nav class="menu-navegacion-sistema" style="width: 100%;">
+    <!-- 🟢 Cambiamos este contenedor a Flexbox con distribución a los extremos -->
+    <div class="menu-enlaces-contenedor" style="display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; box-sizing: border-box !important;">
+        
+        <!-- EXTREMO IZQUIERDO: Logo y Título -->
+        <a href="index.html" style="text-decoration: none; color: inherit; display: inline-block;">
+            <div class="brand">
+                <i class="fa-solid fa-map-location-dot brand-icon"></i>
+                <div class="brand-text">
+                    <h1>Negosistema</h1>
+                    <p class="subtitle">Buscador Macro de Alcaldías CDMX</p>
+                </div>
+            </div>
+        </a>
+        
+        <!-- EXTREMO DERECHO: Botón de Anuncios -->
+        <div class="nav-tabs-container" style="display: flex !important; align-items: center !important;">
+            <a href="catalogo.html" class="btn-anunciate-header">
+                <span class="icono-nav"></span> catalogo
+            </a>
+        </div>
+
+    </div>
+</nav>
+
+
+
+
+
+
+    <!-- Contenedor de Contenido Comercial -->
+    <div class="contenedor-servicios-ventas" style="padding: 20px; max-width: 1100px; margin: 0 auto;">
+<header style="text-align: center; margin-bottom: 40px; margin-top: 20px;">
+    <h2 class="titulo-pagina-sistema" style="font-size: 2rem;">Impulsa tu Negocio en la Colonia</h2>
+    <p class="subtitulo-pagina-sistema" style="line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Deja de tirar dinero en volantes de papel que terminan en la basura. <br>
+        Tu negocio disponible 24/7 en el celular de tus vecinos.
+    </p>
+</header>
+
+
+        <!-- Pilares de Valor comerciales -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 50px;">
+            <div class="feature-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 15px; background: white; padding: 20px;">
+                <h3>📍 Visibilidad Exacta</h3>
+                <p style="color: #555; font-size: 0.95rem; line-height: 1.5;">Posicionamos tu establecimiento en el mapa digital con precisión milimétrica. Los vecinos sabrán exactamente cómo llegar.</p>
+            </div>
+            <div class="feature-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 15px; background: white; padding: 20px;">
+                <h3>📊 Niveles a tu Medida</h3>
+                <p style="color: #555; font-size: 0.95rem; line-height: 1.5;">Desde un registro básico anónimo, pasando por la verificación hasta multimedia completa. Tú decides qué volumen entregar.</p>
+            </div>
+            <div class="feature-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 15px; background: white; padding: 20px;">
+                <h3>🔄 Información en Tiempo Real</h3>
+                <p style="color: #555; font-size: 0.95rem; line-height: 1.5;">Reflejamos el estado actual. Si cambias de horario, agregas productos o cierras por vacaciones, la colonia lo sabrá.</p>
+            </div>
+        </div>
+
+        <!-- Tabla Profesional de Planes y Niveles de Inversión -->
+        <section style="margin-bottom: 50px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <h3 style="color: #2c3e50; text-align: center; margin-bottom: 25px;">Planes de Publicidad Colectiva</h3>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+                    <thead>
+                        <tr style="background-color: #2c3e50; color: white;">
+                            <th style="padding: 12px;">Nivel</th>
+                            <th style="padding: 12px;">Inversión</th>
+                            <th style="padding: 12px;">Lo que el Vecino ve</th>
+                            <th style="padding: 12px;">Beneficio del Dueño</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+                            <td style="padding: 15px; font-weight: bold;">1. Incógnito</td>
+                            <td style="padding: 15px; color: #2ecc71; font-weight: bold;">Gratis ($0)</td>
+                            <td style="padding: 15px;">Punto gris anónimo (Sin datos)</td>
+                            <td style="padding: 15px;">Ubicación base en el mapa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 15px; font-weight: bold;">2. Conocido</td>
+                            <td style="padding: 15px;">$600 / Trimestre</td>
+                            <td style="padding: 15px;">Color de ramo + Nombre + Logo</td>
+                            <td style="padding: 15px;">SEO Local básico (Aparece en búsquedas)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e2e8f0; background: #fdfae6;">
+                            <td style="padding: 15px; font-weight: bold; color: #b45309;">3. Información ⭐</td>
+                            <td style="padding: 15px; font-weight: bold; color: #b45309;">$1,600 / Mes</td>
+                            <td style="padding: 15px;">Nivel 2 + Horarios + Fotos + Menú</td>
+                            <td style="padding: 15px;">Confianza total. El vecino sabe qué vendes</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 15px; font-weight: bold;">4. Venta</td>
+                            <td style="padding: 15px;">$2,000 / Mes</td>
+                            <td style="padding: 15px;">Nivel 3 + Botón WhatsApp + Redes + Video</td>
+                            <td style="padding: 15px;">Ventas Reales al contacto Inmediato.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e2e8f0; background: #f0fdf4;">
+                            <td style="padding: 15px; font-weight: bold; color: #15803d;">5. Confianza</td>
+                            <td style="padding: 15px; font-weight: bold; color: #15803d;">$4,000 / Mes</td>
+                            <td style="padding: 15px;">Nivel 4 + Enlace a Landing Page exclusiva</td>
+                            <td style="padding: 15px;">Autoridad Comercial. Tu propia Web oficial</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sección de Visualización de Pruebas -->
+        <section style="margin-bottom: 50px; text-align: center;">
+            <h3 style="color: #2c3e50; font-size: 1.8rem; margin-bottom: 5px;">Muestra de los Niveles de Servicio</h3>
+            <p style="color: #64748b; margin-bottom: 25px;">Explore lo que incluye la Publicidad Colectiva y cómo se distribuyen los 26 comercios muestra.</p>
+            
+            <!-- CONTROLLER PREMIUM ADAPTADO: Botón interactivo para alternar entornos en el simulador -->
+            
+          <div style="margin-bottom: 15px; display: flex; justify-content: center;">
+                <button id="btn-switch-entorno" class="btn-switcher-premium btn-accesibilidad-macro" data-entorno="productos" style="max-width: 320px; background: var(--text-dark); color: #fff; border-radius: var(--radius-premium); box-shadow: 0 4px 12px rgba(15,23,42,0.15);">
+                    Ver Servicios <span id="emoji-switch">🛠️</span>
+                </button>
+            </div>
+
+            <!-- El lienzo del Mapa General Piloto -->
+            <div id="mapa_general" style="width: 100%; height: 500px; min-height: 400px; border: 2px solid #ccc; border-radius: 15px; overflow: hidden; background: #fff; z-index: 1; margin-bottom: 20px;"></div>
+            
+            <!-- CORRECCIÓN CLAVE: Agregado el contenedor donde el JS dibuja los botones y descripciones de las capas del simulador -->
+            <div style="background: white; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; text-align: left;">
+                <h4 style="color: #2c3e50; margin-bottom: 12px; font-size: 1rem;"><i class="fa-solid fa-layer-group"></i> Filtros del Simulador Piloto</h4>
+     	            <div id="capas-inferiores-contenedor" class="capas-lista-scroll">
+                    <div class="loading-placeholder">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Cargando filtros del simulador...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bloque de Conversión Directa (Call to Action) -->
+        <div style="background: linear-gradient(135deg, #2c3e50 0%, #1e40af 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+            <h3 style="margin-top: 0; font-size: 1.6rem; color: #fff;">¿Quién quieres ser en el mapa de tu colonia?</h3>
+            <p style="color: #93c5fd; max-width: 600px; margin: 10px auto 25px auto;">Es hora de digitalizar tu esfuerzo. Elige tu nivel ideal y empieza a recibir pedidos directos de tus vecinos.</p>
+            <a href="https://wa.me" class="btn-gps-xalpa" target="_blank" style="background: #25d366; color:#fff; display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 15px rgba(37,211,102,0.3);">
+                <i class="fa-brands fa-whatsapp"></i> Registrar Mi Comercio Ahora
+            </a>
+        </div>
+    </div>
+    <!-- PIE DE PÁGINA OSCURO CORPORATIVO -->
+<!-- PIE DE PÁGINA OSCURO CORPORATIVO -->
+<footer class="footer-maestro-sistema" style="margin-top: 40px;">
+    <div class="footer-maestro-contenido" style="max-width: 1100px;">
+        <p class="copyright" style="margin: 0;">&copy; 2026 <strong>Negosistema</strong>. Todos los derechos reservados.</p>
+        <div class="footer-links">
+            <a href="terminos.html" class="enlace-legal-footer">
+                <i class="fa-solid fa-scale-balanced"></i> Términos, Condiciones y Aviso de Privacidad
+            </a>
+        </div>
+    </div>
+</footer>
+
+
+
+    <!-- Al final de anunciate.html, reemplaza tus scripts por este orden específico -->
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.markercluster.js"></script> 
+    <script src="js/papaparse.min.js"></script>
+    <!-- Agregamos defer para garantizar que el script espere a las librerías anteriores -->
+    <script src="js/motor-mapas.js" defer></script>
+</body>
+</html>

@@ -1345,7 +1345,7 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
   }
 
   // ==========================================================================
-  // SECCIÓN 2: LISTA DE PRODUCTOS O SERVICIOS (CON TU LÓGICA DE MOTONETAS)
+  // SECCIÓN 2: LISTA DE PRODUCTOS O SERVICIOS TRADUCIDA AUTOMÁTICAMENTE
   // ==========================================================================
   if (listaItems) {
     let htmlBadgesServicio = "";
@@ -1354,13 +1354,13 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
       const palabrasEnvio = ["envio", "domicilio", "reparto", "entregamos", "lleva", "mandamos", "enviamos"];
       const palabrasGratis = ["gratis", "sin costo", "incluido", "cortesia"];
       const palabrasLlevar = ["llevar", "pasar", "recoger", "takeout", "pick up"];
-      
+
       let tieneEntrega = palabrasEnvio.some(palabra => textoAnalizar.includes(palabra));
       let esGratis = palabrasGratis.some(palabra => textoAnalizar.includes(palabra));
       let tieneParaLlevar = palabrasLlevar.some(palabra => textoAnalizar.includes(palabra));
-      
-      htmlBadgesServicio = `<div class="contenedor-micro-badges-ui" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">`;
-      
+
+      htmlBadgesServicio = `<div class="contenedor-micro-badges-ui" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;">`;
+
       if (tieneEntrega) {
         if (esGratis) {
           htmlBadgesServicio += `<span class="badge-micro-item" style="background: #e6f4ea; color: #137333; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">🛵 Entrega Gratis</span>`;
@@ -1372,21 +1372,26 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
         htmlBadgesServicio += `<span class="badge-micro-item" style="background: #fef7e0; color: #b06000; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">🛍️ Ordena y Recoge</span>`;
       }
       htmlBadgesServicio += `</div>`;
-      
+
       if (!tieneEntrega && !tieneParaLlevar) {
         htmlBadgesServicio = "";
       }
     }
 
+    // 🔥 EL CAMBIO MAESTRO: Pasamos la lista de items por nuestro formateador de comas inteligente
+    const htmlMenuEstructurado = procesarListaItemsConComas(listaItems);
+
     html += `
     <div class="acordeon-item">
       <button class="acordeon-disparador" onclick="alternarAcordeonSeccion(this)">
-        <span>📋 ${entornoActual==="productos"?"Productos":"Servicios"}</span> <i class="flecha-icono">▼</i>
+        <span>📋 ${entornoActual==="productos"?"Productos":"Servicios"} y Menú</span> <i class="flecha-icono">▼</i>
       </button>
       <div class="acordeon-contenido">
-        <div class="popup-nego-seccion" style="padding-top: 10px;">
+        <div class="popup-nego-seccion" style="padding: 12px 14px;">
           ${htmlBadgesServicio}
-          <span class="popup-nego-contenido" style="display: block; line-height: 1.5; color: #334155;">${listaItems}</span>
+          <div class="popup-nego-contenido">
+            ${htmlMenuEstructurado}
+          </div>
         </div>
       </div>
     </div>`;
@@ -2200,4 +2205,88 @@ function verificarVisibilidadAcordeon(imgElemento) {
       if (contenedorDots) contenedorDots.style.display = 'none';
     }
   }
+}
+
+// ==========================================================================
+// MOTOR TRADUCTOR DE COMAS, GIROS SECUNDARIOS Y MÉTODOS DE PAGO (NIVEL 3)
+// ==========================================================================
+function procesarListaItemsConComas(cadenaRaw) {
+    if (!cadenaRaw || cadenaRaw.trim() === "" || cadenaRaw.trim().toLowerCase() === "vacio") {
+        return "";
+    }
+
+    // Separamos por comas y limpiamos espacios vacíos o elementos nulos
+    const elementos = cadenaRaw.split(",").map(item => item.trim()).filter(item => item !== "");
+    
+    let htmlResultado = "";
+    let seccionActual = "principal"; // Estados: principal, secundaria, pagos
+    let contadorPrincipales = 0;
+
+    let itemsPrincipal = [];
+    let itemsSecundaria = [];
+    let itemsPagos = [];
+
+    // Clasificación semántica de elementos en un solo barrido
+    elementos.forEach(elemento => {
+        const elementoMinuscula = elemento.toLowerCase();
+
+        if (elementoMinuscula === "sec") {
+            seccionActual = "secundaria";
+            return; // Brinca al siguiente ciclo sin agregar la palabra clave
+        }
+        if (elementoMinuscula === "pag") {
+            seccionActual = "pagos";
+            return; // Brinca al siguiente ciclo sin agregar la palabra clave
+        }
+
+        // Distribución por bloques con tope de 5 para la sección principal
+        if (seccionActual === "principal") {
+            if (contadorPrincipales < 5) {
+                itemsPrincipal.push(elemento);
+                contadorPrincipales++;
+            } else {
+                // Salvavidas: si meten más de 5 principales sin poner "sec", los manda a secundarios para no romper el diseño
+                itemsSecundaria.push(elemento);
+            }
+        } else if (seccionActual === "secundaria") {
+            itemsSecundaria.push(elemento);
+        } else if (seccionActual === "pagos") {
+            itemsPagos.push(elemento);
+        }
+    });
+
+    // RENDERIZADO BLOQUE 1: Especialidades / Productos Estrella
+    if (itemsPrincipal.length > 0) {
+        htmlResultado += `<div class="menu-bloque-ui principal">`;
+        htmlResultado += `<span class="menu-titulo-categoria">⭐ ESPECIALIDADES DESTACADAS</span>`;
+        htmlResultado += `<ul class="menu-lista-items">`;
+        itemsPrincipal.forEach(item => {
+            htmlResultado += `<li>${item}</li>`;
+        });
+        htmlResultado += `</ul></div>`;
+    }
+
+    // RENDERIZADO BLOQUE 2: Complementos y Catálogo Extra
+    if (itemsSecundaria.length > 0) {
+        htmlResultado += `<div class="menu-bloque-ui secundaria" style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #e2e8f0;">`;
+        htmlResultado += `<span class="menu-titulo-categoria">💎 COMPLEMENTOS Y EXTRAS</span>`;
+        htmlResultado += `<ul class="menu-lista-items">`;
+        itemsSecundaria.forEach(item => {
+            htmlResultado += `<li>${item}</li>`;
+        });
+        htmlResultado += `</ul></div>`;
+    }
+
+    // RENDERIZADO BLOQUE 3: Transacciones y Finanzas
+    if (itemsPagos.length > 0) {
+        htmlResultado += `<div class="menu-bloque-ui pagos" style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #e2e8f0;">`;
+        htmlResultado += `<span class="menu-titulo-categoria">💳 MÉTODOS DE PAGO</span>`;
+        htmlResultado += `<div class="menu-pagos-badges">`;
+        itemsPagos.forEach(item => {
+            htmlResultado += `<span class="badge-pago-item">${item}</span>`;
+        });
+        htmlResultado += `</div></div>`;
+    }
+
+    return htmlResultado;
 }

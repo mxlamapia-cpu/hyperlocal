@@ -1007,7 +1007,100 @@ body.pagina-scroll-ventas {
         display: flex !important;
         flex-direction: column !important; /* Icono arriba, switch abajo */
         align-items: center !important;
-        justify-content: center !important;
+        justify-content: space-between !important; /* <--- CAMBIO: Fuerza al emoji a irse arriba y al switch abajo sin encimarse */
+        padding: 12px 4px 10px 4px !important;
+        border-radius: 12px !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        height: 95px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 3. Ocultar los textos nativos dentro del mosaico para que no rompan el espacio */
+    #capas-inferiores-contenedor .desc-filtro-span,
+    #capas-inferiores-contenedor .label-filtro-span {
+        display: none !important;
+    }
+
+    /* 4. Alinear y centrar el contenedor del icono/emoji */
+    #capas-inferiores-contenedor .texto-filtro-info {
+        order: 1 !important;
+        margin: 0 0 6px 0 !important;
+        padding: 0 !important;
+        text-align: center !important;
+        display: block !important;
+    }
+
+    #capas-inferiores-contenedor .emoji-filtro-span {
+        font-size: 24px !important;
+        display: block !important;
+        line-height: 1 !important;
+    }
+
+    /* 5. Centrar la palanca del switch en la base del cuadrante */
+    #capas-inferiores-contenedor .toggle-switch {
+        /* <--- CAMBIO: Eliminamos 'transform: scale' que es el que rompe la responsividad y encima los elementos */
+        order: 2 !important;
+        margin: 0 auto !important;
+        display: block !important;
+    }
+
+    /* 6. ESTILO DE LA TARJETA FLOTANTE OSCURA DINÁMICA (PANTALLA C) */
+    .tarjeta-informativa-movil-oscura {
+        position: fixed !important;
+        bottom: 16px !important;
+        left: 5% !important;
+        width: 90% !important;
+        background: #0f172a !important; /* Fondo corporativo idéntico a tu captura */
+        color: #ffffff !important;
+        padding: 14px 18px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
+        z-index: 999999 !important; /* Por encima de mapas y popups */
+        box-sizing: border-box !important;
+        font-family: 'Inter', sans-serif !important;
+        animation: entradaDetalleSubida 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .tarjeta-informativa-movil-oscura strong {
+        color: #ffffff !important;
+        display: block !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        margin-bottom: 4px !important;
+    }
+
+    .tarjeta-informativa-movil-oscura span {
+        color: #94a3b8 !important; /* Gris suavizado para la descripción */
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        display: block !important;
+        font-weight: 400 !important;
+    }
+}
+
+@keyframes entradaDetalleSubida {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    /* 1. Forzar rejilla estricta de 3 columnas simétricas en celular */
+    #capas-inferiores-contenedor {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+        padding: 8px 4px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 2. Formatear cada botón como un cuadrante vertical limpio */
+    #capas-inferiores-contenedor .guia-item-filtro {
+        display: flex !important;
+        flex-direction: column !important; /* Icono arriba, switch abajo */
+        align-items: center !important;
+        justify-content: space-between !important; /* <--- CAMBIO: Fuerza al emoji a irse arriba y al switch abajo sin encimarse */
         padding: 10px 4px !important;
         border-radius: 12px !important;
         background: #ffffff !important;
@@ -1038,7 +1131,7 @@ body.pagina-scroll-ventas {
 
     /* 5. Centrar la palanca del switch en la base del cuadrante */
     #capas-inferiores-contenedor .toggle-switch {
-        transform: scale(0.9) !important;
+        /* <--- CAMBIO: Eliminamos 'transform: scale' que es el que rompe la responsividad y encima los elementos */
         margin: 0 auto !important;
         display: block !important;
     }
@@ -1129,4 +1222,244 @@ body.pagina-scroll-ventas {
 /* Oculta la imagen rota de forma inmediata antes de ser removida del DOM */
 .img-inexistente {
   display: none !important;
+}
+
+.menu-bloque-ui {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.menu-titulo-categoria {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    color: #64748b !important;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.menu-lista-items {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.menu-lista-items li {
+    font-size: 13px !important;
+    color: #334155 !important;
+    font-weight: 500;
+    line-height: 1.4;
+    padding-left: 4px;
+}
+
+/* CONTENEDOR DE MEDIOS DE PAGO ESTILO BOTONES RESPONSIVOS ELEGANTES */
+.menu-pagos-badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); /* 📱 Se acomodan solos en rejilla según el ancho del celular */
+    gap: 6px;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.badge-pago-item {
+    background: #ffffff;
+    color: #1e293b !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 6px 4px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+/* 🎨 TRUCO MAESTRO DE MARKETING: Inyección automática de iconos según el texto de Google Sheets */
+.badge-pago-item:has-text("Efectivo"), 
+.badge-pago-item:contains("Efectivo") {
+    border-left: 3px solid #16a34a !important; /* Verde dinero */
+}
+
+.badge-pago-item:has-text("Tarjeta"), 
+.badge-pago-item:contains("Tarjeta"),
+.badge-pago-item:contains("Clip") {
+    border-left: 3px solid #2563eb !important; /* Azul bancario */
+}
+
+.badge-pago-item:has-text("Transferencia"), 
+.badge-pago-item:contains("SPEI"),
+.badge-pago-item:contains("Transfer") {
+    border-left: 3px solid #7c3aed !important; /* Morado tecnológico / SPEI */
+}
+
+/* ==========================================================================
+   🏛️ DISEÑO PREMIUM: PILARES CON DIVISIÓN AZUL CORPORATIVA Y RESPONSIVOS
+   ========================================================================== */
+
+/* 1. Contenedor de la Rejilla: Flexbox Elástico e Inteligente */
+.grid-pilares-sistema {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+    width: 100% !important;
+    margin-bottom: 50px !important;
+    padding: 0 10px !important;
+    box-sizing: border-box !important;
+}
+
+/* 2. Caja Contenedora Completa (Estética Limpia como la original) */
+.tarjeta-pilar-negosistema {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+    border: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    
+    /* 🖥️ COMPORTAMIENTO BASE (PC): Las 4 cajas se acomodan alineadas en horizontal */
+    flex: 1 1 calc(25% - 20px) !important;
+    min-width: 240px !important;
+    max-width: 100% !important;
+}
+
+/* Efecto sutil al pasar el cursor o presionar en smartphones */
+.tarjeta-pilar-negosistema:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 25px rgba(15, 23, 42, 0.07) !important;
+}
+
+/* Título centrado u ordenado del pilar */
+.tarjeta-pilar-negosistema h3 {
+    margin: 0 0 12px 0 !important;
+    color: #0f172a !important; /* Mismo color oscuro de la cabecera de precios */
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.3px !important;
+}
+
+/* 🔵 LA LÍNEA DIVISORIA AZUL CORPORATIVA (IDÉNTICA A LOS PRECIOS) */
+.linea-division-azul {
+    width: 100% !important;
+    height: 3px !important; /* Grosor ideal para que se note con elegancia */
+    background-color: #0f172a !important; /* Azul marino oscuro de tu tabla */
+    margin-bottom: 16px !important;
+    border-radius: 2px !important;
+}
+
+/* Párrafo descriptivo inferior */
+.tarjeta-pilar-negosistema p {
+    color: #475569 !important; /* Gris oscuro ultra legible */
+    font-size: 0.92rem !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+    text-align: left !important;
+}
+
+.tarjeta-pilar-negosistema p strong {
+    color: #0f172a !important;
+}
+
+/* ==========================================================================
+   🔄 MOTOR RESPONSIVO CONTINUO (SIN PARCHES)
+   ========================================================================== */
+
+/* 🎚️ VISTA MEDIANA (Tablets o ventanas colapsadas en PC junto a YouTube) */
+@media (max-width: 1100px) and (min-width: 601px) {
+    .tarjeta-pilar-negosistema {
+        /* 🔳 EFECTO BLOGGER: Fuerza la rejilla a acomodarse exactamente en 2x2 */
+        flex: 1 1 calc(50% - 20px) !important;
+    }
+}
+
+/* 📱 VISTA CELULAR: Fila india vertical limpia */
+@media (max-width: 600px) {
+    .tarjeta-pilar-negosistema {
+        flex: 1 1 100% !important; /* Ocupa todo el ancho disponible del celular */
+    }
+}
+
+/* ==========================================================================
+   📊 OPTIMIZACIÓN DE FUERZA Y CONTRASTE PARA LA TABLA DE PRECIOS
+   ========================================================================== */
+
+/* Forzar grosores en textos descriptivos dentro de la tabla */
+.tabla-sistema td {
+    font-weight: 600 !important; /* Le da cuerpo al texto general de las celdas */
+    color: #1e293b !important;  /* Slate oscuro de máxima legibilidad */
+    line-height: 1.5 !important;
+}
+
+/* Títulos de los Niveles */
+.texto-nivel-titulo {
+    font-weight: 800 !important; /* Grosor máximo e imponente */
+    font-size: 0.98rem !important;
+    color: #0f172a !important;
+}
+
+/* Precios e Inversión */
+.texto-precio-negrita {
+    font-weight: 800 !important;
+    font-size: 1rem !important;
+    color: #0f172a !important;
+}
+
+/* Subtextos, Semanas y Trimestres */
+.texto-precio-sublinea {
+    font-weight: 700 !important; /* Evita que el texto de la semana parezca delgado */
+    font-size: 11px !important;
+    color: #475569 !important;
+}
+
+/* Textos de Ofertas y Rampas Dinámicas */
+.badge-oferta-texto {
+    font-weight: 800 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.3px !important;
+    margin-top: 4px !important;
+    display: inline-block !important;
+}
+
+/* Ajuste específico para celulares para que las letras no se toquen */
+@media (max-width: 768px) {
+    .tabla-sistema td {
+        padding: 14px 10px !important; /* Da espacio libre para que respire la letra */
+        font-size: 0.88rem !important;
+    }
+    .texto-nivel-titulo { font-size: 0.9rem !important; }
+    .texto-precio-negrita { font-size: 0.9rem !important; }
+}
+
+/* Unificar el h3 con el color de fondo de las cabeceras del sistema */
+.tarjeta-pilar-negosistema h3 {
+    /* Color principal plano extraído de tus botones y tabla */
+    background-color: #0b1a30 !important; 
+    color: #ffffff !important;
+    
+    /* Espaciado interno para darle formato de celda/tarjeta */
+    padding: 12px 16px !important; 
+    
+    /* Esquinas redondeadas idénticas a la tabla (12px) */
+    border-radius: 12px !important; 
+    
+    /* Separación inferior con respecto al texto de abajo */
+    margin: 0 0 16px 0 !important; 
+    display: block !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+/* Escondemos la línea azul porque el bloque h3 ya sirve como separador visual */
+.tarjeta-pilar-negosistema .linea-division-azul {
+    display: none !important; 
 }
