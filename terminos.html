@@ -4,35 +4,346 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Negosistema - Términos y Condiciones</title>
+
+    <!-- Dependencias Locales Unificadas del Proyecto -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/MarkerCluster.css" />
     <link rel="stylesheet" href="css/all.min.css" />
     <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
+<body class="entorno-marketing-anuncios">
 
-    <div class="legal-page-container">
-        <header class="legal-header">
-            <a href="index.html" class="btn-regresar-legal"><i class="fa-solid fa-chevron-left"></i> Volver al Mapa</a>
-            <h1>Términos, Condiciones y Aviso de Privacidad</h1>
-            <p>Última actualización: Agosto 2026</p>
+    <!-- MENÚ DE NAVEGACIÓN PREMIUM UNIFORME -->
+    <nav class="menu-navegacion-sistema" style="width: 100%;">
+        <div class="menu-enlaces-contenedor" style="display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; box-sizing: border-box !important;">
+            
+            <!-- EXTREMO IZQUIERDO: Logo y Título -->
+            <a href="index.html" style="text-decoration: none; color: inherit; display: inline-block;">
+                <div class="brand">
+                    <i class="fa-solid fa-map-location-dot brand-icon"></i>
+                    <div class="brand-text">
+                        <h1>Negosistema</h1>
+                        <p class="subtitle">Buscador Macro de Alcaldías CDMX</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- EXTREMO DERECHO: Botón de Anuncios -->
+            <div class="nav-tabs-container" style="display: flex !important; align-items: center !important;">
+                <a href="anunciate.html" class="btn-anunciate-header">
+                    <span class="icono-nav">📢</span> Anúnciate Aquí
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- CONTENEDOR CORE GENERAL -->
+    <div class="contenedor-servicios-ventas" style="padding: 20px; max-width: 1100px; margin: 0 auto;">
+        
+        <!-- CABECERA DE LA PÁGINA LEGAL -->
+        <header style="text-align: center; margin-bottom: 40px; margin-top: 20px;">
+            <a href="index.html" class="btn-regresar-sistema" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; margin-bottom: 15px;">
+                <i class="fa-solid fa-arrow-left"></i> Regresar al Buscador Regional
+            </a>
+            <h1 class="titulo-pagina-sistema" style="font-size: 2.2rem; font-weight: 800; color: #0f172a; margin-bottom: 5px;">TÉRMINOS Y CONDICIONES DE USO DE NEGOSISTEMA</h1>
+            <span class="badge-fase" style="background: #e2e8f0; color: #475569; font-size: 0.8rem; font-weight: 700; padding: 6px 16px; border-radius: 20px; display: inline-block; margin-top: 5px;">
+                Última actualización: 25 de Mayo de 2026
+            </span>
         </header>
 
-        <main class="legal-content">
-            <section class="legal-block">
-                <h2>1. Naturaleza del Servicio</h2>
-                <p>Negosistema es una plataforma geoespacial informativa de mapeo de comercios locales. No procesa pagos de forma directa de extremo a extremo ni se hace responsable por las transacciones comerciales particulares derivadas del uso del directorio.</p>
-            </section>
+        <!-- BLOQUE INTRODUCTORIO -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 30px; background: #fff; padding: 25px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <p style="font-size: 1.05rem; line-height: 1.7; color: #1e293b; font-weight: 500; margin: 0;">
+                Bienvenido a Negosistema. Al registrar su negocio, proporcionar sus datos o utilizar nuestro directorio hiperlocal (en adelante, la "Plataforma"), usted acepta sujetarse a los presentes Términos y Condiciones. Si no está de acuerdo con ellos, le solicitamos abstenerse de registrarse o utilizar el servicio.
+            </p>
+        </section>
 
-            <section class="legal-block">
-                <h2>2. Uso de Datos y Geolocalización</h2>
-                <p>Las coordenadas e información de los comercios son capturadas bajo el consentimiento de los titulares mediante herramientas serverless vinculadas. El procesamiento de geofencing se realiza estrictamente con fines de zonificación cartográfica.</p>
-            </section>
+        <!-- CLAÚSULA 1 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-circle-info" style="color: #2563eb;"></i> 1. NATURALEZA DEL SERVICIO (DIRECTORIO INFORMATIVO)
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin: 0;">
+                Negosistema es una plataforma digital e independiente de escaparate publicitario de libre acceso y geolocalización de comercios locales. Su única función es conectar de forma digital (24/7) a los negocios de la colonia (en adelante, los "Comercios") con los residentes y visitantes de la zona (en adelante, los "Usuarios"). Negosistema no vende productos, no presta servicios de forma directa, no gestiona entregas ni procesa pagos entre las partes. La relación comercial se da exclusivamente entre el Comercio y el Usuario.
+            </p>
+        </section>
 
-            <section class="legal-block">
-                <h2>3. Niveles de Servicio</h2>
-                <p>La visualización de los elementos multimedia (imágenes y videos) y enlaces de contacto interactivos está supeditada de manera estricta al estatus de vigencia y validación del plan del negocio contratado en la matriz central.</p>
-            </section>
-        </main>
-    </div>
+        <!-- CLAÚSULA 2 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-signature" style="color: #2563eb;"></i> 2. MECANISMO DE REGISTRO Y CONSENTIMIENTO
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin-bottom: 15px;">
+                El registro de los Comercios se realiza de forma voluntaria a través de dos modalidades:
+            </p>
+            <ul style="list-style-type: none; padding-left: 0; margin-bottom: 15px;">
+                <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; color: #334155;">
+                    <i class="fa-solid fa-check" style="color: #16a34a; margin-top: 5px;"></i>
+                    <span><strong>Levantamiento en campo:</strong> Validación presencial por el equipo de Negosistema.</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; color: #334155;">
+                    <i class="fa-solid fa-check" style="color: #16a34a; margin-top: 5px;"></i>
+                    <span><strong>Vía digital:</strong> Llenado de formularios de registro enviados por WhatsApp o herramientas web afines.</span>
+                </li>
+            </ul>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin: 0;">
+                Al proporcionar voluntariamente el nombre de su negocio, dirección, teléfono, horarios, logotipos y fotografías, el Comercio otorga su consentimiento expreso para que dicha información sea pública en el mapa digital de la Plataforma.
+            </p>
+        </section>
+        <!-- CLAÚSULA 3 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #dc2626;"></i> 3. EXCLUSIÓN Y DESLINDE DE RESPONSABILIDAD
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin-bottom: 15px;">
+                Como Comercio o Usuario de Negosistema, usted reconoce y acepta que:
+            </p>
+            
+            <ul style="list-style-type: none; padding-left: 0; margin-bottom: 20px;">
+                <li style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; color: #334155; line-height: 1.6;">
+                    <i class="fa-solid fa-store" style="color: #64748b; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span><strong>Responsabilidad Comercial:</strong> Cada Comercio es el único responsable de la calidad, precio, legalidad, entrega, garantías y veracidad de los productos o servicios ofrecidos. Negosistema no se hace responsable por fraudes, alimentos en mal estado, malos servicios, incumplimientos o disputas comerciales.</span>
+                </li>
+                <li style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; color: #334155; line-height: 1.6;">
+                    <i class="fa-solid fa-circle-xmark" style="color: #dc2626; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span><strong>Fallas Técnicas:</strong> El servicio cartográfico depende de la infraestructura tecnológica de Google My Maps. Negosistema no garantiza la disponibilidad ininterrumpida de la plataforma ni se hace responsable por caídas del sistema o fallas de red ajenas a su control.</span>
+                </li>
+                <li style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; color: #334155; line-height: 1.6;">
+                    <i class="fa-solid fa-comments-slash" style="color: #64748b; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span><strong>Sin Sistema de Reseñas:</strong> El mapa es estrictamente informativo. Negosistema no modera, no incluye, ni se hace responsable por opiniones de terceros fuera del entorno de la Plataforma.</span>
+                </li>
+            </ul>
+
+            <!-- Subsección Especial: Seguridad Física -->
+            <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                <h4 style="color: #991b1b; font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-shield-halved"></i> Seguridad Física y Conducta en el Entorno Real:
+                </h4>
+                <p style="color: #991b1b; font-size: 0.95rem; line-height: 1.6; margin: 0; font-weight: 500;">
+                    Negosistema es una herramienta publicitaria estrictamente digital y no tiene control, supervisión ni responsabilidad sobre el comportamiento de las personas en el mundo físico. La Plataforma se deslinda por completo de cualquier incidente de seguridad, altercado, conducta delictiva, extorsión, fraude presencial o daño físico o material que pudiera ocurrir entre Usuarios, Comercios o terceros con motivo de los encuentros, visitas o transacciones comerciales derivadas de la localización de los negocios en el mapa. El uso de la información para acudir a un establecimiento físico corre bajo el exclusivo riesgo y responsabilidad de cada individuo.
+                </p>
+            </div>
+        </section>
+        <!-- CLAÚSULA 4 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-pen-to-square" style="color: #2563eb;"></i> 4. ACTUALIZACIÓN DE LA INFORMACIÓN
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin-bottom: 25px;">
+                Es obligación exclusiva del Comercio notificar de forma inmediata cualquier cambio en sus horarios, ubicación, números de contacto o el cierre definitivo del local. Negosistema no se hace responsable ante los Usuarios por información desactualizada si el Comercio omitió reportar los cambios correspondientes.
+            </p>
+
+            <!-- SUBSECCIÓN 4.1 -->
+            <h4 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;">
+                4.1. POLÍTICA DE ACTUALIZACIONES Y MODIFICACIONES MANUALES
+            </h4>
+            <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
+                Al ser un directorio operado de forma semi-automatizada, las actualizaciones de información en el mapa se gestionan de manera manual por el equipo de Negosistema. Para garantizar la viabilidad operativa del servicio, el Comercio acepta las siguientes reglas de actualización:
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                
+                <!-- Límite -->
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <h5 style="margin: 0 0 5px 0; color: #0f172a; font-size: 0.95rem; font-weight: 700;">
+                        <i class="fa-solid fa-sliders" style="color: #64748b;"></i> Límite de Solicitudes
+                    </h5>
+                    <p style="margin: 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                        Cada Comercio tendrá derecho a solicitar un máximo de 1 modificación a sus datos (horarios, teléfonos o imágenes) por mes calendario.
+                    </p>
+                </div>
+
+                <!-- Extraordinarias -->
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <h5 style="margin: 0 0 5px 0; color: #0f172a; font-size: 0.95rem; font-weight: 700;">
+                        <i class="fa-solid fa-hand-holding-dollar" style="color: #64748b;"></i> Actualizaciones Extraordinarias
+                    </h5>
+                    <p style="margin: 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                        Cualquier cambio excedente dentro del mismo mes quedará sujeto a la disponibilidad del equipo o podrá generar un costo administrativo adicional.
+                    </p>
+                </div>
+
+                <!-- Tiempos -->
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <h5 style="margin: 0 0 5px 0; color: #0f172a; font-size: 0.95rem; font-weight: 700;">
+                        <i class="fa-solid fa-clock" style="color: #2563eb;"></i> Tiempo de Respuesta
+                    </h5>
+                    <p style="margin: 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                        Una vez recibida la información completa por el canal oficial, Negosistema contará con un plazo de 48 a 72 horas hábiles para reflejar los cambios en el mapa.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Control de Calidad -->
+            <div style="background: #fffbeb; border-left: 4px solid #d97706; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                <h5 style="margin: 0 0 5px 0; color: #92400e; font-size: 0.95rem; font-weight: 700;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Control de Calidad y Pausa de Servicio
+                </h5>
+                <p style="margin: 0; color: #78350f; font-size: 0.9rem; line-height: 1.5;">
+                    El Comercio es responsable de enviar la información con ortografía clara, datos verídicos y formatos legibles. En caso de que una solicitud de actualización sea enviada con datos incompletos, confusos, con errores de redacción o imágenes de baja calidad, Negosistema pausará el proceso de forma inmediata. El plazo de respuesta se congelará y comenzará a contar desde cero únicamente hasta que el Comercio envíe la información corregida. Las solicitudes pausadas por el usuario seguirán contando dentro de su límite mensual.
+                </p>
+            </div>
+
+            <!-- Emergencia -->
+            <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; border-radius: 6px;">
+                <h5 style="margin: 0 0 5px 0; color: #166534; font-size: 0.95rem; font-weight: 700;">
+                    <i class="fa-solid fa-shield-check" style="color: #16a34a;"></i> Excepciones de Emergencia
+                </h5>
+                <p style="margin: 0; color: #14532d; font-size: 0.9rem; line-height: 1.5;">
+                    Las solicitudes de "Baja Definitiva del Negocio" o "Cierre por Causa de Fuerza Mayor" no contarán dentro del límite mensual y se procesarán con prioridad por seguridad legal.
+                </p>
+            </div>
+        </section>
+        <!-- CLAÚSULA 5 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-ban" style="color: #dc2626;"></i> 5. GIROS Y CONTENIDOS PROHIBIDOS
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin-bottom: 15px;">
+                Negosistema se reserva el derecho de rechazar, suspender o eliminar de forma inmediata del mapa a cualquier negocio que ofrezca de manera ilegal o sin los permisos correspondientes de la Alcaldía:
+            </p>
+            <ul style="list-style-type: none; padding-left: 0; margin: 0;">
+                <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; color: #334155;">
+                    <i class="fa-solid fa-circle-exclamation" style="color: #dc2626; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span>Venta de alcohol sin licencia o fuera de horario regulado.</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; color: #334155;">
+                    <i class="fa-solid fa-circle-exclamation" style="color: #dc2626; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span>Medicamentos controlados, sustancias ilícitas o pirotecnia.</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; color: #334155;">
+                    <i class="fa-solid fa-circle-exclamation" style="color: #dc2626; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span>Apuestas, servicios para adultos o cualquier activity que viole las leyes vigentes de la Ciudad de México.</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; color: #334155;">
+                    <i class="fa-solid fa-circle-exclamation" style="color: #dc2626; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span>Uso de marcas registradas o imágenes de las cuales no posea derechos de autor.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- CLAÚSULA 6 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-copyright" style="color: #2563eb;"></i> 6. PROPIEDAD INTELECTUAL
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin-bottom: 15px;">
+                El nombre Negosistema, su logotipo, los iconos personalizados del mapa, el diseño de la interfaz web y la base de datos recopilada son propiedad exclusiva de la Plataforma.
+            </p>
+            <ul style="list-style-type: none; padding-left: 0; margin: 0;">
+                <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; color: #334155; line-height: 1.6;">
+                    <i class="fa-solid fa-camera" style="color: #64748b; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span><strong>Fotografías en campo:</strong> Las fotografías tomadas por el personal de Negosistema durante los recorridos de campo pertenecen a la Plataforma, otorgando al Comercio una licencia de uso temporal y gratuita únicamente para fines de este directorio.</span>
+                </li>
+                <li style="margin-bottom: 0; display: flex; align-items: flex-start; gap: 10px; color: #334155; line-height: 1.6;">
+                    <i class="fa-solid fa-image" style="color: #64748b; margin-top: 5px; flex-shrink: 0;"></i>
+                    <span><strong>Imágenes del Comercio:</strong> Si el Comercio proporciona sus propias imágenes, garantiza tener los derechos de uso de las mismas, deslindando a Negosistema de cualquier reclamo por derechos de autor.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- CLAÚSULA 7 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-headset" style="color: #2563eb;"></i> 7. CANAL DE ATENCIÓN OFICIAL Y DERECHOS ARCO (BAJAS)
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin-bottom: 20px;">
+                Para solicitar la actualización de datos, corrección de errores o la baja definitiva de un negocio del mapa, el titular del comercio deberá comunicarse exclusivamente a nuestro canal oficial de WhatsApp Business al número: [Tu Número de WhatsApp]. Por motivos de seguridad legal, la solicitud debe enviarse desde el mismo número telefónico registrado en el sistema. Las bajas se procesarán en un lapso no mayor a [48/72] horas hábiles.
+            </p>
+
+            <!-- Bloque de Acción Destacado de WhatsApp -->
+            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 12px; text-align: center;">
+                <p style="margin: 0 0 15px 0; color: #475569; font-size: 0.95rem; font-weight: 600;">
+                    ¿Requieres enviar una solicitud legal o aclaración?
+                </p>
+                <a href="https://wa.me" target="_blank" style="background: #25d366; color: #fff; display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(37,211,102,0.2); transition: all 0.3s ease;">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Contactar a Soporte Oficial
+                </a>
+            </div>
+        </section>
+                <!-- CLAÚSULA 8 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-gavel" style="color: #2563eb;"></i> 8. MODIFICACIONES A LOS TÉRMINOS
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin: 0;">
+                Negosistema se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento para adaptarlos a nuevas funciones o regulaciones legales. Las modificaciones serán publicadas en este mismo apartado web y el uso continuo del servicio constituirá la aceptación de los nuevos términos.
+            </p>
+        </section>
+
+        <!-- CLAÚSULA 9 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 25px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-user-shield" style="color: #16a34a;"></i> 9. AVISO DE PRIVACIDAD SIMPLIFICADO (PROTECCIÓN DE DATOS)
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin-bottom: 15px;">
+                De conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), Negosistema le informa que los datos personales recopilados (tales como nombre del titular, teléfono de WhatsApp, ubicación del negocio e imágenes) serán utilizados exclusivamente con la finalidad de integrar, publicar y difundir su negocio en el mapa publicitario de la Plataforma, así como para gestionar sus solicitudes de actualización o baja.
+            </p>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin-bottom: 15px;">
+                Negosistema no vende, no transfiere ni comercializa sus datos con ningún tercero. El Comercio y el Usuario manifiestan su consentimiento expreso para el tratamiento de sus datos al proporcionar la información a través de los canales oficiales.
+            </p>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin: 0;">
+                Para ejercer sus derechos ARCO (Acceso, Rectificación, Cancelación y Oposición), el titular deberá seguir el procedimiento establecido en la Cláusula 7 de este documento.
+            </p>
+        </section>
+
+        <!-- CLAÚSULA 10 -->
+        <section class="panel-card-gis-vertical" style="margin-bottom: 40px; background: #fff; padding: 30px; border-radius: var(--radius-premium); box-shadow: var(--shadow-subtle);">
+            <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-scale-balanced" style="color: #0f172a;"></i> 10. JURISDICCIÓN Y LEY APLICABLE
+            </h3>
+            <div class="linea-division-azul" style="height: 2px; background: #e2e8f0; margin-bottom: 15px;"></div>
+            <p style="color: #334155; font-size: 1rem; line-height: 1.6; margin: 0;">
+                Para la interpretación, cumplimiento y resolución de cualquier controversia, disputa o reclamación derivada del uso de la Plataforma o de los presentes Términos y Condiciones, las partes (Comercios, Usuarios y la Plataforma) se someten expresamente a las leyes aplicables de la Ciudad de México y a la jurisdicción de los tribunales competentes y las oficinas de la Procuraduría Federal del Consumidor (PROFECO) delegación Ciudad de México, renunciando expresamente a cualquier otro fuero que pudiera corresponderles por razón de sus domicilios presentes o futuros.
+            </p>
+        </section>
+
+    </div><!-- Cierre de .contenedor-servicios-ventas -->
+
+    <!-- PIE DE PÁGINA OSCURO CORPORATIVO PREMIUM UNIFORME -->
+    <footer class="footer-maestro-sistema" style="background-color: #0f172a !important; color: #f8fafc !important; width: 100% !important; padding: 40px 20px !important; margin-top: 60px !important; border-top: 1px solid #1e293b !important; box-sizing: border-box !important;">
+        <div class="footer-maestro-contenido" style="max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
+            
+            <!-- Izquierda: Copyright -->
+            <p class="copyright" style="margin: 0; font-size: 0.9rem; color: #94a3b8 !important; font-weight: 400;">
+                &copy; 2026 <strong style="color: #ffffff !important; font-weight: 700;">Negosistema</strong>. Todos los derechos reservados.
+            </p>
+            
+            <!-- Derecha: Enlaces Legales -->
+            <div class="footer-links" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <a href="terminos.html" class="enlace-legal-footer" style="color: #38bdf8 !important; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.2s ease;">
+                    <i class="fa-solid fa-scale-balanced"></i> Términos, Condiciones y Aviso de Privacidad
+                </a>
+                
+                <!-- El enlace 'P' con su ID intacto para el script -->
+                <a href="catalogo.html" class="enlace-legal-footer escaparate-p" id="enlaceEscaparateStaging" title="Ver escaparate de pruebas en Staging" style="color: #475569 !important; text-decoration: none; font-size: 0.85rem; margin-left: 8px; font-weight: bold;">P</a>
+            </div>
+
+        </div>
+
+        <!-- Script de automatización de rutas del sistema -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const enlace = document.getElementById("enlaceEscaparateStaging");
+                if (enlace) {
+                    const ultimaColonia = localStorage.getItem("ultima_colonia_explorada") || "xalpa ii";
+                    enlace.href = `catalogo.html?colonia=${encodeURIComponent(ultimaColonia)}`;
+                }
+            });
+        </script>
+    </footer>
 
 </body>
 </html>
+

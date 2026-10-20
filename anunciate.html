@@ -219,18 +219,7 @@
             </a>
         </div>
     </div>
-    <!-- PIE DE PÁGINA OSCURO CORPORATIVO -->
-<!-- PIE DE PÁGINA OSCURO CORPORATIVO -->
-<footer class="footer-maestro-sistema" style="margin-top: 40px;">
-    <div class="footer-maestro-contenido" style="max-width: 1100px;">
-        <p class="copyright" style="margin: 0;">&copy; 2026 <strong>Negosistema</strong>. Todos los derechos reservados.</p>
-        <div class="footer-links">
-            <a href="terminos.html" class="enlace-legal-footer">
-                <i class="fa-solid fa-scale-balanced"></i> Términos, Condiciones y Aviso de Privacidad
-            </a>
-        </div>
-    </div>
-</footer>
+
 
 
 
@@ -240,5 +229,39 @@
     <script src="js/papaparse.min.js"></script>
     <!-- Agregamos defer para garantizar que el script espere a las librerías anteriores -->
     <script src="js/motor-mapas.js" defer></script>
+
+    <!-- PIE DE PÁGINA OSCURO CORPORATIVO PREMIUM UNIFORME -->
+    <footer class="footer-maestro-sistema" style="background-color: #0f172a !important; color: #f8fafc !important; width: 100% !important; padding: 40px 20px !important; margin-top: 60px !important; border-top: 1px solid #1e293b !important; box-sizing: border-box !important;">
+        <div class="footer-maestro-contenido" style="max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
+            
+            <!-- Izquierda: Copyright -->
+            <p class="copyright" style="margin: 0; font-size: 0.9rem; color: #94a3b8 !important; font-weight: 400;">
+                &copy; 2026 <strong style="color: #ffffff !important; font-weight: 700;">Negosistema</strong>. Todos los derechos reservados.
+            </p>
+            
+            <!-- Derecha: Enlaces Legales -->
+            <div class="footer-links" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <a href="terminos.html" class="enlace-legal-footer" style="color: #38bdf8 !important; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.2s ease;">
+                    <i class="fa-solid fa-scale-balanced"></i> Términos, Condiciones y Aviso de Privacidad
+                </a>
+                
+                <!-- El enlace 'P' con su ID intacto para el script -->
+                <a href="catalogo.html" class="enlace-legal-footer escaparate-p" id="enlaceEscaparateStaging" title="Ver escaparate de pruebas en Staging" style="color: #475569 !important; text-decoration: none; font-size: 0.85rem; margin-left: 8px; font-weight: bold;">P</a>
+            </div>
+
+        </div>
+
+        <!-- Script de automatización de rutas del sistema -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const enlace = document.getElementById("enlaceEscaparateStaging");
+                if (enlace) {
+                    const ultimaColonia = localStorage.getItem("ultima_colonia_explorada") || "xalpa ii";
+                    enlace.href = `catalogo.html?colonia=${encodeURIComponent(ultimaColonia)}`;
+                }
+            });
+        </script>
+    </footer>
+
 </body>
 </html>
