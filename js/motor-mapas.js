@@ -1261,12 +1261,35 @@ function inyectarPopupComercioInteligente(comercio, nivel) {
  const linkWaze = wazeMatch ? wazeMatch[0] : null;
  const linkGoogle = googleMatch ? googleMatch[0] : null;
 
+ // ==========================================================================
+ // ENLACE Y CONTROL DE PRIVACIDAD PARA CONVERSIÓN DE MARKETING (NIVEL 1)
+ // ==========================================================================
  if (nivel === 1) {
- return `<div class="popup-nego-contenedor">
- <p style="margin:0; font-size:12px; font-weight:bold; color:#64748B;">Directorio Base Comercial</p>
- <h4 style="margin:4px 0 0 0; font-size:14px; color:#1E293B;">Ubicación en verificación</h4>
- </div>`;
+   const linkVentasWeb = "https://wa.me/525522989345?text=Hola%2C%20quisiera%20contratar%20publicidad%20para%20mi%20negocio"; // 👈 REEMPLAZA CON TU LINK REAL DE VENTAS
+   
+   return `
+   <div class="popup-nego-contenedor" style="position:relative; padding: 4px 2px;">
+     <div class="popup-nego-header" style="margin-bottom: 10px;">
+       <p style="margin:0 0 4px 0; font-size:11px; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing: 0.5px;">📋 Directorio Base (geolocalización)</p>
+       
+       <div class="ui-titulo-fila-contenedor" style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+         <h4 class="popup-nego-titulo" style="margin: 0; font-size: 15px; font-weight: 800; color: #0F172A; line-height: 1.2;">${nombre}</h4>
+         <span class="popup-id-disenado" style="font-size: 13px; font-weight: 800; color: #E11D48; font-family: monospace; background: #FFF1F2; padding: 2px 6px; border-radius: 4px; border: 1px solid #FFE4E6;">#${id}</span>
+       </div>
+       
+       <p style="margin: 8px 0 0 0; font-size: 12px; color: #64748B; line-height: 1.4;">Los datos comerciales, menús y horarios de este establecimiento se encuentran ocultos por verificación de cuenta.</p>
+     </div>
+     
+     <div style="border-top: 1px solid #E2E8F0; padding-top: 10px; margin-top: 10px;">
+       <a href="${linkVentasWeb}?id=${id}" target="_blank" class="enlace-web-profesional" style="display:block; text-align:center; background:#E11D48; color:#fff; text-decoration:none; padding:10px; border-radius:6px; font-size:13px; font-weight:700; transition: background 0.2s;">
+         🚀 Activar Información Comercial
+       </a>
+       <span style="display:block; text-align:center; font-size:10px; color:#94A3B8; margin-top:4px;">Copia tu ID <b>#${id}</b> para usarlo en tu registro</span>
+     </div>
+   </div>`;
  }
+ // ==========================================================================
+
  
  // CABECERA FIJA Y COMPACTA
  let html = `<div class="popup-nego-contenedor" style="position:relative;">
